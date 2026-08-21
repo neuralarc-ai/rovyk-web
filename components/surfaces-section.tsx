@@ -1,10 +1,8 @@
-import {
-  DownloadSimpleIcon,
-  MicrophoneIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { MicrophoneIcon } from "@phosphor-icons/react/dist/ssr";
 import { RovykHud } from "@/components/rovyk-hud";
 import { SectionHead } from "@/components/section-head";
 import { MacWindow } from "@/components/ui/mac-window";
+import { DOWNLOADS_FLOW } from "@/lib/hud-flows";
 import { cn } from "@/lib/utils";
 import { AppleLogo } from "./apple-logo";
 
@@ -104,7 +102,7 @@ function GhostWindow() {
         <span className="size-1.5 rounded-full bg-white/20" />
         <span className="size-1.5 rounded-full bg-white/20" />
         <span className="ml-2 font-mono text-[8.5px] tracking-[0.14em] text-white/34 uppercase">
-          Mail
+          Downloads
         </span>
       </div>
       <div className="flex flex-col gap-2 px-3 py-3">
@@ -120,8 +118,15 @@ function GhostWindow() {
   );
 }
 
-/** The notch, on a screen fragment that dissolves before the panel ends. */
-function NotchStage() {
+/**
+ * The notch, on a screen fragment that dissolves before the panel ends.
+ *
+ * `labels` puts the menu bar's own furniture — app name, menus, clock — back
+ * on the strip. Off here: this card is a close-up of one piece of chrome, and
+ * at this size the labels crowd the thing they are meant to frame. The strip
+ * itself stays, because it is the edge the notch is carved out of.
+ */
+function NotchStage({ labels = false }: { labels?: boolean }) {
   return (
     <div className={STAGE}>
       <StageGrid />
@@ -133,20 +138,31 @@ function NotchStage() {
         )}
       >
         <div className="absolute inset-x-0 top-0 z-20 flex h-[22px] items-center justify-between px-3 text-[9px] text-white/72 backdrop-blur-sm [background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.06))]">
-          <div className="flex items-center gap-3">
-            <b className="font-semibold">Rovyk</b>
-            <span>File</span>
-            <span>Edit</span>
-            <span>View</span>
-          </div>
-          <span>9:41</span>
+          {labels && (
+            <>
+              <div className="flex items-center gap-3">
+                <b className="font-semibold">Rovyk</b>
+                <span>File</span>
+                <span>Edit</span>
+                <span>View</span>
+              </div>
+              <span>9:41</span>
+            </>
+          )}
         </div>
 
         <GhostWindow />
 
-        {/* Scaled to the artifact, not the viewport — expanded the notch is
+        {/* A different run from the hero's, so the page is not telling the
+            same story twice — and a longer chain, which is the case the
+            shell has to grow for.
+
+            Scaled to the artifact, not the viewport — expanded the notch is
             404px, wider than this screen on a phone. */}
-        <RovykHud className="z-30 scale-[0.55] md:scale-[0.62] lg:scale-[0.8]" />
+        <RovykHud
+          flow={DOWNLOADS_FLOW}
+          className="z-30 scale-[0.55] md:scale-[0.62] lg:scale-[0.8]"
+        />
       </div>
     </div>
   );

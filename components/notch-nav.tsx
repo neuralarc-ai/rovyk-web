@@ -46,6 +46,14 @@ const CLOSE_DELAY_MS = 120;
 /** Reveal once the intro screen starts moving away. */
 const REVEAL_AT = 0.12;
 
+/**
+ * Where the notch parks when it is away: far enough up that its bottom edge
+ * sits exactly on the top of the viewport, so it slides out of the screen's
+ * edge rather than fading off the bezel. Its own height plus the strip it
+ * hangs from — read from CSS, so the frame and the travel cannot drift.
+ */
+const PARKED_Y = `calc(-1 * (var(--gut) + ${NOTCH_H}px))`;
+
 /* ── The mark ─────────────────────────────────────────────────────────
    Collapsed, the notch shows only the R, set larger so it reads as a
    mark rather than a clipped word. Opening does two things at once: the
@@ -69,7 +77,7 @@ const LETTER_STEP_MS = 90;
  * the notch keeps its shape against a black page rather than dissolving into
  * the bar it hangs from.
  */
-const EDGE_LIGHT = 0.5;
+const EDGE_LIGHT = 0.6;
 
 /**
  * Where the lit edge crosses onto the bar. The fillet does not fade to
@@ -78,7 +86,7 @@ const EDGE_LIGHT = 0.5;
  * notch reads as carved out of a lit edge rather than as a lit object
  * sitting on an unlit one.
  */
-const EDGE_BLEED = 0.2;
+const EDGE_BLEED = 0.3;
 
 const LINKS_L = [
   { label: "Where it lives", href: "#where" },
@@ -128,7 +136,13 @@ function Fillet({ side }: { side: "l" | "r" }) {
       className={cn("block shrink-0 overflow-visible", margin)}
     >
       <defs>
-        <linearGradient id={gradientId} gradientUnits="userSpaceOnUse" {...from} y1="0" y2="0">
+        <linearGradient
+          id={gradientId}
+          gradientUnits="userSpaceOnUse"
+          {...from}
+          y1="0"
+          y2="0"
+        >
           <stop offset="0" stopColor="#fff" stopOpacity={EDGE_BLEED} />
           <stop offset="0.5" stopColor="#fff" stopOpacity={EDGE_BLEED + 0.14} />
           <stop offset="1" stopColor="#fff" stopOpacity={EDGE_LIGHT} />
@@ -197,7 +211,10 @@ export function NotchNav() {
     return () => trigger.kill();
   }, []);
 
-  useEffect(() => () => void (closeTimer.current && clearTimeout(closeTimer.current)), []);
+  useEffect(
+    () => () => void (closeTimer.current && clearTimeout(closeTimer.current)),
+    [],
+  );
 
   const hold = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -229,13 +246,21 @@ export function NotchNav() {
         onFocusCapture={hold}
         onBlurCapture={release}
         className={cn(
-          "fixed top-(--gut) left-1/2 z-100 flex -translate-x-1/2 items-start text-black",
+          "fixed top-(--gut) left-1/2 z-100 flex items-start text-black",
           // A little room below the notch so the pointer does not have to
           // thread the concave gap to keep it open.
           "pb-4",
-          shown ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
-          "transition-opacity duration-500 ease-out motion-reduce:transition-none",
+          // It arrives by dropping out of the top edge and leaves the same
+          // way. The easing is the notch's own — a long settle, so it slides
+          // to a stop rather than snapping into place. The transition lives
+          // in a class, not the style below, or `motion-reduce` could not
+          // reach past the inline declaration to turn it off.
+          "transition-transform duration-[550ms] ease-[cubic-bezier(.52,.52,0,1)] motion-reduce:transition-none",
+          shown ? "pointer-events-auto" : "pointer-events-none",
         )}
+        // Centring travels with it, so both axes have to be one transform:
+        // a Tailwind `-translate-x-1/2` would be overwritten by this.
+        style={{ transform: `translate(-50%, ${shown ? "0px" : PARKED_Y})` }}
       >
         {/* The bleed. Sits one pixel up, on the bar's own bottom row, so it
             is continuous with the fillet stroke rather than a second line
@@ -243,7 +268,9 @@ export function NotchNav() {
         <span
           aria-hidden
           className="pointer-events-none absolute -top-px right-full h-px w-[20vw]"
-          style={{ background: `linear-gradient(270deg, rgba(255,255,255,${EDGE_BLEED}), transparent)` }}
+          style={{
+            background: `linear-gradient(270deg, rgba(255,255,255,${EDGE_BLEED}), transparent)`,
+          }}
         />
 
         <Fillet side="l" />
@@ -280,11 +307,13 @@ export function NotchNav() {
                     : "[&_path]:delay-0 [&_path:not(:first-child)]:opacity-0",
                   "motion-reduce:[&_path]:transition-none",
                 )}
-                style={{
-                  height: open ? MARK_H_OPEN : MARK_H_SHUT,
-                  transition: `height .55s ${EASE}`,
-                  "--letter-step": `${LETTER_STEP_MS}ms`,
-                } as CSSProperties}
+                style={
+                  {
+                    height: open ? MARK_H_OPEN : MARK_H_SHUT,
+                    transition: `height .55s ${EASE}`,
+                    "--letter-step": `${LETTER_STEP_MS}ms`,
+                  } as CSSProperties
+                }
               />
             </div>
           </a>
@@ -306,7 +335,9 @@ export function NotchNav() {
         <span
           aria-hidden
           className="pointer-events-none absolute -top-px left-full h-px w-[20vw]"
-          style={{ background: `linear-gradient(90deg, rgba(255,255,255,${EDGE_BLEED}), transparent)` }}
+          style={{
+            background: `linear-gradient(90deg, rgba(255,255,255,${EDGE_BLEED}), transparent)`,
+          }}
         />
       </nav>
     </>
