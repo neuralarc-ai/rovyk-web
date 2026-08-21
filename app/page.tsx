@@ -1,6 +1,7 @@
 import { HeroSection } from "@/components/hero-section";
 import { IntroSection } from "@/components/intro-section";
 import { SurfacesSection } from "@/components/surfaces-section";
+import { ToolsSection } from "@/components/tools-section";
 
 export default function Page() {
   return (
@@ -14,6 +15,7 @@ export default function Page() {
       <main className="relative m-(--gut) rounded-4xl bg-background">
         <HeroSection />
         <SurfacesSection />
+        <ToolsSection />
       </main>
     </>
   );
