@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MODE_DRAWS, resolvePreset, type OrbState } from "thinking-orbs/engine";
+import { MODE_DRAWS, resolvePreset, type OrbSize, type OrbState } from "thinking-orbs/engine";
 import { cn } from "@/lib/utils";
 
 /**
@@ -31,8 +31,17 @@ type Layer = {
   opacity: number;
 };
 
+/**
+ * The library ships two tunings — 64 for avatar scale, 20 for inline scale —
+ * and they are separate designs, not a scale factor. Pick by intent: anything
+ * small enough to sit in a line of chrome gets the inline tuning.
+ */
+function presetFor(size: number): OrbSize {
+  return size < 40 ? 20 : 64;
+}
+
 function paintLayer(layer: Layer, size: number, seconds: number, speedScale: number) {
-  const { mode, speed, opts } = resolvePreset(layer.state, 64);
+  const { mode, speed, opts } = resolvePreset(layer.state, presetFor(size));
   const dpr = Math.min(2, (typeof devicePixelRatio !== "undefined" && devicePixelRatio) || 1);
 
   if (layer.canvas.width !== Math.round(size * dpr)) {

@@ -1,13 +1,18 @@
+import { HeroSection } from "@/components/hero-section";
 import { IntroSection } from "@/components/intro-section";
-import { SmoothScroll } from "@/components/smooth-scroll";
 
 export default function Page() {
   return (
-    <SmoothScroll>
+    <>
+      {/* Full-bleed: the splash owns the whole screen, outside the frame. */}
       <IntroSection />
-      {/* Scaffolding only — gives the scroll cue somewhere to go until the
-          next section is built. No content is implied here. */}
-      <section className="h-screen border-t border-border bg-background" />
-    </SmoothScroll>
+
+      {/* The sheet. Every section from here on shares one rounded surface,
+          inset by the same `--gut` the bezel strips are drawn at; the first
+          section carries the top corners. */}
+      <main className="relative m-(--gut) rounded-4xl bg-background">
+        <HeroSection />
+      </main>
+    </>
   );
 }

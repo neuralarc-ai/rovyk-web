@@ -76,6 +76,9 @@
   /* Intro-section motion — see components/intro-section.tsx */
   --animate-caret: caret 1s step-end infinite;
   --animate-scroll-cue: scroll-cue 2.4s ease-in-out infinite;
+  /* Hero-section motion — see components/hero-section.tsx */
+  --animate-twinkle: twinkle 6s ease-in-out infinite;
+  --animate-marquee: marquee 42s linear infinite;
 }
 
 :root {
@@ -106,6 +109,10 @@
   --chart-4: rgba(255, 255, 255, 0.36);
   --chart-5: rgba(255, 255, 255, 0.22);
   --radius: 0.625rem;
+  /* The frame gutter. Drives the bezel strips, the sheet's inset and the
+     height every full-bleed section reserves for them — change it here and
+     all three move together. */
+  --gut: 20px;
   --sidebar: #111111; /* band */
   --sidebar-foreground: #ffffff;
   --sidebar-primary: #ffffff;
@@ -236,4 +243,85 @@
   background-image:
     radial-gradient(26% 22% at 50% 50%, rgba(255, 255, 255, 0.10), transparent 70%),
     radial-gradient(52% 44% at 50% 50%, rgba(85, 90, 244, 0.065), transparent 72%);
+}
+
+/* ── Hero section ──────────────────────────────────────────────────
+   Again: only what utilities cannot express — multi-layer background
+   recipes, mask geometry, and keyframes. */
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.08; }
+  50%      { opacity: 0.6; }
+}
+
+/* Travels exactly one third, because the app list is rendered three
+   times — so the reset lands on an identical frame. */
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-33.3333%, 0, 0); }
+}
+
+/* The scrim over the hero wallpaper. Keeps the headline readable and
+   lands the bottom edge exactly on the sheet colour, so the section
+   dissolves into the page rather than ending at a seam. The photograph
+   underneath is a <Image>, not a background layer, so Next can serve it
+   responsively — see components/hero-section.tsx. */
+@utility bg-hero-scrim {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(4, 10, 12, 0.7) 0%,
+      rgba(4, 10, 12, 0.44) 28%,
+      rgba(6, 11, 12, 0.62) 60%,
+      rgba(11, 11, 11, 0.94) 87%,
+      #0b0b0b 100%
+    ),
+    radial-gradient(76% 56% at 50% 16%, rgba(0, 0, 0, 0.44) 0%, transparent 74%),
+    radial-gradient(120% 92% at 50% 46%, transparent 42%, rgba(0, 0, 0, 0.48) 100%);
+}
+
+/* Inside the Mac window: a lit desktop wallpaper, top-left key light. */
+@utility bg-display-wall {
+  background-image:
+    radial-gradient(66% 56% at 26% 14%, rgba(255, 255, 255, 0.17) 0%, transparent 62%),
+    radial-gradient(56% 48% at 80% 30%, rgba(255, 255, 255, 0.09) 0%, transparent 64%),
+    radial-gradient(90% 76% at 50% 104%, rgba(255, 255, 255, 0.05) 0%, transparent 70%),
+    linear-gradient(155deg, #242424 0%, #161616 46%, #0e0e0e 100%);
+}
+
+/* The window is cropped rather than ended — it runs off the bottom of
+   the section instead of sitting in it. */
+@utility mask-fade-b {
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 54%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 54%, transparent 100%);
+}
+
+/* Concave corner fillets. These are what make the notch read as carved
+   out of the edge it hangs from, rather than a pill floating near it.
+   `-t-` hangs from the top edge (HUD), `-b-` rises from the bottom
+   (the app marquee). */
+@utility mask-fillet-tl {
+  -webkit-mask-image: radial-gradient(circle farthest-side at 0 100%, transparent calc(100% - 0.6px), #000 100%);
+  mask-image: radial-gradient(circle farthest-side at 0 100%, transparent calc(100% - 0.6px), #000 100%);
+}
+@utility mask-fillet-tr {
+  -webkit-mask-image: radial-gradient(circle farthest-side at 100% 100%, transparent calc(100% - 0.6px), #000 100%);
+  mask-image: radial-gradient(circle farthest-side at 100% 100%, transparent calc(100% - 0.6px), #000 100%);
+}
+@utility mask-fillet-bl {
+  -webkit-mask-image: radial-gradient(circle farthest-side at 0 0, transparent calc(100% - 0.7px), #000 100%);
+  mask-image: radial-gradient(circle farthest-side at 0 0, transparent calc(100% - 0.7px), #000 100%);
+}
+@utility mask-fillet-br {
+  -webkit-mask-image: radial-gradient(circle farthest-side at 100% 0, transparent calc(100% - 0.7px), #000 100%);
+  mask-image: radial-gradient(circle farthest-side at 100% 0, transparent calc(100% - 0.7px), #000 100%);
+}
+
+/* ── Notch nav ─────────────────────────────────────────────────────
+   The notch's lit underside. A hairline along the bottom edge, at full
+   strength dead centre and faded to nothing well before the ends, so it
+   never reaches the fillets and never has to follow their curve. */
+@utility mask-notch-underlight {
+  -webkit-mask-image: radial-gradient(64% 210% at 50% 100%, #000 0, rgba(0, 0, 0, 0.6) 52%, transparent 100%);
+  mask-image: radial-gradient(64% 210% at 50% 100%, #000 0, rgba(0, 0, 0, 0.6) 52%, transparent 100%);
 }
