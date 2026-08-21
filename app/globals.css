@@ -46,75 +46,145 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Rovyk brand — see docs/references/rovyk_palette.html */
+  --color-brand-indigo: var(--brand-indigo);
+  --color-brand-indigo-text: var(--brand-indigo-text);
+  --color-brand-indigo-tint: var(--brand-indigo-tint);
+  --color-brand-indigo-edge: var(--brand-indigo-edge);
+  --color-brand-indigo-on: var(--brand-indigo-on);
+  --color-brand-red: var(--brand-red);
+  --color-brand-red-text: var(--brand-red-text);
+  --color-brand-red-tint: var(--brand-red-tint);
+  --color-brand-red-edge: var(--brand-red-edge);
+  --color-brand-red-on: var(--brand-red-on);
+  --color-brand-green: var(--brand-green);
+  --color-brand-green-text: var(--brand-green-text);
+  --color-brand-green-tint: var(--brand-green-tint);
+  --color-brand-green-edge: var(--brand-green-edge);
+  --color-brand-green-on: var(--brand-green-on);
+  --color-brand-pink: var(--brand-pink);
+  --color-brand-pink-text: var(--brand-pink-text);
+  --color-brand-pink-tint: var(--brand-pink-tint);
+  --color-brand-pink-edge: var(--brand-pink-edge);
+  --color-brand-pink-on: var(--brand-pink-on);
 }
 
 :root {
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  /* ── Rovyk neutral ramp ────────────────────────────────────────────
+     Six neutrals and three border alphas carry the entire page; every
+     surface is one of these and nothing else. Dark-only system — the
+     .dark block below repeats these values so the palette renders with
+     or without the class. Source: docs/references/rovyk_palette.html */
+  --card: #171717; /* card — panels, surfaces */
+  --card-foreground: #ffffff;
+  --popover: #171717; /* card */
+  --popover-foreground: #ffffff;
+  --primary: #ffffff; /* cta/fill — download stays white on black */
+  --primary-foreground: #000000; /* cta/label — void */
+  --secondary: #262626; /* highest — chips, key caps, toggles */
+  --secondary-foreground: #ffffff;
+  --muted: #111111; /* band — alternate band, footer base */
+  --muted-foreground: rgba(255, 255, 255, 0.68); /* text/secondary */
+  --accent: #1e1e1e; /* raised — active rows, selected states */
+  --accent-foreground: #ffffff;
+  --destructive: #fe4e4e; /* state/danger — brand red */
+  --border: rgba(255, 255, 255, 0.10); /* border/hairline */
+  --input: rgba(255, 255, 255, 0.17); /* border/panel */
+  --ring: #555af4; /* accent/focus — indigo, on every interactive element */
+  --chart-1: rgba(255, 255, 255, 0.87); /* charts are not in the palette; monochrome */
+  --chart-2: rgba(255, 255, 255, 0.68);
+  --chart-3: rgba(255, 255, 255, 0.52);
+  --chart-4: rgba(255, 255, 255, 0.36);
+  --chart-5: rgba(255, 255, 255, 0.22);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --sidebar: #111111; /* band */
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #1e1e1e; /* raised */
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.10); /* border/hairline */
+  --sidebar-ring: #555af4; /* accent/focus */
+  --background: #0b0b0b; /* ground — the sheet, every section sits on this */
+  --foreground: #ffffff; /* ink */
+
+  /* ── Rovyk brand hues ──────────────────────────────────────────────
+     Four signals, one meaning each; never borrow another's. The neutral
+     ramp does all structural work — these mark state only, on ~2-4% of
+     any screen. Per hue: base is the mark colour, text the lightened
+     variant that clears 4.5:1 on the near-black ground, tint (12%) and
+     edge (30%) the only fills allowed, on the label colour atop a base
+     fill. Tint/edge are pre-composited against #0B0B0B, so they are
+     dark-ground values by construction.
+     Source: docs/references/rovyk_palette.html */
+
+  /* Indigo — the agent itself: thinking, focus, anything interactive.
+     Primary brand hue. Focus rings everywhere. */
+  --brand-indigo: #555af4;
+  --brand-indigo-text: #8e92f8;
+  --brand-indigo-tint: #141427;
+  --brand-indigo-edge: #212351;
+  --brand-indigo-on: #ffffff;
+
+  /* Red — irreversible, or caught: the confirmation gate, a claim the
+     honesty check flagged, the muted microphone. */
+  --brand-red: #fe4e4e;
+  --brand-red-text: #fe8b8b;
+  --brand-red-tint: #281313;
+  --brand-red-edge: #541f1f;
+  --brand-red-on: #0b0b0b;
+
+  /* Green — done, and on-device: completed task chips, verified claims,
+     a granted permission, local-only badges. */
+  --brand-green: #4ee693;
+  --brand-green-text: #84eeb4;
+  --brand-green-tint: #13251b;
+  --brand-green-edge: #1f4d34;
+  --brand-green-on: #0b0b0b;
+
+  /* Pink — memory and voice: the speaking state, recall across sessions,
+     the dot-matrix glyph. Softest of the four, used most sparingly. */
+  --brand-pink: #fbb2fb;
+  --brand-pink-text: #feecfe;
+  --brand-pink-tint: #281f28;
+  --brand-pink-edge: #533d53;
+  --brand-pink-on: #0b0b0b;
 }
 
+/* Dark-only system: same ramp as :root. */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #0b0b0b;
+  --foreground: #ffffff;
+  --card: #171717;
+  --card-foreground: #ffffff;
+  --popover: #171717;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  --secondary: #262626;
+  --secondary-foreground: #ffffff;
+  --muted: #111111;
+  --muted-foreground: rgba(255, 255, 255, 0.68);
+  --accent: #1e1e1e;
+  --accent-foreground: #ffffff;
+  --destructive: #fe4e4e;
+  --border: rgba(255, 255, 255, 0.10);
+  --input: rgba(255, 255, 255, 0.17);
+  --ring: #555af4;
+  --chart-1: rgba(255, 255, 255, 0.87);
+  --chart-2: rgba(255, 255, 255, 0.68);
+  --chart-3: rgba(255, 255, 255, 0.52);
+  --chart-4: rgba(255, 255, 255, 0.36);
+  --chart-5: rgba(255, 255, 255, 0.22);
+  --sidebar: #111111;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #1e1e1e;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.10);
+  --sidebar-ring: #555af4;
 }
 
 @layer base {

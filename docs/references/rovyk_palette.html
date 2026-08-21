@@ -1,0 +1,428 @@
+<title>Rovyk Palette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:ital,wght@0,400..700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  /* ground — near-black with a faint cool bias toward the indigo core */
+  --bg:#08080A;
+  --s1:#0D0D10;
+  --s2:#141418;
+  --s3:#1C1C21;
+  --s4:#26262C;
+
+  --line:rgba(255,255,255,.09);
+  --line-2:rgba(255,255,255,.16);
+  --line-3:rgba(255,255,255,.28);
+
+  --ink:#FFFFFF;
+  --ink-2:rgba(255,255,255,.70);
+  --ink-3:rgba(255,255,255,.52);
+  --ink-4:rgba(255,255,255,.36);
+
+  --indigo:#555AF4;
+  --red:#FE4E4E;
+  --green:#4EE693;
+  --pink:#FBB2FB;
+
+  --sans:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --wrap:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--indigo);outline-offset:3px;border-radius:6px}
+
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+.kick{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-4)}
+.kick s{text-decoration:none;color:rgba(255,255,255,.22)}
+
+/* ── masthead ─────────────────────────────────────────── */
+header{padding:88px 0 56px;border-bottom:1px solid var(--line)}
+h1{font-size:clamp(40px,6vw,74px);line-height:.98;letter-spacing:-.035em;font-weight:600;
+  text-wrap:balance;margin:20px 0 22px}
+h1 em{font-style:normal;color:var(--ink-3)}
+.lede{max-width:60ch;font-size:clamp(16px,1.4vw,18.5px);color:var(--ink-2);line-height:1.6}
+.hrow{display:flex;gap:8px;margin-top:32px;flex-wrap:wrap}
+.hrow i{display:block;width:52px;height:52px;border-radius:12px}
+
+/* ── sections ─────────────────────────────────────────── */
+section{padding:64px 0;border-bottom:1px solid var(--line)}
+.shead{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:28px}
+.shead h2{font-size:clamp(22px,2.4vw,30px);letter-spacing:-.028em;font-weight:600}
+.shead p{flex:1;min-width:280px;max-width:52ch;color:var(--ink-3);font-size:14.5px}
+
+/* ── neutral ramp ─────────────────────────────────────── */
+.rampset{display:flex;flex-direction:column;gap:26px}
+.ramp{display:grid;grid-template-columns:repeat(auto-fit,minmax(124px,1fr));
+  border:1px solid var(--line-2);border-radius:14px;overflow:hidden}
+.ramp .sw{border-right:1px solid var(--line);display:flex;flex-direction:column}
+.ramp .sw:last-child{border-right:none}
+.ramp .chip{height:96px;cursor:copy}
+.ramp .meta{padding:12px 13px 15px;display:flex;flex-direction:column;gap:5px;background:var(--s1)}
+.ramp .hex{font-family:var(--mono);font-size:12px;letter-spacing:.02em}
+.ramp .use{font-size:11.5px;color:var(--ink-4);line-height:1.35}
+
+/* ── brand cards ──────────────────────────────────────── */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{border:1px solid var(--line-2);border-radius:16px;overflow:hidden;background:var(--s1)}
+.card .face{height:150px;position:relative;display:flex;align-items:flex-end;
+  justify-content:space-between;padding:16px 18px;cursor:copy}
+.card .face .nm{font-size:20px;letter-spacing:-.02em;font-weight:600}
+.card .face .hx{font-family:var(--mono);font-size:13px}
+.card .role{padding:16px 18px 4px;font-size:14.5px;color:var(--ink-2);max-width:44ch}
+.card .role b{color:var(--ink);font-weight:600}
+.derive{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+  margin:16px 0 0;border-top:1px solid var(--line)}
+.derive div{background:var(--s1);padding:12px 14px 14px;display:flex;flex-direction:column;gap:7px}
+.derive .dot{width:100%;height:24px;border-radius:6px;cursor:copy}
+.derive .lb{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-4)}
+.derive .vv{font-family:var(--mono);font-size:11px;color:var(--ink-2)}
+.stat{display:flex;gap:20px;padding:14px 18px;border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:11px;color:var(--ink-4);flex-wrap:wrap}
+.stat b{color:var(--ink-2);font-weight:400}
+
+/* ── table ────────────────────────────────────────────── */
+.tablewrap{overflow-x:auto;border:1px solid var(--line-2);border-radius:14px;background:var(--s1)}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{text-align:left;padding:13px 18px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-4);font-weight:400;background:var(--s2)}
+tr:last-child td{border-bottom:none}
+td.tok{font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--ink)}
+td.where{color:var(--ink-3);font-size:14px}
+.tag{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;white-space:nowrap}
+.tag i{width:10px;height:10px;border-radius:3px;flex:none}
+
+/* ── rules ────────────────────────────────────────────── */
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.rule{border:1px solid var(--line-2);border-radius:16px;padding:22px 24px 24px;background:var(--s1)}
+.rule.yes{border-color:rgba(78,230,147,.30)}
+.rule.no{border-color:rgba(254,78,78,.30)}
+.rule h3{font-size:16px;letter-spacing:-.01em;margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.rule.yes h3 span{color:var(--green)}
+.rule.no h3 span{color:var(--red)}
+.rule ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+.rule li{font-size:14px;color:var(--ink-2);line-height:1.5;padding-left:18px;position:relative}
+.rule li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:1px;
+  background:var(--line-3)}
+.rule li b{color:var(--ink);font-weight:600}
+
+.ratio{margin-top:20px;border:1px solid var(--line-2);border-radius:14px;padding:20px 24px;
+  background:var(--s1);display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.ratio .bar{flex:1;min-width:260px;height:26px;border-radius:99px;overflow:hidden;display:flex}
+.ratio .bar u{display:block;height:100%;text-decoration:none}
+.ratio p{font-size:14px;color:var(--ink-2);max-width:44ch}
+
+/* ── figma ────────────────────────────────────────────── */
+.figma{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.coll{border:1px solid var(--line-2);border-radius:16px;background:var(--s1);overflow:hidden}
+.coll h3{font-size:14px;padding:15px 18px;border-bottom:1px solid var(--line);background:var(--s2);
+  display:flex;align-items:center;gap:10px}
+.coll h3 code{font-family:var(--mono);font-size:11px;color:var(--ink-4)}
+.coll ol{list-style:none;counter-reset:v}
+.coll li{display:flex;align-items:center;gap:12px;padding:9px 18px;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.coll li:last-child{border-bottom:none}
+.coll li i{width:14px;height:14px;border-radius:4px;flex:none;box-shadow:0 0 0 1px var(--line-2) inset}
+.coll li span{margin-left:auto;color:var(--ink-4)}
+.steps{margin-top:18px;font-size:14px;color:var(--ink-3);max-width:76ch}
+.steps b{color:var(--ink-2);font-weight:600}
+
+footer{padding:38px 0 64px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:11px;color:var(--ink-4);letter-spacing:.04em}
+
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);opacity:0;
+  background:var(--ink);color:#0A0A0A;font-family:var(--mono);font-size:11.5px;
+  padding:9px 15px;border-radius:99px;pointer-events:none;transition:.22s ease;z-index:9}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:860px){
+  .cards,.rules,.figma{grid-template-columns:1fr}
+  .derive{grid-template-columns:repeat(2,1fr)}
+  header{padding:58px 0 40px}
+  section{padding:48px 0}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="kick"><s>[</s>&nbsp;brand system &middot; v1&nbsp;<s>]</s></div>
+  <h1>Rovyk palette.<br><em>Monochrome, with four signals.</em></h1>
+  <p class="lede">The neutral ramp does all the structural work: surfaces, borders, type, every
+    card and panel on the site. The four brand hues never build layout. They mark state, and
+    they appear in marks small enough to read as punctuation.</p>
+  <div class="hrow">
+    <i style="background:#555AF4"></i><i style="background:#FE4E4E"></i>
+    <i style="background:#4EE693"></i><i style="background:#FBB2FB"></i>
+    <i style="background:#FFFFFF"></i><i style="background:#0B0B0B;box-shadow:0 0 0 1px var(--line-2) inset"></i>
+  </div>
+</header>
+
+<section>
+  <div class="shead">
+    <div>
+      <div class="kick"><s>[</s>&nbsp;01&nbsp;<s>]</s></div>
+      <h2>The spine</h2>
+    </div>
+    <p>Six neutrals and three border alphas carry the entire page. Every surface on the site is
+      one of these. Nothing else.</p>
+  </div>
+  <div class="rampset">
+    <div>
+      <div class="kick" style="margin-bottom:10px"><s>[</s>&nbsp;surfaces &amp; ink&nbsp;<s>]</s></div>
+      <div class="ramp" id="ramp"></div>
+    </div>
+    <div>
+      <div class="kick" style="margin-bottom:10px"><s>[</s>&nbsp;border alphas&nbsp;<s>]</s></div>
+      <div class="ramp" id="ramp2"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="shead">
+    <div>
+      <div class="kick"><s>[</s>&nbsp;02&nbsp;<s>]</s></div>
+      <h2>The four signals</h2>
+    </div>
+    <p>Each hue owns one meaning and never borrows another's. Base is the mark colour; text is
+      the lightened variant that clears 4.5:1 on black; tint and edge are the only fills allowed.</p>
+  </div>
+  <div class="cards" id="cards"></div>
+</section>
+
+<section>
+  <div class="shead">
+    <div>
+      <div class="kick"><s>[</s>&nbsp;03&nbsp;<s>]</s></div>
+      <h2>Where each one lands</h2>
+    </div>
+    <p>The mapping is semantic, not decorative. If a component does not express one of these
+      four states, it stays monochrome.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Token</th><th>Hue</th><th>Means</th><th>On the site</th></tr></thead>
+      <tbody id="map"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="shead">
+    <div>
+      <div class="kick"><s>[</s>&nbsp;04&nbsp;<s>]</s></div>
+      <h2>The 90/10 rule</h2>
+    </div>
+    <p>Colour is rationed by area, not by taste. Two to four percent of any screen carries hue.
+      The primary download button and the orb are never part of it.</p>
+  </div>
+  <div class="rules">
+    <div class="rule yes">
+      <h3><span>&#10003;</span> Colour is allowed here</h3>
+      <ul>
+        <li><b>Marks under 16px.</b> Status dots, task ticks, the wake indicator, a 1px underline.</li>
+        <li><b>Tints at 12–18%.</b> Confirmation panels, the memory glyph, a hovered state chip.</li>
+        <li><b>Small glyph fills.</b> The dot matrix inside the memory tile, a status LED in a
+          mock, an icon that expresses state rather than labelling a thing.</li>
+        <li><b>Focus rings.</b> Indigo, everywhere, on every interactive element.</li>
+        <li><b>One hue per screen height.</b> Two brand hues never sit in the same component.</li>
+      </ul>
+    </div>
+    <div class="rule no">
+      <h3><span>&#10005;</span> Colour stays out of here</h3>
+      <ul>
+        <li><b>Section backgrounds.</b> Surfaces are neutral, always. The hero photograph is the
+          single large colour field on the page.</li>
+        <li><b>Headlines and body copy.</b> Type is white or one of the ink alphas.</li>
+        <li><b>The primary CTA.</b> Download stays white on black; nothing may compete with it.</li>
+        <li><b>Card borders and dividers.</b> Those are line alphas, not hue.</li>
+        <li><b>The orb.</b> It stays monochrome white. The product's face is neutral, so hue
+          always reads as state and never as decoration.</li>
+        <li><b>Above the fold.</b> The hero photograph is the only colour up there. No brand hue
+          appears in the hero except inside the device mock.</li>
+        <li><b>Gradients between two brand hues.</b> Reads as a template, not a system.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="ratio">
+    <div class="bar" id="bar"></div>
+    <p>A rough budget for a full viewport: neutral ground, a small share of ink, and a sliver
+      of hue. When a screen exceeds it, something is being decorated rather than signalled.</p>
+  </div>
+</section>
+
+<section>
+  <div class="shead">
+    <div>
+      <div class="kick"><s>[</s>&nbsp;05&nbsp;<s>]</s></div>
+      <h2>Rebuilding it in Figma</h2>
+    </div>
+    <p>Two variable collections. Primitives hold every raw value; semantics alias them, so a hue
+      swap later touches one row rather than forty components.</p>
+  </div>
+  <div class="figma">
+    <div class="coll">
+      <h3>Collection 1 <code>primitives</code></h3>
+      <ol id="prim"></ol>
+    </div>
+    <div class="coll">
+      <h3>Collection 2 <code>semantic</code> <code>&rarr; aliases</code></h3>
+      <ol id="sem"></ol>
+    </div>
+  </div>
+  <p class="steps"><b>Setup:</b> make <code>primitives</code> a single mode. Give
+    <code>semantic</code> one mode named <b>dark</b> now, so a light mode can be added later
+    without renaming anything. Bind every fill in your components to a
+    <code>semantic</code> variable, never to a primitive directly. Border alphas stay as
+    white-with-opacity rather than solid greys, so cards keep working when a surface changes.</p>
+</section>
+
+<footer>
+  <span>Rovyk &middot; palette v1 &middot; 2026</span>
+  <span>Click any swatch to copy its hex</span>
+</footer>
+
+</div>
+<div id="toast">copied</div>
+
+<script>
+const NEUTRALS=[
+ ['#000000','Void','Page frame, the notch, the menu bar'],
+ ['#0B0B0B','Ground','The sheet. Every section sits on this'],
+ ['#111111','Band','Alternate band, footer base'],
+ ['#171717','Card','Panels, surfaces, the raised card'],
+ ['#1E1E1E','Raised','Active rows, selected states'],
+ ['#262626','Highest','Chips, key caps, toggles'],
+ ['#FFFFFF','Ink','Headlines, the primary button'],
+];
+const ALPHAS=[
+ ['rgba(255,255,255,.10)','Line','Hairlines inside a panel'],
+ ['rgba(255,255,255,.17)','Line 2','Panel and card outlines'],
+ ['rgba(255,255,255,.30)','Line 3','Hover borders, ticks'],
+];
+const HUES=[
+ {n:'Indigo',v:'#555AF4',txt:'#8E92F8',tint:'#141427',edge:'#212351',on:'#FFFFFF',
+  cr:'3.89',crt:'7.14',crOn:'5.05',
+  role:'<b>The agent itself.</b> Thinking, focus, anything interactive. This is the primary brand hue and the one a user should associate with Rovyk.'},
+ {n:'Red',v:'#FE4E4E',txt:'#FE8B8B',tint:'#281313',edge:'#541F1F',on:'#0B0B0B',
+  cr:'6.01',crt:'8.70',crOn:'6.41',
+  role:'<b>Irreversible, or caught.</b> The confirmation gate, a false claim the honesty check flagged, the muted microphone.'},
+ {n:'Green',v:'#4EE693',txt:'#84EEB4',tint:'#13251B',edge:'#1F4D34',on:'#0B0B0B',
+  cr:'12.24',crt:'13.94',crOn:'13.06',
+  role:'<b>Done, and on-device.</b> Completed task chips, verified claims, a permission that is granted, local-only badges.'},
+ {n:'Pink',v:'#FBB2FB',txt:'#FEECFE',tint:'#281F28',edge:'#533D53',on:'#0B0B0B',
+  cr:'12.06',crt:'17.47',crOn:'12.86',
+  role:'<b>Memory and voice.</b> The speaking state, recall across sessions, the dot-matrix glyph. The softest of the four, used most sparingly.'},
+];
+const MAP=[
+ ['--acc / indigo','Indigo','#555AF4','Attention &amp; focus','Focus rings · active nav dot · the capability group arrow · link underlines · the listening indicator'],
+ ['--warn / red','Red','#FE4E4E','Stop and confirm','Confirmation gate panel · “it did not” row in the honesty check · mic muted · destructive verbs'],
+ ['--ok / green','Green','#4EE693','Complete &amp; local','Task ticks in the HUD · verified claim rows · permission toggles that are on · “runs on-device” marks'],
+ ['--soft / pink','Pink','#FBB2FB','Memory &amp; speech','The memory accordion glyph · recall chips · wordmark lockup on a white ground'],
+];
+const PRIM=[
+ ['neutral/void','#000000'],['neutral/ground','#0B0B0B'],['neutral/band','#111111'],
+ ['neutral/card','#171717'],['neutral/raised','#1E1E1E'],['neutral/highest','#262626'],
+ ['neutral/ink','#FFFFFF'],
+ ['brand/indigo','#555AF4'],['brand/indigo-text','#8E92F8'],['brand/indigo-tint','#141427'],['brand/indigo-edge','#212351'],
+ ['brand/red','#FE4E4E'],['brand/red-text','#FE8B8B'],['brand/red-tint','#281313'],['brand/red-edge','#541F1F'],
+ ['brand/green','#4EE693'],['brand/green-text','#84EEB4'],['brand/green-tint','#13251B'],['brand/green-edge','#1F4D34'],
+ ['brand/pink','#FBB2FB'],['brand/pink-text','#FEECFE'],['brand/pink-tint','#281F28'],['brand/pink-edge','#533D53'],
+];
+const SEM=[
+ ['surface/page','neutral/ground','#0B0B0B'],
+ ['surface/card','neutral/card','#171717'],
+ ['surface/raised','neutral/raised','#1E1E1E'],
+ ['text/primary','neutral/ink','#FFFFFF'],
+ ['text/secondary','ink 68%','rgba(255,255,255,.68)'],
+ ['text/muted','ink 44%','rgba(255,255,255,.44)'],
+ ['border/hairline','ink 10%','rgba(255,255,255,.10)'],
+ ['border/panel','ink 17%','rgba(255,255,255,.17)'],
+ ['accent/focus','brand/indigo','#555AF4'],
+ ['state/danger','brand/red','#FE4E4E'],
+ ['state/success','brand/green','#4EE693'],
+ ['state/memory','brand/pink','#FBB2FB'],
+ ['cta/fill','neutral/ink','#FFFFFF'],
+ ['cta/label','neutral/void','#000000'],
+];
+
+/* ── render ── */
+const swHTML=list=>list.map(([v,n,u])=>`
+  <div class="sw">
+    <div class="chip" data-hex="${v}" title="Copy ${v}" tabindex="0" role="button"
+      style="background:${v};${v.startsWith('rgba')?'background-color:#0B0B0B;box-shadow:inset 0 0 0 999px '+v:''}"></div>
+    <div class="meta">
+      <span class="hex">${v.startsWith('rgba')?v.replace('rgba(255,255,255,','white ').replace(')','')  .replace('.','')+'%':v}</span>
+      <span class="use"><b style="color:rgba(255,255,255,.72);font-weight:400">${n}</b><br>${u}</span>
+    </div>
+  </div>`).join('');
+document.getElementById('ramp').innerHTML=swHTML(NEUTRALS);
+document.getElementById('ramp2').innerHTML=swHTML(ALPHAS);
+
+document.getElementById('cards').innerHTML=HUES.map(h=>`
+  <div class="card">
+    <div class="face" data-hex="${h.v}" title="Copy ${h.v}" tabindex="0" role="button"
+      style="background:${h.v};color:${h.on}">
+      <span class="nm">${h.n}</span><span class="hx">${h.v}</span>
+    </div>
+    <p class="role">${h.role}</p>
+    <div class="derive">
+      <div><span class="dot" data-hex="${h.v}" style="background:${h.v}"></span>
+        <span class="lb">Base</span><span class="vv">${h.v}</span></div>
+      <div><span class="dot" data-hex="${h.txt}" style="background:${h.txt}"></span>
+        <span class="lb">Text</span><span class="vv">${h.txt}</span></div>
+      <div><span class="dot" data-hex="${h.tint}" style="background:${h.tint}"></span>
+        <span class="lb">Tint 12%</span><span class="vv">${h.tint}</span></div>
+      <div><span class="dot" data-hex="${h.edge}" style="background:${h.edge}"></span>
+        <span class="lb">Edge 30%</span><span class="vv">${h.edge}</span></div>
+    </div>
+    <div class="stat">
+      <span>base on ground <b>${h.cr}:1</b></span>
+      <span>text on ground <b>${h.crt}:1</b></span>
+      <span>label on fill <b>${h.crOn}:1</b> (${h.on==='#FFFFFF'?'white':'black'})</span>
+    </div>
+  </div>`).join('');
+
+document.getElementById('map').innerHTML=MAP.map(([t,n,v,m,w])=>`
+  <tr><td class="tok">${t}</td>
+    <td><span class="tag"><i style="background:${v}"></i>${n}</span></td>
+    <td style="font-size:14px">${m}</td>
+    <td class="where">${w}</td></tr>`).join('');
+
+document.getElementById('bar').innerHTML=`
+  <u style="background:#171717;width:78%"></u>
+  <u style="background:rgba(255,255,255,.55);width:14%"></u>
+  <u style="background:#555AF4;width:4%"></u>
+  <u style="background:#4EE693;width:2%"></u>
+  <u style="background:#FE4E4E;width:1.2%"></u>
+  <u style="background:#FBB2FB;width:.8%"></u>`;
+
+document.getElementById('prim').innerHTML=PRIM.map(([n,v])=>`
+  <li><i style="background:${v}"></i>${n}<span>${v}</span></li>`).join('');
+document.getElementById('sem').innerHTML=SEM.map(([n,a,v])=>`
+  <li><i style="background:${v}"></i>${n}<span>&rarr; ${a}</span></li>`).join('');
+
+/* ── copy ── */
+const toast=document.getElementById('toast');let tt;
+function copy(hex){
+  const done=()=>{toast.textContent=hex+' copied';toast.classList.add('on');
+    clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),1400)};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(hex).then(done).catch(done);
+  }else done();
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-hex]');if(t)copy(t.dataset.hex)});
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter'&&e.key!==' ')return;
+  const t=e.target.closest&&e.target.closest('[data-hex]');
+  if(t){e.preventDefault();copy(t.dataset.hex)}});
+</script>
