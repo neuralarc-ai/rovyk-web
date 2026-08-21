@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+/* Required by Lenis. Its `html.lenis { height: auto }` is what releases the
+   `h-full` on <html> — without this the document reports no scrollable
+   distance and the wheel does nothing. Unlayered, so it beats utilities. */
+@import "lenis/dist/lenis.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -68,6 +72,10 @@
   --color-brand-pink-tint: var(--brand-pink-tint);
   --color-brand-pink-edge: var(--brand-pink-edge);
   --color-brand-pink-on: var(--brand-pink-on);
+
+  /* Intro-section motion — see components/intro-section.tsx */
+  --animate-caret: caret 1s step-end infinite;
+  --animate-scroll-cue: scroll-cue 2.4s ease-in-out infinite;
 }
 
 :root {
@@ -200,4 +208,32 @@
   html {
     @apply font-sans;
   }
+}
+/* ── Intro section ─────────────────────────────────────────────────
+   Only what Tailwind utilities cannot express: keyframes, and two
+   background recipes whose data-URI / multi-layer syntax does not
+   survive arbitrary-value parsing. Everything else is utilities. */
+
+@keyframes caret {
+  50% { opacity: 0; }
+}
+
+@keyframes scroll-cue {
+  0%, 100% { opacity: 0.25; transform: scaleY(0.55); }
+  50%      { opacity: 1;    transform: scaleY(1); }
+}
+
+/* Film grain over the void, so the black reads as a surface not an
+   absence. Overlay blend keeps it invisible on true black and only
+   surfaces where the glow lifts the ground. */
+@utility bg-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+}
+
+/* The pool of light the orb sits in. Two stacked radials: a tight warm
+   core and a wide falloff that never quite reaches the edges. */
+@utility bg-intro-glow {
+  background-image:
+    radial-gradient(26% 22% at 50% 50%, rgba(255, 255, 255, 0.10), transparent 70%),
+    radial-gradient(52% 44% at 50% 50%, rgba(85, 90, 244, 0.065), transparent 72%);
 }
