@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -63,6 +63,23 @@ const MARK_W_OPEN = MARK_H_OPEN * WORDMARK_ASPECT;
 /** Per-letter reveal step. Roughly tracks the crop edge as it travels. */
 const LETTER_STEP_MS = 90;
 
+/**
+ * Brightness of the lit underside where it is strongest — along the body and
+ * at the inner end of each fillet. The whole bottom silhouette carries it, so
+ * the notch keeps its shape against a black page rather than dissolving into
+ * the bar it hangs from.
+ */
+const EDGE_LIGHT = 0.5;
+
+/**
+ * Where the lit edge crosses onto the bar. The fillet does not fade to
+ * nothing any more — it hands off at this value to a line that carries on
+ * along the bar's bottom edge and dissolves out across the frame, so the
+ * notch reads as carved out of a lit edge rather than as a lit object
+ * sitting on an unlit one.
+ */
+const EDGE_BLEED = 0.2;
+
 const LINKS_L = [
   { label: "Where it lives", href: "#where" },
   { label: "Features", href: "#features" },
@@ -73,26 +90,34 @@ const LINKS_R = [
 ];
 
 /**
- * Left fillet. `M0 0 C45.98 0 37 34 87 34 V0 Z` — the Figma path, rebased
- * to its own 87×34 box and closed along the top so it fills above the curve.
+ * A fillet: the Figma curve, filled, plus the same curve stroked so the lit
+ * underside carries on around the corner instead of stopping at the body.
+ *
+ * `fill` closes along the top edge to fill above the curve; `edge` is the bare
+ * curve, so only the silhouette is lit. The stroke fades to nothing at the end
+ * that meets the bar, which is what stops the notch looking like it has been
+ * pasted on.
  */
-function FilletLeft() {
-  return (
-    <svg
-      width={FILLET_W}
-      height={NOTCH_H}
-      viewBox={`0 0 ${FILLET_W} ${NOTCH_H}`}
-      fill="none"
-      aria-hidden
-      className="-mr-px block shrink-0"
-    >
-      <path d="M0 0C45.98 0 37 34 87 34V0Z" fill="currentColor" />
-    </svg>
-  );
-}
+const FILLET = {
+  l: {
+    fill: "M0 0C45.98 0 37 34 87 34V0Z",
+    edge: "M0 0C45.98 0 37 34 87 34",
+    /* Gradient runs outward → inward, so `0` is always the bar end. */
+    from: { x1: 0, x2: FILLET_W },
+    margin: "-mr-px",
+  },
+  r: {
+    fill: "M87 0C41.02 0 50 34 0 34V0Z",
+    edge: "M87 0C41.02 0 50 34 0 34",
+    from: { x1: FILLET_W, x2: 0 },
+    margin: "-ml-px",
+  },
+} as const;
 
-/** Right fillet — the same path mirrored, exactly as Figma has it. */
-function FilletRight() {
+function Fillet({ side }: { side: "l" | "r" }) {
+  const { fill, edge, from, margin } = FILLET[side];
+  const gradientId = `${useId()}-notch-edge`;
+
   return (
     <svg
       width={FILLET_W}
@@ -100,9 +125,26 @@ function FilletRight() {
       viewBox={`0 0 ${FILLET_W} ${NOTCH_H}`}
       fill="none"
       aria-hidden
-      className="-ml-px block shrink-0"
+      className={cn("block shrink-0 overflow-visible", margin)}
     >
-      <path d="M87 0C41.02 0 50 34 0 34V0Z" fill="currentColor" />
+      <defs>
+        <linearGradient id={gradientId} gradientUnits="userSpaceOnUse" {...from} y1="0" y2="0">
+          <stop offset="0" stopColor="#fff" stopOpacity={EDGE_BLEED} />
+          <stop offset="0.5" stopColor="#fff" stopOpacity={EDGE_BLEED + 0.14} />
+          <stop offset="1" stopColor="#fff" stopOpacity={EDGE_LIGHT} />
+        </linearGradient>
+      </defs>
+      <path d={fill} fill="currentColor" />
+      {/* Nudged up half a unit: a stroke is centred on its path, so without
+          this it straddles the shape's edge and lands half a pixel below the
+          body's hairline, leaving a visible step where the two meet. */}
+      <path
+        d={edge}
+        stroke={`url(#${gradientId})`}
+        strokeWidth="1"
+        fill="none"
+        transform="translate(0 -0.5)"
+      />
     </svg>
   );
 }
@@ -195,7 +237,16 @@ export function NotchNav() {
           "transition-opacity duration-500 ease-out motion-reduce:transition-none",
         )}
       >
-        <FilletLeft />
+        {/* The bleed. Sits one pixel up, on the bar's own bottom row, so it
+            is continuous with the fillet stroke rather than a second line
+            beneath it. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -top-px right-full h-px w-[20vw]"
+          style={{ background: `linear-gradient(270deg, rgba(255,255,255,${EDGE_BLEED}), transparent)` }}
+        />
+
+        <Fillet side="l" />
 
         <div
           className="relative flex items-center bg-black px-[22px]"
@@ -240,16 +291,23 @@ export function NotchNav() {
 
           <NavSide side="r" open={open} />
 
-          {/* Lit underside: a hairline at its brightest dead centre, gone
-              before the notch ends — so it never reaches the fillets and
-              never has to follow the curve. */}
+          {/* Lit underside along the body. The fillets continue it around
+              their curves and fade it out at the bar, so the line traces the
+              whole silhouette. */}
           <span
             aria-hidden
-            className="mask-notch-underlight pointer-events-none absolute inset-0 border-b border-white/95"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
+            style={{ background: `rgba(255,255,255,${EDGE_LIGHT})` }}
           />
         </div>
 
-        <FilletRight />
+        <Fillet side="r" />
+
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -top-px left-full h-px w-[20vw]"
+          style={{ background: `linear-gradient(90deg, rgba(255,255,255,${EDGE_BLEED}), transparent)` }}
+        />
       </nav>
     </>
   );

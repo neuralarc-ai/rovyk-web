@@ -1,0 +1,336 @@
+import {
+  DownloadSimpleIcon,
+  MicrophoneIcon,
+} from "@phosphor-icons/react/dist/ssr";
+import { RovykHud } from "@/components/rovyk-hud";
+import { SectionHead } from "@/components/section-head";
+import { MacWindow } from "@/components/ui/mac-window";
+import { cn } from "@/lib/utils";
+import { AppleLogo } from "./apple-logo";
+
+/* ────────────────────────────────────────────────────────────────────
+   Surfaces — where the agent can be.
+
+   The weight is deliberately on the artwork, not the words: the stage is
+   360–470px against roughly 150px of copy. Each artifact floats in the
+   middle of a grid rather than filling the panel, so the card reads as a
+   fragment of a screen caught mid-work.
+   ──────────────────────────────────────────────────────────────────── */
+
+/** Two thirds of the card. The copy gets what is left. */
+const STAGE =
+  "relative flex h-[clamp(360px,40vh,470px)] items-center justify-center overflow-hidden border-b border-border bg-background px-6 sm:px-[30px]";
+
+/** Both artifacts float at the same width and cast the same shadow. */
+const FLOAT =
+  "relative w-full max-w-[520px] overflow-hidden rounded-2xl shadow-[0_30px_64px_-28px_#000]";
+
+function Kbd({ children }: { children: React.ReactNode }) {
+  return (
+    <kbd className="inline-flex h-[19px] min-w-[19px] items-center justify-center rounded-[5px] border border-input bg-accent px-1.5 font-mono text-[11px] leading-none text-white">
+      {children}
+    </kbd>
+  );
+}
+
+function ChromeTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="font-mono text-[10px] tracking-[0.16em] text-white/45 uppercase">
+      {children}
+    </span>
+  );
+}
+
+/** A pill in the title bar, carrying the one number worth reading. */
+function Tag({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full border border-input bg-background px-2.5 py-1 font-mono text-[10px] tracking-[0.12em] text-white/55 uppercase">
+      {children}
+    </span>
+  );
+}
+
+function MetaStrip({
+  items,
+  className,
+}: {
+  items: React.ReactNode[];
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-wrap items-center gap-2.5 font-mono text-[10.5px] tracking-[0.08em] text-white/36 uppercase",
+        className,
+      )}
+    >
+      {items.map((item, i) => (
+        <span key={i} className="flex items-center gap-2.5">
+          {i > 0 ? (
+            <i
+              aria-hidden
+              className="size-[3px] shrink-0 rounded-full bg-white/22"
+            />
+          ) : null}
+          <span className="flex items-center gap-1.5">{item}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/** Hairline graph paper, dissolving before it reaches any edge. */
+function StageGrid() {
+  return (
+    <div
+      aria-hidden
+      className="bg-hairline-grid mask-grid-center absolute inset-0"
+    />
+  );
+}
+
+/**
+ * A faint app window on the desktop behind the notch, so the screen does not
+ * read as empty. Furniture — no real content, just the shape of work.
+ */
+function GhostWindow() {
+  return (
+    <div
+      aria-hidden
+      className="mask-fade-b absolute inset-x-[11%] -bottom-[6%] h-[62%] overflow-hidden rounded-xl border border-white/10 shadow-[0_26px_60px_-30px_#000] [--fade-start:52%] [background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.018))]"
+    >
+      <div className="flex items-center gap-[5px] border-b border-white/8 px-2.5 py-2">
+        <span className="size-1.5 rounded-full bg-white/20" />
+        <span className="size-1.5 rounded-full bg-white/20" />
+        <span className="size-1.5 rounded-full bg-white/20" />
+        <span className="ml-2 font-mono text-[8.5px] tracking-[0.14em] text-white/34 uppercase">
+          Mail
+        </span>
+      </div>
+      <div className="flex flex-col gap-2 px-3 py-3">
+        {[64, 88, 41, 73, 55].map((w, i) => (
+          <span
+            key={i}
+            style={{ width: `${w}%` }}
+            className="h-[5px] rounded-[3px] bg-white/10"
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** The notch, on a screen fragment that dissolves before the panel ends. */
+function NotchStage() {
+  return (
+    <div className={STAGE}>
+      <StageGrid />
+      <div
+        className={cn(
+          FLOAT,
+          "mask-fade-b bg-display-wall aspect-16/11 [--fade-start:74%]",
+          "shadow-[0_0_0_1px_rgba(255,255,255,.17),0_0_0_5px_rgba(255,255,255,.03),0_30px_64px_-28px_#000]",
+        )}
+      >
+        <div className="absolute inset-x-0 top-0 z-20 flex h-[22px] items-center justify-between px-3 text-[9px] text-white/72 backdrop-blur-sm [background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.06))]">
+          <div className="flex items-center gap-3">
+            <b className="font-semibold">Rovyk</b>
+            <span>File</span>
+            <span>Edit</span>
+            <span>View</span>
+          </div>
+          <span>9:41</span>
+        </div>
+
+        <GhostWindow />
+
+        {/* Scaled to the artifact, not the viewport — expanded the notch is
+            404px, wider than this screen on a phone. */}
+        <RovykHud className="z-30 scale-[0.55] md:scale-[0.62] lg:scale-[0.8]" />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Focus mode. The card's own chrome already carries the window controls, so
+ * this bar only needs to say what the window is.
+ */
+function FocusStage() {
+  return (
+    <div className={STAGE}>
+      <StageGrid />
+      <div className={cn(FLOAT, "border border-input bg-secondary")}>
+        <div className="flex items-center gap-3 border-b border-border bg-accent px-3.5 py-2.5">
+          <span className="font-mono text-[10.5px] tracking-[0.12em] text-white/45">
+            FOCUS MODE
+          </span>
+        </div>
+
+        <div className="flex min-h-[150px] flex-col gap-3 p-4">
+          <p className="max-w-[86%] self-end rounded-[13px] rounded-br-[5px] bg-accent px-3.5 py-2.5 text-[12.5px] leading-[1.5] text-white">
+            Find the invoice from Northlane and rename it properly.
+          </p>
+          <p className="max-w-[86%] self-start rounded-[13px] rounded-bl-[5px] border border-input px-3.5 py-2.5 text-[12.5px] leading-[1.5] text-muted-foreground">
+            Found{" "}
+            <b className="font-medium text-white">inv_8823_final_FINAL.pdf</b>{" "}
+            in Downloads.
+            <br />
+            Rename to{" "}
+            <b className="font-medium text-white">
+              2026-08 Northlane invoice.pdf
+            </b>
+            ?
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2.5 border-t border-border bg-background px-3 py-2.5">
+          <span className="flex shrink-0 items-center overflow-hidden rounded-lg border border-input font-mono text-[10px] tracking-wide uppercase">
+            <span className="bg-white/90 px-2 py-1 text-black">voice</span>
+            <span className="px-2 py-1 text-white/40">chat</span>
+          </span>
+          <span className="flex-1 truncate text-[12.5px] text-white/28">
+            Type, or hold to talk
+          </span>
+          <MicrophoneIcon
+            weight="regular"
+            className="size-4 shrink-0 text-white/45"
+            aria-hidden
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const SURFACES = [
+  {
+    id: "notch",
+    index: "01 · The notch",
+    tag: "26px at rest",
+    title: "Hands free, in the menu bar",
+    description: "Say the wake word. It drops open, works, then retracts.",
+    stage: <NotchStage />,
+    meta: [
+      <>
+        <Kbd>⌥</Kbd>
+        <Kbd>space</Kbd>
+      </>,
+      <>&ldquo;Hey Rovyk&rdquo;</>,
+      <>No window, no dock icon</>,
+    ],
+  },
+  {
+    id: "focus",
+    index: "02 · Focus mode",
+    tag: "type or talk",
+    title: "A window, when talking is not an option",
+    description: "Unpin the notch and type instead. Same brain, same gate.",
+    stage: <FocusStage />,
+    meta: [
+      <>
+        <Kbd>⌘</Kbd>
+        <Kbd>⇧</Kbd>
+        <Kbd>space</Kbd>
+      </>,
+      <>Full scrollback</>,
+      <>Meetings &amp; open offices</>,
+    ],
+  },
+];
+
+export function SurfacesSection() {
+  return (
+    <section id="where" className="relative py-[clamp(96px,12.5vh,158px)]">
+      <div className="mx-auto w-full max-w-[1240px] px-6 sm:px-10">
+        <SectionHead
+          eyebrow="surfaces"
+          title="Where can I be?"
+          className="mb-[62px]"
+        >
+          Two surfaces, one agent. Switch mid-sentence, it keeps the thread.
+        </SectionHead>
+
+        <div className="grid gap-[18px] md:grid-cols-2">
+          {SURFACES.map((surface) => (
+            <MacWindow
+              key={surface.id}
+              title={<ChromeTitle>{surface.index}</ChromeTitle>}
+              trailing={<Tag>{surface.tag}</Tag>}
+            >
+              {surface.stage}
+
+              <div className="flex flex-1 flex-col px-[26px] pt-6 pb-[22px]">
+                <h3 className="mb-2 text-[clamp(20px,1.7vw,23px)] leading-[1.2] font-medium tracking-[-0.028em]">
+                  {surface.title}
+                </h3>
+                <p className="mb-[18px] max-w-[38ch] text-[14px] leading-[1.55] font-light text-white/68">
+                  {surface.description}
+                </p>
+                {/* Pinned to the bottom so the strips line up across the row
+                    even when one description wraps and the other does not. */}
+                <MetaStrip
+                  items={surface.meta}
+                  className="mt-auto border-t border-border pt-3.5"
+                />
+              </div>
+            </MacWindow>
+          ))}
+        </div>
+
+        {/* One download for both. Lit from the right so the bar has a bright
+            end and a quiet end rather than being evenly filled. */}
+        <div className="relative mt-[18px] flex flex-wrap items-center gap-x-[34px] gap-y-8 overflow-hidden rounded-[22px] border border-input bg-card px-[34px] py-8">
+          <div
+            aria-hidden
+            className="bg-cta-glow pointer-events-none absolute inset-0"
+          />
+          <div
+            aria-hidden
+            className="bg-hairline-grid mask-grid-right pointer-events-none absolute inset-0 [--grid-size:96px]"
+          />
+
+          <div className="relative z-10 min-w-[260px] flex-1">
+            <h3 className="mb-2 text-[clamp(22px,2.4vw,30px)] leading-[1.1] font-medium tracking-[-0.03em] text-balance">
+              Both surfaces, one&nbsp;84&nbsp;MB download
+            </h3>
+            <p className="text-[13.5px] leading-[1.55] font-light text-white/68">
+              Apple Silicon, macOS 15 or later. No account, no sign-up, nothing
+              to configure.
+            </p>
+          </div>
+
+          <div className="relative z-10 flex flex-col items-start gap-3">
+            <a
+              href="#cta"
+              className="inline-flex h-[58px] items-center justify-center gap-2.5 rounded-[15px] bg-primary px-[30px] text-[16px] font-semibold tracking-[-0.012em] whitespace-nowrap text-primary-foreground shadow-[0_18px_44px_-18px_rgba(255,255,255,.5)] transition-[transform,background] duration-200 hover:-translate-y-0.5 hover:bg-primary/90 active:translate-y-0 active:bg-primary/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              <AppleLogo size={20} />
+              Download for Apple Silicon
+            </a>
+
+            <div className="flex flex-wrap items-center gap-3.5 font-mono text-[12.5px] tracking-[0.04em] text-white/36">
+              <span>Free</span>
+              <i aria-hidden className="size-[3px] rounded-full bg-white/22" />
+              <a
+                href="#"
+                className="border-b border-input pb-px text-white/68 transition-colors hover:border-brand-indigo hover:text-white"
+              >
+                Homebrew
+              </a>
+              <i aria-hidden className="size-[3px] rounded-full bg-white/22" />
+              <a
+                href="#"
+                className="border-b border-input pb-px text-white/68 transition-colors hover:border-brand-indigo hover:text-white"
+              >
+                Changelog
+              </a>
+              <i aria-hidden className="size-[3px] rounded-full bg-white/22" />
+              <span>v0.9</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

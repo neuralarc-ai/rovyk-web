@@ -1,5 +1,6 @@
 import { HeroSection } from "@/components/hero-section";
 import { IntroSection } from "@/components/intro-section";
+import { SurfacesSection } from "@/components/surfaces-section";
 
 export default function Page() {
   return (
@@ -12,6 +13,7 @@ export default function Page() {
           section carries the top corners. */}
       <main className="relative m-(--gut) rounded-4xl bg-background">
         <HeroSection />
+        <SurfacesSection />
       </main>
     </>
   );

@@ -292,8 +292,8 @@
 /* The window is cropped rather than ended — it runs off the bottom of
    the section instead of sitting in it. */
 @utility mask-fade-b {
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 54%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 54%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 var(--fade-start, 54%), transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 var(--fade-start, 54%), transparent 100%);
 }
 
 /* Concave corner fillets. These are what make the notch read as carved
@@ -317,11 +317,44 @@
   mask-image: radial-gradient(circle farthest-side at 100% 0, transparent calc(100% - 0.7px), #000 100%);
 }
 
-/* ── Notch nav ─────────────────────────────────────────────────────
-   The notch's lit underside. A hairline along the bottom edge, at full
-   strength dead centre and faded to nothing well before the ends, so it
-   never reaches the fillets and never has to follow their curve. */
-@utility mask-notch-underlight {
-  -webkit-mask-image: radial-gradient(64% 210% at 50% 100%, #000 0, rgba(0, 0, 0, 0.6) 52%, transparent 100%);
-  mask-image: radial-gradient(64% 210% at 50% 100%, #000 0, rgba(0, 0, 0, 0.6) 52%, transparent 100%);
+
+/* ── macOS window controls ─────────────────────────────────────────
+   Quoted verbatim from the system, and deliberately NOT part of the
+   brand ramp: they are a reference to macOS chrome, not one of the four
+   signals. They stay grey until a card is hovered — which is what the
+   real thing does for an unfocused window. */
+:root {
+  --mac-close: #ff5f57;
+  --mac-minimise: #febc2e;
+  --mac-zoom: #28c840;
+}
+
+/* ── Surfaces ──────────────────────────────────────────────────────
+   A hairline graph-paper grid behind the artwork, so a large dark stage
+   reads as space rather than as an empty box. Always masked, so it
+   dissolves before it reaches an edge and never looks like a texture
+   swatch. */
+@utility bg-hairline-grid {
+  background-image:
+    linear-gradient(90deg, var(--border) 1px, transparent 1px),
+    linear-gradient(var(--border) 1px, transparent 1px);
+  background-size: var(--grid-size, 110px) var(--grid-size, 110px);
+}
+
+/* Grid centred under a floating artifact. */
+@utility mask-grid-center {
+  -webkit-mask-image: radial-gradient(90% 80% at 50% 50%, #000 15%, transparent 78%);
+  mask-image: radial-gradient(90% 80% at 50% 50%, #000 15%, transparent 78%);
+}
+
+/* Grid pushed to the right, behind a call to action. */
+@utility mask-grid-right {
+  -webkit-mask-image: radial-gradient(80% 140% at 82% 50%, #000 5%, transparent 74%);
+  mask-image: radial-gradient(80% 140% at 82% 50%, #000 5%, transparent 74%);
+}
+
+/* The light the download CTA sits in — off-centre, so the bar has a
+   bright end and a quiet end rather than being evenly lit. */
+@utility bg-cta-glow {
+  background-image: radial-gradient(64% 130% at 78% 50%, rgba(255, 255, 255, 0.075), transparent 70%);
 }

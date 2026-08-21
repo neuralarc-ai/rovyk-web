@@ -257,10 +257,10 @@ export function RovykHud({ className }: { className?: string }) {
         // samples the notch and smears the interface into a grey blob.
         "absolute top-0 left-1/2 z-30 flex -translate-x-1/2 items-start",
         // The notch is laid out in fixed pixels, because it is a rendering of
-        // a real piece of macOS chrome. Expanded it is 404px wide, which is
-        // wider than the whole window at phone sizes — so scale the notch to
-        // the machine it hangs in, anchored to the edge it hangs from.
-        "origin-top scale-[0.52] sm:scale-[0.8] lg:scale-100",
+        // a real piece of macOS chrome — expanded it is 404px wide. It is the
+        // caller that knows how big the machine it hangs in is, so the scale
+        // comes in through `className`, anchored to the edge it hangs from.
+        "origin-top",
         className,
       )}
     >

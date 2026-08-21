@@ -5,8 +5,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Image from "next/image";
-import { AppleLogoIcon } from "@phosphor-icons/react/dist/ssr";
 import heroWall from "@/public/assets/hero-wall.jpg";
+import { AppleLogo } from "@/components/apple-logo";
 import { RovykHud } from "@/components/rovyk-hud";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -170,8 +170,9 @@ export function HeroSection() {
             href="#cta"
             className="inline-flex h-[46px] items-center justify-center gap-2.5 rounded-xl border border-primary bg-primary px-6 text-[14.5px] font-medium tracking-[-0.005em] whitespace-nowrap text-primary-foreground transition-[transform,background] duration-200 hover:-translate-y-0.5 hover:bg-primary/90 active:translate-y-0 active:bg-primary/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
-            {/* <AppleLogoIcon weight="fill" className="size-4" aria-hidden /> */}
-            <span className="text-xl">  </span>
+            {/* Nudged up a hair: the leaf makes the mark top-light, so a
+                centred bounding box sits visually low against the label. */}
+            <AppleLogo size={17} className="-translate-y-px" />
             Download for Mac
           </a>
           <a
@@ -206,12 +207,7 @@ export function HeroSection() {
                 a phone-sized window, so the chrome around it thins out
                 rather than colliding with it. */}
             <div className="flex items-center gap-4">
-              {/* <AppleLogoIcon
-                weight="fill"
-                className="size-[13px] text-white/90"
-                aria-hidden
-              /> */}
-              <span className="text-base">  </span>
+              <AppleLogo size={13} className="text-white/90" />
               <b className="hidden font-semibold sm:inline">Rovyk</b>
               {MENUS.map((menu) => (
                 <span key={menu} className="hidden lg:inline">
@@ -225,7 +221,9 @@ export function HeroSection() {
             </div>
           </div>
 
-          <RovykHud />
+          {/* Scaled to the window: expanded the notch is 404px, wider than
+              the whole machine at phone sizes. */}
+          <RovykHud className="scale-[0.52] sm:scale-[0.8] lg:scale-100" />
         </div>
       </div>
 
