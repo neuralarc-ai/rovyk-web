@@ -13,8 +13,8 @@ import { confirmationEmail, notificationEmail } from "@/lib/waitlist-email";
    be a real list, write the row BEFORE the sends and let mail failure
    be non-fatal.
 
-   The markup for both emails lives in `lib/waitlist-email.ts`, so it can
-   be rendered and compared at `/lab/mail` without going near SMTP.
+   The markup for both emails lives in `lib/waitlist-email.ts`, so this
+   file stays about the request and that one stays about the words.
 
    Runs on the Node runtime. nodemailer opens a TCP socket to an SMTP
    server, which the edge runtime cannot do — do not add

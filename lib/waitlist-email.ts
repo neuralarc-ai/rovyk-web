@@ -1,9 +1,10 @@
 /* ────────────────────────────────────────────────────────────────────
    The waitlist emails.
 
-   Lifted out of the route so the same markup can be rendered in
-   `/lab/mail` and compared side by side. Nothing here touches the
-   network or reads a request — it takes a name and returns strings.
+   Lifted out of the route so the words and the request handling are not
+   the same file. Nothing here touches the network or reads a request —
+   it takes a name and returns strings, which also makes it the one part
+   of the flow you can check without an SMTP server.
 
    Email is not the web, and every rule below follows from that:
 
@@ -447,7 +448,9 @@ export function confirmationText({
 }
 
 /* ── The registry ─────────────────────────────────────────────────────
-   What `/lab/mail` iterates and what the route picks one of. */
+   Five treatments of the same words; the route sends one of them.
+   Switching is a one-line change to `DEFAULT_VARIANT` below — the other
+   four stay compiled and reachable, so a swap is never a rewrite. */
 
 export type VariantId = "current" | "plate" | "letter" | "hud" | "paper";
 
