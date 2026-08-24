@@ -8,6 +8,8 @@ import {
   WORDMARK_ASPECT,
   WORDMARK_R_SHARE,
 } from "@/components/rovyk-wordmark";
+import { JoinWaitlistButton } from "@/components/waitlist/join-waitlist-button";
+import { WAITLIST_MODE } from "@/lib/flags";
 import { cn } from "@/lib/utils";
 
 /* ────────────────────────────────────────────────────────────────────
@@ -90,14 +92,30 @@ const EDGE_LIGHT = 0.6;
  */
 const EDGE_BLEED = 0.3;
 
-const LINKS_L = [
+type NavLink = {
+  label: string;
+  href: string;
+  /** The one nav item that is an offer rather than a destination. While the
+   *  waitlist flag is on it stops being a link at all — see `lib/flags.ts`. */
+  cta?: boolean;
+};
+
+const LINKS_L: NavLink[] = [
   { label: "Where it lives", href: "#where" },
   { label: "Features", href: "#features" },
 ];
-const LINKS_R = [
+const LINKS_R: NavLink[] = [
   { label: "How it works", href: "#how" },
-  { label: "Download", href: "#cta" },
+  { label: "Download", href: "#cta", cta: true },
 ];
+
+/** Shorter than the label the buttons use. The notch widens to fit its own
+ *  contents, so a nav item is the one place where two extra characters cost
+ *  geometry rather than nothing. */
+const WAITLIST_NAV_LABEL = "Join waitlist";
+
+const NAV_LINK =
+  "inline-flex h-7.5 items-center rounded-sm px-1 transition-colors duration-200 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 /**
  * A fillet: the Figma curve, filled, plus the same curve stroked so the lit
@@ -198,15 +216,24 @@ function NavSide({
       // React 19 takes `inert` as a real boolean, not the empty-string form.
       inert={!open}
     >
-      {links.map((link) => (
-        <a
-          key={link.href}
-          href={linkHref(link.href, home)}
-          className="inline-flex h-7.5 items-center rounded-sm px-1 transition-colors duration-200 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
-          {link.label}
-        </a>
-      ))}
+      {links.map((link) =>
+        WAITLIST_MODE && link.cta ? (
+          <JoinWaitlistButton
+            key={link.href}
+            className={cn(NAV_LINK, "cursor-pointer")}
+          >
+            {WAITLIST_NAV_LABEL}
+          </JoinWaitlistButton>
+        ) : (
+          <a
+            key={link.href}
+            href={linkHref(link.href, home)}
+            className={NAV_LINK}
+          >
+            {link.label}
+          </a>
+        ),
+      )}
     </div>
   );
 }

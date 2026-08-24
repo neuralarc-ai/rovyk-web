@@ -53,7 +53,7 @@ const FAQ: [question: string, answer: string][] = [
   ],
   [
     "Does it work on Intel Macs?",
-    "No. Rovyk is Apple Silicon only, M1 or later, on macOS 15 or later. The local models and the bundled browser agent both depend on it.",
+    "No. Rovyk is Apple Silicon only, M1 or later, on macOS 27 or later. The local models and the bundled browser agent both depend on it.",
   ],
 ];
 

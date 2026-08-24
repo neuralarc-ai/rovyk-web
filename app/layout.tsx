@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { NotchNav } from "@/components/notch-nav";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { WaitlistProvider } from "@/components/waitlist/waitlist-provider";
 
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -40,8 +41,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           so it belongs to the shell. */}
       <body className="flex min-h-full flex-col bg-black">
         <SmoothScroll>
-          <NotchNav />
-          {children}
+          {/* Above the nav and every section, because all of them ask for the
+              same dialog and there is only ever one of it. */}
+          <WaitlistProvider>
+            <NotchNav />
+            {children}
+          </WaitlistProvider>
         </SmoothScroll>
       </body>
     </html>

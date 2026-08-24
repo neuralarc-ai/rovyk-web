@@ -23,7 +23,7 @@ import { HeroOrb } from "@/components/hero-orb";
 
 /** The three numbers worth knowing before clicking. Same facts the hero
  *  opened with, so nothing new is introduced at the point of decision. */
-const META = ["v0.9", "84 MB", "macOS 15+"];
+const META = ["v0.9", "84 MB", "macOS 27+"];
 
 export function CtaSection() {
   return (

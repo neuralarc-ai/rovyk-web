@@ -28,7 +28,7 @@ const APPS = [
 ];
 
 /** Facts, not claims — every one of these is checkable before downloading. */
-const SPECS = ["macOS 15+", "Apple Silicon", "84 MB"];
+const SPECS = ["macOS 27+", "Apple Silicon", "84 MB"];
 
 const MENUS = ["File", "Edit", "View", "Window", "Help"];
 
@@ -168,10 +168,9 @@ export function HeroSection() {
 
         <div data-rise className="mt-7 flex flex-wrap justify-center gap-3">
           <DownloadButton href="#cta">Download for Mac</DownloadButton>
-          <GhostButton href="#how">Watch it work</GhostButton>
         </div>
 
-        <div data-rise className="mt-4 flex gap-4 text-xs text-white/36">
+        <div data-rise className="mt-4 flex gap-4 text-xs text-white/60">
           {SPECS.map((spec) => (
             <span key={spec}>{spec}</span>
           ))}

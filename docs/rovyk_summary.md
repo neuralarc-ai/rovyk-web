@@ -4,7 +4,7 @@ Rovyk is a voice-first AI agent that lives in the macOS menu bar. You say "Hey R
 
 The core positioning detail that matters for a landing page: **this is not a cloud SaaS product**. There is no backend, no remote database, no accounts server. It's a native Mac app that runs locally. Hearing (speech-to-text), speech (text-to-speech), and reasoning all default to fully on-device. Any network calls (cloud LLM providers like DeepInfra/Groq, web search, a task-delegation service called Helium, GitHub integration) are opt-in and require the user to add their own API key in Settings. This "local-first, cloud-optional" story is a real differentiator versus most AI assistant products, which are cloud-only by default.
 
-It's built as a single native macOS app (SwiftUI, Apple Silicon only, macOS 15+), distributed as a direct DMG download, not through the App Store.
+It's built as a single native macOS app (SwiftUI, Apple Silicon only, macOS 27+), distributed as a direct DMG download, not through the App Store.
 
 ## How the product actually works (for design/messaging framing)
 

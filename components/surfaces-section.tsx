@@ -7,6 +7,7 @@ import { MacWindow } from "@/components/ui/mac-window";
 import { DOWNLOADS_FLOW } from "@/lib/hud-flows";
 import { cn } from "@/lib/utils";
 import { AppleLogo } from "./apple-logo";
+import { DownloadButton } from "./cta-button";
 
 /* ────────────────────────────────────────────────────────────────────
    Surfaces — where the agent can be.
@@ -229,12 +230,12 @@ export function SurfacesSection() {
               Both surfaces, one&nbsp;84&nbsp;MB download
             </h3>
             <p className="text-[13.5px] leading-[1.55] font-light text-white/68">
-              Apple Silicon, macOS 15 or later. No account, no sign-up, nothing
+              Apple Silicon, macOS 27 or later. No account, no sign-up, nothing
               to configure.
             </p>
           </div>
 
-          <div className="relative z-10 flex flex-col items-start gap-3">
+          {/* <div className="relative z-10 flex flex-col items-start gap-3">
             <a
               href="#cta"
               className="inline-flex h-14.5 items-center justify-center gap-2.5 rounded-xl bg-primary px-7.5 text-base font-semibold tracking-[-0.012em] whitespace-nowrap text-primary-foreground shadow-[0_18px_44px_-18px_rgba(255,255,255,.5)] transition-[transform,background] duration-200 hover:-translate-y-0.5 hover:bg-primary/90 active:translate-y-0 active:bg-primary/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -242,27 +243,8 @@ export function SurfacesSection() {
               <AppleLogo size={20} />
               Download for Apple Silicon
             </a>
-
-            <div className="flex flex-wrap items-center gap-3.5 font-mono text-[12.5px] tracking-[0.04em] text-white/36">
-              <span>Free</span>
-              <i aria-hidden className="size-0.75 rounded-full bg-white/22" />
-              <a
-                href="#"
-                className="border-b border-input pb-px text-white/68 transition-colors hover:border-brand-indigo hover:text-white"
-              >
-                Homebrew
-              </a>
-              <i aria-hidden className="size-0.75 rounded-full bg-white/22" />
-              <a
-                href="#"
-                className="border-b border-input pb-px text-white/68 transition-colors hover:border-brand-indigo hover:text-white"
-              >
-                Changelog
-              </a>
-              <i aria-hidden className="size-0.75 rounded-full bg-white/22" />
-              <span>v0.9</span>
-            </div>
-          </div>
+          </div> */}
+          <DownloadButton href="#cta">Download for Mac</DownloadButton>
         </div>
       </div>
     </section>
