@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { getLenis } from "@/components/smooth-scroll";
 import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -54,18 +53,6 @@ export function LegalNav({
     { dependencies: [items] },
   );
 
-  /* Lenis owns the scroll, so a native hash jump would be read back as
-     user input on the next frame and fight the glide. Same bargain the
-     orb rail makes. */
-  const jump = (e: React.MouseEvent, id: string) => {
-    const el = document.getElementById(id);
-    const lenis = getLenis();
-    if (!el || !lenis) return;
-    e.preventDefault();
-    lenis.scrollTo(el, { offset: -112, duration: 1 });
-    history.replaceState(null, "", `#${id}`);
-  };
-
   return (
     <nav
       ref={root}
@@ -92,7 +79,11 @@ export function LegalNav({
               ) : null}
               <a
                 href={`#${id}`}
-                onClick={(e) => jump(e, id)}
+                /* A clause has no padding of its own to sit under the notch,
+                   so the glide stops short of the heading by the same amount
+                   `scroll-mt-28` gives the native jump. SmoothScroll reads
+                   this; every other anchor on the site wants no offset. */
+                data-scroll-offset={-112}
                 aria-current={on ? "true" : undefined}
                 className="group/toc flex items-baseline gap-3 py-1.25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >

@@ -18,6 +18,66 @@ let instance: Lenis | null = null;
  *  none and the caller should fall back to native scrolling. */
 export const getLenis = () => instance;
 
+/** How long an anchor takes to travel, however far it is going. Matches the
+ *  orb rail's own jump, which is the other thing on this site that moves the
+ *  page for you. */
+const ANCHOR_DURATION = 1.1;
+
+/**
+ * Same-page anchors, glided rather than jumped.
+ *
+ * Lenis ships an `anchors` option, but its handler does not call
+ * `preventDefault` — the browser still performs the instant hash jump, and
+ * the glide then runs from wherever that left the page. So the click is
+ * taken here instead, where the default can actually be stopped.
+ *
+ * Delegated at the document rather than wired per link: every in-page link
+ * on this site wants this, and the ones that arrived without it — the whole
+ * footer, the notch nav — were the bug.
+ *
+ * A link may set `data-scroll-offset` to land somewhere other than the
+ * target's top edge, for a target with no padding of its own to sit under
+ * the notch. The equivalent `scroll-mt-*` still belongs on the target, since
+ * that is what the native jump below uses under reduced motion.
+ */
+function anchorHandler(lenis: Lenis) {
+  return (e: MouseEvent) => {
+    // Anything already handled, or any click asking for a new tab, is not
+    // ours to take.
+    if (e.defaultPrevented || e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    const link = (e.target as Element | null)?.closest?.("a[href]") as
+      | HTMLAnchorElement
+      | null
+      | undefined;
+    if (!link || link.target === "_blank" || link.hasAttribute("download"))
+      return;
+
+    const url = new URL(link.href);
+    /* Only a hash on the page we are already on. A different route is the
+       router's business, and a bare `#` is a placeholder for an href we do
+       not have yet rather than a destination. */
+    if (url.origin !== location.origin) return;
+    if (url.pathname !== location.pathname) return;
+    if (url.hash.length <= 1) return;
+
+    const target = document.getElementById(
+      decodeURIComponent(url.hash.slice(1)),
+    );
+    if (!target) return;
+
+    e.preventDefault();
+    lenis.scrollTo(target, {
+      offset: Number(link.dataset.scrollOffset ?? 0),
+      duration: ANCHOR_DURATION,
+    });
+    /* Replace rather than push: the address bar should say where you are,
+       but a back button that lands mid-glide is worse than no entry. */
+    history.replaceState(null, "", url.hash);
+  };
+}
+
 /**
  * Global smooth scroll, with Lenis and GSAP sharing one clock.
  *
@@ -59,7 +119,11 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     lenis.on("scroll", ScrollTrigger.update);
     instance = lenis;
 
+    const onClick = anchorHandler(lenis);
+    document.addEventListener("click", onClick);
+
     return () => {
+      document.removeEventListener("click", onClick);
       gsap.ticker.remove(update);
       lenis.destroy();
       instance = null;
