@@ -31,7 +31,9 @@ export function AppleLogo({
       viewBox="0 0 814 1000"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
-      {...(ariaLabel ? { role: "img", "aria-label": ariaLabel } : { "aria-hidden": true })}
+      {...(ariaLabel
+        ? { role: "img", "aria-label": ariaLabel }
+        : { "aria-hidden": true })}
       style={{ height: size }}
       className={cn("block w-auto", className)}
     >

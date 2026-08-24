@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { Corners, PlusToggle } from "@/components/disclosure-toggle";
 import { SectionHead } from "@/components/section-head";
 import { cn } from "@/lib/utils";
 
@@ -64,38 +65,17 @@ const ITEMS: Apart[] = [
 
 const EASE = "ease-[cubic-bezier(.52,.52,0,1)]";
 
-/** Four bracket marks, one per corner — the page's way of saying "a plate". */
-function Corners({ inset, size }: { inset: string; size: string }) {
-  return (
-    <>
-      {[
-        "border-r-0 border-b-0 top-(--in) left-(--in)",
-        "border-l-0 border-b-0 top-(--in) right-(--in)",
-        "border-r-0 border-t-0 bottom-(--in) left-(--in)",
-        "border-l-0 border-t-0 bottom-(--in) right-(--in)",
-      ].map((corner) => (
-        <span
-          key={corner}
-          aria-hidden
-          style={{ "--in": inset } as React.CSSProperties}
-          className={cn("absolute border border-white/22", size, corner)}
-        />
-      ))}
-    </>
-  );
-}
-
 /** The plate. Grows out of nothing as its claim opens. */
 function Glyph({ item, open }: { item: Apart; open: boolean }) {
   return (
     <span
       aria-hidden
       className={cn(
-        "relative hidden shrink-0 place-items-center overflow-hidden rounded-[18px] border border-input bg-background lg:grid",
+        "relative hidden shrink-0 place-items-center overflow-hidden rounded-2xl border border-input bg-background lg:grid",
         "transition-[width,height,opacity,margin] duration-[550ms]",
         EASE,
         "motion-reduce:transition-none",
-        open ? "mr-[30px] size-[124px] opacity-100" : "mr-0 size-0 opacity-0",
+        open ? "mr-7.5 size-[124px] opacity-100" : "mr-0 size-0 opacity-0",
       )}
     >
       {/* Crosshair and corner ticks: the plate reads as a instrument face
@@ -104,8 +84,8 @@ function Glyph({ item, open }: { item: Apart; open: boolean }) {
       <span className="absolute inset-y-0 left-1/2 w-px bg-white/7" />
       <Corners inset="9px" size="size-1" />
 
-      <span className="grid size-[78px] place-items-center rounded-[13px] border border-border bg-accent">
-        <span className="grid grid-cols-4 gap-[3px]">
+      <span className="grid size-[78px] place-items-center rounded-xl border border-border bg-accent">
+        <span className="grid grid-cols-4 gap-0.75">
           {item.dots.map((lit, i) => (
             <i
               key={i}
@@ -128,16 +108,16 @@ export function ApartSection() {
 
   return (
     <section id="uses" className="relative py-[clamp(96px,12.5vh,158px)]">
-      <div className="mx-auto w-full max-w-[1240px] px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="what sets it apart"
           title="Built for how you actually use a Mac"
-          className="mb-[62px]"
+          className="mb-16"
         >
           Three things no other assistant on this machine will do for you.
         </SectionHead>
 
-        <div className="rounded-[20px] border border-input bg-card p-2">
+        <div className="rounded-3xl border border-input bg-card p-2">
           {ITEMS.map((item, i) => {
             const on = i === open;
             const head = `${uid}-h-${i}`;
@@ -149,7 +129,7 @@ export function ApartSection() {
                     "relative flex items-center transition-[padding] duration-500",
                     EASE,
                     "motion-reduce:transition-none",
-                    on ? "px-5 pt-[22px] pb-6" : "px-4 py-[18px]",
+                    on ? "px-5 pt-5.5 pb-6" : "px-4 py-4.5",
                     // A hairline between rows, gone either side of the open one
                     // so it never runs into the raised card's edge.
                     !on &&
@@ -170,7 +150,7 @@ export function ApartSection() {
 
                   <span
                     className={cn(
-                      "relative z-10 grid h-[26px] shrink-0 place-items-center rounded-[7px] border px-2.5 font-mono text-[11.5px] transition-colors duration-[450ms]",
+                      "relative z-10 grid h-6.5 shrink-0 place-items-center rounded-sm border px-2.5 font-mono text-[11.5px] transition-colors duration-[450ms]",
                       on
                         ? "border-white bg-white text-[#0A0A0A]"
                         : "border-border bg-secondary text-white/45",
@@ -233,40 +213,17 @@ export function ApartSection() {
                       )}
                     >
                       <div className="overflow-hidden">
-                        <p className="max-w-[56ch] pt-[11px] text-[14px] leading-[1.6] font-light text-white/45">
+                        <p className="max-w-[56ch] pt-3 text-sm leading-[1.6] font-light text-white/45">
                           {item.body}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Plus becomes minus: the upright bar collapses rather than
-                      the whole mark rotating, so nothing swings about. */}
-                  <span
-                    aria-hidden
-                    className={cn(
-                      "relative z-10 ml-6 grid size-10 shrink-0 place-items-center rounded-[10px] border transition-colors duration-400",
-                      on ? "border-transparent" : "border-input",
-                    )}
-                  >
-                    <span className="absolute h-[1.5px] w-[13px] rounded-full bg-white/80" />
-                    <span
-                      className={cn(
-                        "absolute h-[13px] w-[1.5px] rounded-full bg-white/80 transition-transform duration-400",
-                        EASE,
-                        "motion-reduce:transition-none",
-                        on && "scale-y-0",
-                      )}
-                    />
-                    <span
-                      className={cn(
-                        "absolute inset-0 transition-opacity duration-400",
-                        on ? "opacity-100" : "opacity-0",
-                      )}
-                    >
-                      <Corners inset="0px" size="size-2" />
-                    </span>
-                  </span>
+                  <PlusToggle
+                    open={on}
+                    className="relative z-10 ml-6 size-10"
+                  />
                 </div>
 
                 {/* The whole row is the target, which is what the reference

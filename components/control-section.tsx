@@ -2,6 +2,7 @@ import { GateDemo, HonestyDemo, PermsDemo } from "@/components/control-demos";
 import { SectionHead } from "@/components/section-head";
 import { MECHANISMS, type Mechanism } from "@/lib/control-mechanisms";
 import { cn } from "@/lib/utils";
+import { MacWindow } from "./ui/mac-window";
 
 /* ────────────────────────────────────────────────────────────────────
    Control — three mechanisms between the power and the machine.
@@ -32,33 +33,38 @@ import { cn } from "@/lib/utils";
  */
 function SpecCard({ m, className }: { m: Mechanism; className?: string }) {
   return (
-    <div
-      className={cn("flex flex-col border rounded-xl p-4 bg-card/50", className)}
+    <MacWindow
+      className={cn("bg-card/50", className)}
+      title={
+        <span className="font-mono text-[10.5px] tracking-[0.18em] text-white/40 uppercase">
+          Mechanism {m.n} - {m.name}
+        </span>
+      }
     >
-      <span className="mb-6 font-mono text-[10.5px] tracking-[0.18em] text-white/40 uppercase">
-        Mechanism {m.n} - {m.name}
-      </span>
+      <div className="flex flex-1 flex-col p-6">
+        <h3 className="mb-7 max-w-[20ch] text-[clamp(24px,2.4vw,32px)] leading-[1.1] tracking-[-0.03em]">
+          {m.title}
+        </h3>
 
-      <h3 className="mb-7 max-w-[20ch] text-[clamp(24px,2.4vw,32px)] leading-[1.1] tracking-[-0.03em]">
-        {m.title}
-      </h3>
-
-      {/* Pinned to the bottom, so the rows line up with the foot of the
+        {/* Pinned to the bottom, so the rows line up with the foot of the
           demo beside them however long a claim runs. */}
-      <dl className="mt-auto">
-        {m.spec.map(([label, value]) => (
-          <div
-            key={label}
-            className="flex items-baseline gap-5 border-t border-border py-2.5"
-          >
-            <dt className="w-[128px] shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase">
-              {label}
-            </dt>
-            <dd className="text-[13.5px] font-light text-white/85">{value}</dd>
-          </div>
-        ))}
-      </dl>
-    </div>
+        <dl className="mt-auto">
+          {m.spec.map(([label, value]) => (
+            <div
+              key={label}
+              className="flex items-baseline gap-5 border-t border-border py-2.5"
+            >
+              <dt className="w-[128px] shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase">
+                {label}
+              </dt>
+              <dd className="text-[13.5px] font-light text-white/85">
+                {value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </MacWindow>
   );
 }
 
@@ -67,11 +73,11 @@ export function ControlSection() {
 
   return (
     <section id="safe" className="relative py-[clamp(96px,12.5vh,158px)]">
-      <div className="mx-auto w-full max-w-[1240px] px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="control"
           title="Why you can hand it the keys to your Mac"
-          className="mb-[62px]"
+          className="mb-16"
         >
           It is unsandboxed, it clicks real buttons and it touches real files.
           Three mechanisms sit between that power and your machine.
@@ -79,7 +85,7 @@ export function ControlSection() {
 
         {/* Uneven on purpose. Each demo takes the width its content needs,
             and the sides swap every row so the eye crosses the grid. */}
-        <div className="grid auto-rows-[minmax(320px,auto)] gap-x-[18px] gap-y-14 lg:grid-cols-12 lg:gap-y-[18px]">
+        <div className="grid auto-rows-[minmax(320px,auto)] gap-x-4.5 gap-y-14 lg:grid-cols-12 lg:gap-y-4.5">
           <SpecCard m={gate} className="lg:col-span-5" />
           <GateDemo className="lg:col-span-7" />
 

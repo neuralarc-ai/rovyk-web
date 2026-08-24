@@ -22,7 +22,7 @@ export function ScreenMenuBar({
   return (
     <div
       className={cn(
-        "absolute inset-x-0 top-0 z-20 flex h-[22px] items-center justify-between px-3 text-[9px] text-white/72 backdrop-blur-sm [background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.06))]",
+        "absolute inset-x-0 top-0 z-20 flex h-5.5 items-center justify-between px-3 text-[9px] text-white/72 backdrop-blur-sm [background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.06))]",
         className,
       )}
     >

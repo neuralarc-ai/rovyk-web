@@ -90,7 +90,7 @@ function EditorialCard({ m, className }: { m: Mechanism; className?: string }) {
         <h3 className="mb-4 max-w-[16ch] text-[clamp(26px,2.9vw,38px)] leading-[1.05] tracking-[-0.035em]">
           {m.title}
         </h3>
-        <p className="max-w-[44ch] border-l border-white/22 pl-5 text-[14px] leading-[1.65] font-light text-white/62">
+        <p className="max-w-[44ch] border-l border-white/22 pl-5 text-sm leading-[1.65] font-light text-white/62">
           {m.body}
         </p>
       </div>
@@ -105,8 +105,8 @@ function PlateCard({ m, className }: { m: Mechanism; className?: string }) {
   return (
     <div
       className={cn(
-        "relative flex flex-col rounded-[6px] border border-white/22 bg-[#101010] p-7",
-        "before:pointer-events-none before:absolute before:inset-[5px] before:rounded-[3px] before:border before:border-white/8",
+        "relative flex flex-col rounded-sm border border-white/22 bg-[#101010] p-7",
+        "before:pointer-events-none before:absolute before:inset-1 before:rounded-[3px] before:border before:border-white/8",
         className,
       )}
     >
@@ -144,7 +144,7 @@ function PlateCard({ m, className }: { m: Mechanism; className?: string }) {
 function PairedRow({ m, i }: { m: Mechanism; i: number }) {
   const Demo = DEMOS[i];
   return (
-    <div className="grid overflow-hidden rounded-[18px] border border-input bg-card lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+    <div className="grid overflow-hidden rounded-2xl border border-input bg-card lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <div className="flex flex-col justify-center px-8 py-9 lg:px-10">
         <span className="mb-5 font-mono text-[10.5px] tracking-[0.18em] text-white/34 uppercase">
           {m.n} &middot; {m.name}
@@ -152,7 +152,7 @@ function PairedRow({ m, i }: { m: Mechanism; i: number }) {
         <h3 className="mb-3.5 max-w-[18ch] text-[clamp(22px,2.2vw,29px)] leading-[1.14] tracking-[-0.028em]">
           {m.title}
         </h3>
-        <p className="max-w-[48ch] text-[14px] leading-[1.6] font-light text-white/62">
+        <p className="max-w-[48ch] text-sm leading-[1.6] font-light text-white/62">
           {m.body}
         </p>
       </div>
@@ -165,7 +165,7 @@ function PairedRow({ m, i }: { m: Mechanism; i: number }) {
 
 export default function Page() {
   return (
-    <main className="mx-auto w-full max-w-[1240px] px-6 py-16 sm:px-10">
+    <main className="mx-auto w-full max-w-7xl px-6 py-16 sm:px-10">
       <header className="mb-14">
         <span className="font-mono text-[11px] tracking-[0.2em] text-white/34 uppercase">
           Throwaway
@@ -185,13 +185,13 @@ export default function Page() {
           name="Current"
           note="Icon, heading, paragraph, dot-separated tags — the shape you flagged."
         >
-          <div className="grid gap-[18px] lg:grid-cols-3">
+          <div className="grid gap-4.5 lg:grid-cols-3">
             {MECHANISMS.map((m) => {
               const Icon = m.icon;
               return (
                 <div
                   key={m.n}
-                  className="flex flex-col rounded-[18px] border border-input bg-accent px-7 py-[30px]"
+                  className="flex flex-col rounded-2xl border border-input bg-accent px-7 py-7.5"
                 >
                   <Icon
                     weight="light"
@@ -201,10 +201,10 @@ export default function Page() {
                   <h3 className="mt-8 mb-3 text-[22px] leading-[1.2] tracking-[-0.025em]">
                     {m.title}
                   </h3>
-                  <p className="text-[14px] leading-[1.6] font-light text-white/68">
+                  <p className="text-sm leading-[1.6] font-light text-white/68">
                     {m.body}
                   </p>
-                  <div className="flex flex-wrap items-center gap-x-2.5 pt-[22px] font-mono text-[11.5px] text-white/40">
+                  <div className="flex flex-wrap items-center gap-x-2.5 pt-5.5 font-mono text-[11.5px] text-white/40">
                     {m.tags.join(" · ")}
                   </div>
                 </div>
@@ -218,7 +218,7 @@ export default function Page() {
           name="Spec sheet"
           note="No icon, no prose. A rule, a name, a claim set large, and three label/value rows — the same instrument language as the tool readout and the notch specs."
         >
-          <div className="grid gap-x-[18px] gap-y-12 lg:grid-cols-3">
+          <div className="grid gap-x-4.5 gap-y-12 lg:grid-cols-3">
             {MECHANISMS.map((m) => (
               <SpecCard key={m.n} m={m} />
             ))}
@@ -230,7 +230,7 @@ export default function Page() {
           name="Editorial"
           note="Typography carries it. A ghosted numeral behind, the claim at display size, the body hung off a rule. No box at all — the section's ground shows through."
         >
-          <div className="grid gap-x-[18px] gap-y-14 lg:grid-cols-3">
+          <div className="grid gap-x-4.5 gap-y-14 lg:grid-cols-3">
             {MECHANISMS.map((m) => (
               <EditorialCard key={m.n} m={m} />
             ))}
@@ -242,7 +242,7 @@ export default function Page() {
           name="Plate"
           note="Hardware rather than web card: a tight radius, an inner scribe line, an engraved label, a count. Tags become etched chips instead of a dot-separated run."
         >
-          <div className="grid gap-[18px] lg:grid-cols-3">
+          <div className="grid gap-4.5 lg:grid-cols-3">
             {MECHANISMS.map((m) => (
               <PlateCard key={m.n} m={m} />
             ))}
@@ -254,7 +254,7 @@ export default function Page() {
           name="One card per mechanism"
           note="Three wide cards instead of six cells. The claim and the thing you can press live in the same frame, split by a hairline — which is the fix for the fragmentation as much as any styling is."
         >
-          <div className="flex flex-col gap-[18px]">
+          <div className="flex flex-col gap-4.5">
             {MECHANISMS.map((m, i) => (
               <PairedRow key={m.n} m={m} i={i} />
             ))}

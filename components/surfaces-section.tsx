@@ -19,7 +19,7 @@ import { AppleLogo } from "./apple-logo";
 
 /** Two thirds of the card. The copy gets what is left. */
 const STAGE =
-  "relative flex h-[clamp(360px,40vh,470px)] items-center justify-center overflow-hidden border-b border-border bg-background px-6 sm:px-[30px]";
+  "relative flex h-[clamp(360px,40vh,470px)] items-center justify-center overflow-hidden border-b border-border bg-background px-6 sm:px-7.5";
 
 /** Both artifacts float at the same width and cast the same shadow. */
 const FLOAT =
@@ -27,7 +27,7 @@ const FLOAT =
 
 function Kbd({ children }: { children: React.ReactNode }) {
   return (
-    <kbd className="inline-flex h-[19px] min-w-[19px] items-center justify-center rounded-[5px] border border-input bg-accent px-1.5 font-mono text-[11px] leading-none text-white">
+    <kbd className="inline-flex h-[19px] min-w-[19px] items-center justify-center rounded-sm border border-input bg-accent px-1.5 font-mono text-[11px] leading-none text-white">
       {children}
     </kbd>
   );
@@ -143,10 +143,10 @@ function FocusStage() {
         </div>
 
         <div className="flex min-h-[150px] flex-col gap-3 p-4">
-          <p className="max-w-[86%] self-end rounded-[13px] rounded-br-[5px] bg-accent px-3.5 py-2.5 text-[12.5px] leading-[1.5] text-white">
+          <p className="max-w-[86%] self-end rounded-xl rounded-br-sm bg-accent px-3.5 py-2.5 text-[12.5px] leading-[1.5] text-white">
             Find the invoice from Northlane and rename it properly.
           </p>
-          <p className="max-w-[86%] self-start rounded-[13px] rounded-bl-[5px] border border-input px-3.5 py-2.5 text-[12.5px] leading-[1.5] text-muted-foreground">
+          <p className="max-w-[86%] self-start rounded-xl rounded-bl-sm border border-input px-3.5 py-2.5 text-[12.5px] leading-[1.5] text-muted-foreground">
             Found{" "}
             <b className="font-medium text-white">inv_8823_final_FINAL.pdf</b>{" "}
             in Downloads.
@@ -217,16 +217,16 @@ const SURFACES = [
 export function SurfacesSection() {
   return (
     <section id="where" className="relative py-[clamp(96px,12.5vh,158px)]">
-      <div className="mx-auto w-full max-w-[1240px] px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="surfaces"
           title="Where can I be?"
-          className="mb-[62px]"
+          className="mb-16"
         >
           Two surfaces, one agent. Switch mid-sentence, it keeps the thread.
         </SectionHead>
 
-        <div className="grid gap-[18px] md:grid-cols-2">
+        <div className="grid gap-4.5 md:grid-cols-2">
           {SURFACES.map((surface) => (
             <MacWindow
               key={surface.id}
@@ -235,11 +235,11 @@ export function SurfacesSection() {
             >
               {surface.stage}
 
-              <div className="flex flex-1 flex-col px-[26px] pt-6 pb-[22px]">
+              <div className="flex flex-1 flex-col px-6.5 pt-6 pb-5.5">
                 <h3 className="mb-2 text-[clamp(20px,1.7vw,23px)] leading-[1.2] font-medium tracking-[-0.028em]">
                   {surface.title}
                 </h3>
-                <p className="mb-[18px] max-w-[38ch] text-[14px] leading-[1.55] font-light text-white/68">
+                <p className="mb-4.5 max-w-[38ch] text-sm leading-[1.55] font-light text-white/68">
                   {surface.description}
                 </p>
                 {/* Pinned to the bottom so the strips line up across the row
@@ -255,7 +255,7 @@ export function SurfacesSection() {
 
         {/* One download for both. Lit from the right so the bar has a bright
             end and a quiet end rather than being evenly filled. */}
-        <div className="relative mt-[18px] flex flex-wrap items-center gap-x-[34px] gap-y-8 overflow-hidden rounded-[22px] border border-input bg-card px-[34px] py-8">
+        <div className="relative mt-4.5 flex flex-wrap items-center gap-x-8.5 gap-y-8 overflow-hidden rounded-3xl border border-input bg-card px-8.5 py-8">
           <div
             aria-hidden
             className="bg-cta-glow pointer-events-none absolute inset-0"
@@ -278,7 +278,7 @@ export function SurfacesSection() {
           <div className="relative z-10 flex flex-col items-start gap-3">
             <a
               href="#cta"
-              className="inline-flex h-[58px] items-center justify-center gap-2.5 rounded-[15px] bg-primary px-[30px] text-[16px] font-semibold tracking-[-0.012em] whitespace-nowrap text-primary-foreground shadow-[0_18px_44px_-18px_rgba(255,255,255,.5)] transition-[transform,background] duration-200 hover:-translate-y-0.5 hover:bg-primary/90 active:translate-y-0 active:bg-primary/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              className="inline-flex h-14.5 items-center justify-center gap-2.5 rounded-xl bg-primary px-7.5 text-base font-semibold tracking-[-0.012em] whitespace-nowrap text-primary-foreground shadow-[0_18px_44px_-18px_rgba(255,255,255,.5)] transition-[transform,background] duration-200 hover:-translate-y-0.5 hover:bg-primary/90 active:translate-y-0 active:bg-primary/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               <AppleLogo size={20} />
               Download for Apple Silicon

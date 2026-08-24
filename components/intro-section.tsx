@@ -5,7 +5,10 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import type { OrbState } from "thinking-orbs/engine";
-import { ArrowClockwiseIcon, MicrophoneIcon } from "@phosphor-icons/react/dist/ssr";
+import {
+  ArrowClockwiseIcon,
+  MicrophoneIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import { RovykWordmark } from "@/components/rovyk-wordmark";
 import { HeroOrb } from "@/components/hero-orb";
 
@@ -84,23 +87,33 @@ export function IntroSection() {
          colour while the request stays plain — without splitting the tween. */
       const writeAsk = (n: number) => {
         const k = Math.round(n);
-        if (wakeRef.current) wakeRef.current.textContent = ASK.slice(0, Math.min(k, WAKE.length));
+        if (wakeRef.current)
+          wakeRef.current.textContent = ASK.slice(0, Math.min(k, WAKE.length));
         if (restRef.current) {
-          restRef.current.textContent = k > WAKE.length ? ASK.slice(WAKE.length, k) : "";
+          restRef.current.textContent =
+            k > WAKE.length ? ASK.slice(WAKE.length, k) : "";
         }
       };
 
       /* The chip's resting and committed skins. Transcribing is dim and
          provisional; once the request lands it brightens and stays — it is a
          record of what was said, not a transient caption. */
-      const CHIP_LIVE = { borderColor: "rgba(255,255,255,0.10)", backgroundColor: "rgba(255,255,255,0.03)" };
-      const CHIP_DONE = { borderColor: "rgba(255,255,255,0.22)", backgroundColor: "rgba(255,255,255,0.06)" };
+      const CHIP_LIVE = {
+        borderColor: "rgba(255,255,255,0.10)",
+        backgroundColor: "rgba(255,255,255,0.03)",
+      };
+      const CHIP_DONE = {
+        borderColor: "rgba(255,255,255,0.22)",
+        backgroundColor: "rgba(255,255,255,0.06)",
+      };
 
       /* Reduced motion: no performance, just the finished frame. */
       if (reduced) {
         setOrbState("searching");
         gsap.set(splash, { autoAlpha: 0 });
-        gsap.set([glow, orb, askLine, ...replyLines, ...replyWords, foot], { autoAlpha: 1 });
+        gsap.set([glow, orb, askLine, ...replyLines, ...replyWords, foot], {
+          autoAlpha: 1,
+        });
         gsap.set(orb, { scale: ORB_REST });
         gsap.set(replyWords, { y: 0, filter: "blur(0px)" });
         gsap.set(bars, { scaleY: 0.22 });
@@ -116,7 +129,11 @@ export function IntroSection() {
       tl
         /* Reset — every property the performance touches, so a replay
            starts from the same black screen as a cold load. */
-        .set(splash, { autoAlpha: 1, scale: 1, yPercent: 0, filter: "blur(0px)" }, 0)
+        .set(
+          splash,
+          { autoAlpha: 1, scale: 1, yPercent: 0, filter: "blur(0px)" },
+          0,
+        )
         .set([glow, orb, askLine, replyLines, foot], { autoAlpha: 0 }, 0)
         .set(orb, { scale: 0 }, 0)
         .set(askLine, { y: 14, scale: 0.96, filter: "blur(5px)" }, 0)
@@ -157,10 +174,19 @@ export function IntroSection() {
         )
 
         /* ── The room lights ─────────────────────────────────────── */
-        .to(glow, { autoAlpha: 1, duration: 1.6, ease: "power2.out" }, CUE.lights)
+        .to(
+          glow,
+          { autoAlpha: 1, duration: 1.6, ease: "power2.out" },
+          CUE.lights,
+        )
         .to(
           orb,
-          { autoAlpha: 1, scale: ORB_REST, duration: 1.1, ease: "back.out(1.4)" },
+          {
+            autoAlpha: 1,
+            scale: ORB_REST,
+            duration: 1.1,
+            ease: "back.out(1.4)",
+          },
           CUE.orbIn,
         )
 
@@ -185,7 +211,13 @@ export function IntroSection() {
         /* Live-mic halo: breathes only while the mic is actually open. */
         .to(
           halo,
-          { autoAlpha: 0.55, duration: 0.9, ease: "sine.inOut", repeat: 1, yoyo: true },
+          {
+            autoAlpha: 0.55,
+            duration: 0.9,
+            ease: "sine.inOut",
+            repeat: 1,
+            yoyo: true,
+          },
           CUE.listen + 0.2,
         )
         .to(
@@ -217,10 +249,22 @@ export function IntroSection() {
            the reply arrives, the chip brightens and holds: the caret and
            the halo go, the meter settles, the border firms up. What was
            said stays on the record for the whole section. */
-        .to(bars, { scaleY: 0.22, duration: 0.4, ease: "power2.out" }, CUE.settle)
+        .to(
+          bars,
+          { scaleY: 0.22, duration: 0.4, ease: "power2.out" },
+          CUE.settle,
+        )
         .to([caret, halo], { autoAlpha: 0, duration: 0.3 }, CUE.settle)
-        .to(askLine, { autoAlpha: 1, duration: 0.55, ease: "power2.out" }, CUE.settle)
-        .to(chip, { ...CHIP_DONE, duration: 0.55, ease: "power2.out" }, CUE.settle)
+        .to(
+          askLine,
+          { autoAlpha: 1, duration: 0.55, ease: "power2.out" },
+          CUE.settle,
+        )
+        .to(
+          chip,
+          { ...CHIP_DONE, duration: 0.55, ease: "power2.out" },
+          CUE.settle,
+        )
 
         /* ── Thinking ────────────────────────────────────────────── */
         .call(() => setOrbState("solving"), undefined, CUE.think)
@@ -261,8 +305,16 @@ export function IntroSection() {
            Back to the dense globe rather than the ring: at hero scale the
            ring reads as a loading spinner, the globe reads as the orb. */
         .call(() => setOrbState("searching"), undefined, CUE.rest)
-        .to(orb, { scale: ORB_REST, duration: 1.1, ease: "power2.inOut" }, CUE.rest)
-        .to(foot, { autoAlpha: 1, duration: 0.9, ease: "power2.out" }, CUE.rest + 0.2);
+        .to(
+          orb,
+          { scale: ORB_REST, duration: 1.1, ease: "power2.inOut" },
+          CUE.rest,
+        )
+        .to(
+          foot,
+          { autoAlpha: 1, duration: 0.9, ease: "power2.out" },
+          CUE.rest + 0.2,
+        );
 
       /* Replay rewinds the performance rather than layering a second one
          on top of it. */
@@ -306,7 +358,10 @@ export function IntroSection() {
       className="relative h-[100svh] w-full overflow-hidden bg-black"
     >
       {/* Pool of light the orb sits in. */}
-      <div data-glow className="bg-intro-glow pointer-events-none absolute inset-0 opacity-0" />
+      <div
+        data-glow
+        className="bg-intro-glow pointer-events-none absolute inset-0 opacity-0"
+      />
       <div className="bg-grain pointer-events-none absolute inset-0 opacity-40 mix-blend-overlay" />
 
       {/* Splash. Sits above the exchange and clears out of it. */}
@@ -341,7 +396,11 @@ export function IntroSection() {
                 aria-hidden
                 className="pointer-events-none absolute -inset-px rounded-full opacity-0 ring-1 ring-brand-pink/45"
               />
-              <MicrophoneIcon weight="regular" className="size-3.5 shrink-0 text-white/45" aria-hidden />
+              <MicrophoneIcon
+                weight="regular"
+                className="size-3.5 shrink-0 text-white/45"
+                aria-hidden
+              />
               <span aria-hidden className="flex h-3.5 items-center gap-0.75">
                 {BARS.map((h, i) => (
                   <span
@@ -356,7 +415,10 @@ export function IntroSection() {
                   line's width, so the mic and meter hold still while the text
                   types instead of being shoved left by every character. */}
               <span className="grid">
-                <span aria-hidden className="invisible col-start-1 row-start-1 whitespace-pre">
+                <span
+                  aria-hidden
+                  className="invisible col-start-1 row-start-1 whitespace-pre"
+                >
                   {ASK}
                 </span>
                 <span className="col-start-1 row-start-1 whitespace-pre text-left">

@@ -284,11 +284,11 @@ export function HowSection() {
       id="how"
       className="relative py-[clamp(96px,12.5vh,158px)]"
     >
-      <div className="mx-auto w-full max-w-[1240px] px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="how it works"
           title="Say it once. Watch the whole chain run."
-          className="mb-[62px]"
+          className="mb-16"
         >
           No command list, no scripts to wire up. One sentence, and Rovyk
           decides what to call, asks before anything irreversible, then tells
@@ -304,7 +304,7 @@ export function HowSection() {
           onBlurCapture={(e) => {
             if (!e.currentTarget.contains(e.relatedTarget)) disengage();
           }}
-          className="grid overflow-hidden rounded-[20px] border border-input bg-card md:grid-cols-[37%_63%]"
+          className="grid overflow-hidden rounded-3xl border border-input bg-card md:grid-cols-[37%_63%]"
         >
           {/* ── The narration ──────────────────────────────────────── */}
           <div
@@ -338,7 +338,7 @@ export function HowSection() {
                   <span
                     aria-hidden
                     className={cn(
-                      "absolute inset-0 rounded-[15px] border border-input bg-accent shadow-[0_22px_52px_-24px_#000]",
+                      "absolute inset-0 rounded-xl border border-input bg-accent shadow-[0_22px_52px_-24px_#000]",
                       "transition-[opacity,transform] duration-[450ms] ease-[cubic-bezier(.52,.52,0,1)]",
                       on
                         ? "scale-100 opacity-100"
@@ -351,7 +351,7 @@ export function HowSection() {
                       time until the next step are all one mark. */}
                   <span
                     aria-hidden
-                    className="relative z-10 flex w-[22px] shrink-0 flex-col items-center"
+                    className="relative z-10 flex w-5.5 shrink-0 flex-col items-center"
                   >
                     <span className="relative w-px flex-1 bg-border">
                       <span
@@ -365,7 +365,7 @@ export function HowSection() {
 
                     <span
                       className={cn(
-                        "my-2 grid size-[22px] shrink-0 place-items-center rounded-full border font-mono text-[9.5px] transition-colors duration-400",
+                        "my-2 grid size-5.5 shrink-0 place-items-center rounded-full border font-mono text-[9.5px] transition-colors duration-400",
                         on
                           ? "border-white bg-white text-[#0A0A0A]"
                           : passed
@@ -390,7 +390,7 @@ export function HowSection() {
                   <span className="relative z-10 flex flex-1 flex-col justify-center">
                     <h3
                       className={cn(
-                        "mb-[7px] text-[clamp(18px,1.6vw,23px)] leading-[1.16] tracking-[-0.028em] transition-colors duration-400",
+                        "mb-2 text-[clamp(18px,1.6vw,23px)] leading-[1.16] tracking-[-0.028em] transition-colors duration-400",
                         on
                           ? "text-white"
                           : "text-white/68 group-hover/step:text-white/88",
@@ -442,7 +442,7 @@ export function HowSection() {
               ))}
             </div>
 
-            <div className="relative z-20 grid flex-1 place-items-center px-[22px] pt-[34px] pb-[26px]">
+            <div className="relative z-20 grid flex-1 place-items-center px-5.5 pt-8.5 pb-6.5">
               {/* The machine, cropped to a fragment. Same screen as the hero,
                   a third of the size. */}
               <div className="relative aspect-16/10 w-[min(410px,94%)] overflow-hidden rounded-2xl bg-[#080808] md:w-[min(410px,74%)] shadow-[0_0_0_1px_rgba(255,255,255,.15),0_0_0_5px_rgba(255,255,255,.028),0_40px_80px_-30px_rgba(0,0,0,.98)]">
@@ -471,7 +471,7 @@ export function HowSection() {
                 is set to be read rather than skimmed past: no italic, which
                 only ever cost legibility at this size, and it arrives on the
                 same upward slide the tool readout uses. */}
-            <div className="relative z-30 flex items-center border-t border-border bg-card/40 px-16 py-[18px]">
+            <div className="relative z-30 flex items-center border-t border-border bg-card/40 px-16 py-4.5">
               <p
                 key={active}
                 className="animate-in fade-in-0 slide-in-from-bottom-2 flex-1 text-center text-[clamp(14px,1.1vw,15.5px)] leading-[1.45] font-light tracking-[-0.006em] text-balance text-white/88 duration-[420ms] ease-[cubic-bezier(.52,.52,0,1)]"

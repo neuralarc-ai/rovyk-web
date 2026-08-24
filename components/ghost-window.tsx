@@ -20,7 +20,7 @@ export function GhostWindow({
         className,
       )}
     >
-      <div className="flex items-center gap-[5px] border-b border-white/8 px-2.5 py-2">
+      <div className="flex items-center gap-1 border-b border-white/8 px-2.5 py-2">
         <span className="size-1.5 rounded-full bg-white/20" />
         <span className="size-1.5 rounded-full bg-white/20" />
         <span className="size-1.5 rounded-full bg-white/20" />

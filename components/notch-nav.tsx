@@ -168,12 +168,12 @@ function NavSide({ side, open }: { side: "l" | "r"; open: boolean }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-[22px] overflow-hidden whitespace-nowrap text-[13.5px] text-white/68",
+        "flex items-center gap-5.5 overflow-hidden whitespace-nowrap text-[13.5px] text-white/68",
         // max-width rather than width: the body has no fixed size, it is
         // simply as wide as its content, so revealing the links is what
         // widens the notch.
         open ? "max-w-[320px] opacity-100" : "max-w-0 opacity-0",
-        open && (side === "l" ? "pr-[26px]" : "pl-[26px]"),
+        open && (side === "l" ? "pr-6.5" : "pl-6.5"),
         "motion-reduce:transition-none",
       )}
       style={{
@@ -187,7 +187,7 @@ function NavSide({ side, open }: { side: "l" | "r"; open: boolean }) {
         <a
           key={link.href}
           href={link.href}
-          className="inline-flex h-[30px] items-center rounded-[7px] px-1 transition-colors duration-200 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="inline-flex h-7.5 items-center rounded-sm px-1 transition-colors duration-200 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           {link.label}
         </a>
@@ -276,7 +276,7 @@ export function NotchNav() {
         <Fillet side="l" />
 
         <div
-          className="relative flex items-center bg-black px-[22px]"
+          className="relative flex items-center bg-black px-5.5"
           style={{ height: NOTCH_H }}
         >
           <NavSide side="l" open={open} />

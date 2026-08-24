@@ -7,7 +7,12 @@ import { useGSAP } from "@gsap/react";
 import { HeroOrb } from "@/components/hero-orb";
 import { SectionHead } from "@/components/section-head";
 import { getLenis } from "@/components/smooth-scroll";
-import { ORB_BEATS, ORB_RAIL, type OrbGlow } from "@/lib/orb-beats";
+import {
+  ORB_BEATS,
+  ORB_RAIL,
+  type OrbBeat,
+  type OrbGlow,
+} from "@/lib/orb-beats";
 import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -62,30 +67,59 @@ function useMeasured() {
   return [ref, size] as const;
 }
 
-function Beat({ beat }: { beat: (typeof ORB_BEATS)[number] }) {
+/**
+ * One beat, written as a spec entry rather than a headline with a badge
+ * stuck under it: the state's number and name, the claim, and the two lines
+ * that make the claim checkable — the geometry the orb library really draws
+ * for it, and the mechanism the sentence rests on.
+ *
+ * The rows are the same hairline label/value pairs the control and tools
+ * sections use, so a claim you can check looks the same wherever the page
+ * makes one. It also owns its own vertical rhythm: the gap between the name
+ * and the claim is not the gap between the claim and its evidence, and an
+ * even stack of four things was reading as a template.
+ */
+function Beat({ beat, n }: { beat: OrbBeat; n: number }) {
   return (
-    <>
-      <span className="inline-flex items-center gap-2 self-start font-mono text-[10.5px] font-semibold tracking-[0.16em] text-white/52 uppercase">
-        <i
-          aria-hidden
-          className="size-[5px] shrink-0 rounded-full bg-white/28 transition-colors duration-500 group-data-[on=true]/beat:bg-brand-indigo"
-        />
-        {beat.label} &middot; {beat.mode}
-      </span>
+    <div className="flex flex-col items-start">
+      {/* Number, tick, name. The tick is the rail's mark at prose scale —
+          same hairline, same growth on arrival — so the numbered stop on the
+          right edge and the beat it belongs to read as one object. White,
+          not indigo: indigo means the thinking-and-working phase everywhere
+          else on this page, and a Speaking beat cannot borrow it just to
+          show that it is the one you are on. */}
+      <div className="mb-4.5 flex items-center gap-3 font-mono text-[10.5px] tracking-[0.16em] uppercase">
+        <span className="text-white/34">{String(n).padStart(2, "0")}</span>
+        <span className="text-white/60">{beat.label}</span>
+      </div>
 
-      <h3 className="text-[clamp(28px,3.4vw,46px)] leading-[1.06] tracking-[-0.03em] text-white">
+      <h3 className="text-[clamp(28px,3.4vw,46px)] leading-[1.06] tracking-[-0.03em] text-balance text-white">
         {beat.title}
       </h3>
 
-      <p className="max-w-[42ch] text-[16px] leading-[1.6] font-light text-white/68">
+      <p className="mt-3.5 max-w-[42ch] text-base leading-[1.6] font-light text-white/68">
         {beat.body}
       </p>
 
-      <span className="inline-flex items-center gap-2 self-start rounded-full border border-border bg-card px-3 py-1.5 font-mono text-[10.5px] tracking-[0.03em] text-white/45">
-        <i aria-hidden className="size-1 shrink-0 rounded-full bg-white/30" />
-        {beat.fact}
-      </span>
-    </>
+      <dl className="mt-7 w-full max-w-[42ch]">
+        {(
+          [
+            ["Geometry", beat.mode],
+            ["Why", beat.fact],
+          ] as const
+        ).map(([label, value]) => (
+          <div
+            key={label}
+            className="flex items-baseline gap-5 border-t border-border py-2.5"
+          >
+            <dt className="w-[82px] shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase">
+              {label}
+            </dt>
+            <dd className="text-[13.5px] font-light text-white/85">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
   );
 }
 
@@ -163,25 +197,23 @@ export function OrbSection() {
   if (reduced)
     return (
       <section id="orb" className="relative py-[clamp(96px,12.5vh,158px)]">
-        <div className="mx-auto w-full max-w-[1240px] px-6 sm:px-10">
+        <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
           <SectionHead
             eyebrow="the orb"
             title="Five states. You always know which one."
-            className="mb-[62px]"
+            className="mb-16"
           />
           <div className="flex flex-col gap-14">
-            {ORB_BEATS.map((beat) => (
+            {ORB_BEATS.map((beat, i) => (
               <div
                 key={beat.state}
                 data-on="true"
-                className="group/beat flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-10"
+                className="group/beat flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-10"
               >
                 <div className="shrink-0">
                   <HeroOrb state={beat.state} size={132} />
                 </div>
-                <div className="flex flex-col gap-4">
-                  <Beat beat={beat} />
-                </div>
+                <Beat beat={beat} n={i + 1} />
               </div>
             ))}
           </div>
@@ -197,7 +229,7 @@ export function OrbSection() {
        but `hidden` makes this a scroll container and kills the sticky
        column inside it. `clip` crops without either. */
     <section ref={root} id="orb" className="relative overflow-x-clip">
-      <div className="mx-auto w-full max-w-[1240px] px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="the orb"
           title="Five states. You always know which one."
@@ -220,7 +252,7 @@ export function OrbSection() {
                tail is the more generous of the two only because this is
                currently the last section on the page: once anything follows
                it, that content is the runway and this can come back down. */
-            className="flex flex-col pb-[24vh] [--beat:68vh] lg:order-1 lg:pt-[18vh] lg:pr-[70px] lg:[--beat:76vh]"
+            className="flex flex-col pb-[24vh] [--beat:68vh] lg:order-1 lg:pt-[18vh] lg:pr-17.5 lg:[--beat:76vh]"
           >
             {ORB_BEATS.map((b, i) => (
               <div
@@ -231,7 +263,7 @@ export function OrbSection() {
                 data-on={i === active}
                 style={{ minHeight: "var(--beat)" }}
                 className={cn(
-                  "group/beat flex flex-col justify-center gap-5",
+                  "group/beat flex flex-col justify-center",
                   "transition-[opacity,transform] duration-600 ease-[cubic-bezier(.52,.52,0,1)]",
                   // Dimmed, not erased. The reference's 0.16 made the beats
                   // you have not reached yet genuinely unreadable.
@@ -240,7 +272,7 @@ export function OrbSection() {
                     : "translate-y-2.5 opacity-28",
                 )}
               >
-                <Beat beat={b} />
+                <Beat beat={b} n={i + 1} />
               </div>
             ))}
           </div>
@@ -272,12 +304,15 @@ export function OrbSection() {
               </div>
 
               {/* The section claims you always know which state it is in.
-                  Naming it on the orb argues that rather than asserting it. */}
+                  Naming it on the orb argues that rather than asserting it.
+                  The state's name only — the geometry it is drawn from is a
+                  fact about the claim, and belongs in the beat's spec rows
+                  beside it rather than a second time under the orb. */}
               <span
                 key={beat.state}
                 className="animate-in fade-in relative mt-3 font-mono text-[11px] tracking-[0.16em] text-white/48 uppercase duration-500 lg:mt-6"
               >
-                {beat.label} &middot; {beat.mode}
+                {beat.label}
               </span>
             </div>
           </div>
@@ -342,7 +377,7 @@ export function OrbSection() {
               ),
             )}
           </div>
-          <span aria-hidden className="ml-[9px] w-px bg-border" />
+          <span aria-hidden className="ml-2 w-px bg-border" />
         </nav>
       </div>
     </section>

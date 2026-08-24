@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import Image from "next/image";
 import heroWall from "@/public/assets/hero-wall.jpg";
 import { AppleLogo } from "@/components/apple-logo";
+import { DownloadButton, GhostButton } from "@/components/cta-button";
 import { RovykHud } from "@/components/rovyk-hud";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -166,21 +167,8 @@ export function HeroSection() {
         </p>
 
         <div data-rise className="mt-7 flex flex-wrap justify-center gap-3">
-          <a
-            href="#cta"
-            className="inline-flex h-[46px] items-center justify-center gap-2.5 rounded-xl border border-primary bg-primary px-6 text-[14.5px] font-medium tracking-[-0.005em] whitespace-nowrap text-primary-foreground transition-[transform,background] duration-200 hover:-translate-y-0.5 hover:bg-primary/90 active:translate-y-0 active:bg-primary/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            {/* Nudged up a hair: the leaf makes the mark top-light, so a
-                centred bounding box sits visually low against the label. */}
-            <AppleLogo size={17} className="-translate-y-px" />
-            Download for Mac
-          </a>
-          <a
-            href="#how"
-            className="inline-flex h-[46px] items-center justify-center rounded-xl border border-input bg-secondary px-6 text-[14.5px] font-medium tracking-[-0.005em] whitespace-nowrap text-secondary-foreground transition-[transform,background,border-color] duration-200 hover:-translate-y-0.5 hover:border-white/30 hover:bg-accent active:translate-y-0 active:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            Watch it work
-          </a>
+          <DownloadButton href="#cta">Download for Mac</DownloadButton>
+          <GhostButton href="#how">Watch it work</GhostButton>
         </div>
 
         <div data-rise className="mt-4 flex gap-4 text-xs text-white/36">
@@ -198,7 +186,7 @@ export function HeroSection() {
         data-display
         className="mask-fade-b relative z-20 mt-[clamp(22px,3.2vh,46px)] flex max-h-[48vh] min-h-[190px] w-full flex-1 justify-center overflow-hidden"
       >
-        <div className="relative aspect-16/10 w-[min(1080px,86vw)] overflow-hidden rounded-[22px] bg-background shadow-[0_0_0_1px_rgba(255,255,255,.18),0_0_0_6px_rgba(255,255,255,.035),0_40px_90px_-30px_rgba(0,0,0,.9)]">
+        <div className="relative aspect-16/10 w-[min(1080px,86vw)] overflow-hidden rounded-3xl bg-background shadow-[0_0_0_1px_rgba(255,255,255,.18),0_0_0_6px_rgba(255,255,255,.035),0_40px_90px_-30px_rgba(0,0,0,.9)]">
           <div className="bg-display-wall absolute inset-0" />
 
           {/* Menu bar — the notch hangs from this edge. */}
@@ -232,17 +220,17 @@ export function HeroSection() {
           never integrated with it. Names only, no logos — we are not
           implying partnerships. */}
       <div className="absolute bottom-0 left-1/2 z-30 flex -translate-x-1/2 items-end">
-        <span className="mask-fillet-bl -mr-px size-[26px] shrink-0 bg-background" />
-        <div className="relative flex h-[58px] w-[min(480px,54vw)] items-center overflow-hidden rounded-t-[22px] bg-background">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[72px] bg-gradient-to-r from-background to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[72px] bg-gradient-to-l from-background to-transparent" />
-          <div className="animate-marquee flex w-max items-center gap-[38px] pl-5 motion-reduce:animate-none">
+        <span className="mask-fillet-bl -mr-px size-6.5 shrink-0 bg-background" />
+        <div className="relative flex h-14.5 w-[min(480px,54vw)] items-center overflow-hidden rounded-t-3xl bg-background">
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-18 bg-gradient-to-r from-background to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-18 bg-gradient-to-l from-background to-transparent" />
+          <div className="animate-marquee flex w-max items-center gap-9.5 pl-5 motion-reduce:animate-none">
             {/* Three passes: the keyframe travels exactly one third, so the
                 loop point lands on an identical frame. */}
             {[0, 1, 2].map((pass) => (
               <div
                 key={pass}
-                className="flex items-center gap-[38px]"
+                className="flex items-center gap-9.5"
                 aria-hidden={pass > 0}
               >
                 {APPS.map((app) => (
@@ -257,7 +245,7 @@ export function HeroSection() {
             ))}
           </div>
         </div>
-        <span className="mask-fillet-br -ml-px size-[26px] shrink-0 bg-background" />
+        <span className="mask-fillet-br -ml-px size-6.5 shrink-0 bg-background" />
       </div>
     </section>
   );

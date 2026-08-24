@@ -471,6 +471,17 @@
   mask-image: radial-gradient(80% 140% at 82% 50%, #000 5%, transparent 74%);
 }
 
+/* Grid bloomed from the top edge, behind the footer — the sheet's last
+   surface fades into its own grid rather than ending on a rule. */
+@utility mask-grid-top {
+  -webkit-mask-image: radial-gradient(
+    120% 100% at 50% 0%,
+    #000 8%,
+    transparent 76%
+  );
+  mask-image: radial-gradient(120% 100% at 50% 0%, #000 8%, transparent 76%);
+}
+
 /* The light the download CTA sits in — off-centre, so the bar has a
    bright end and a quiet end rather than being evenly lit. */
 @utility bg-cta-glow {

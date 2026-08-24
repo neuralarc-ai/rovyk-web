@@ -17,7 +17,12 @@ export function SectionHead({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col items-center gap-[18px] text-center", className)}>
+    <div
+      className={cn(
+        "flex flex-col items-center gap-4.5 text-center",
+        className,
+      )}
+    >
       <span className="inline-flex items-center gap-2 text-[12.5px] text-muted-foreground">
         <span className="text-white/36">[</span>
         {eyebrow}

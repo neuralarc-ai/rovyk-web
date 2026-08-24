@@ -85,8 +85,8 @@ function Reading({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-baseline gap-5 border-t border-border py-[15px] first:border-t-0 first:pt-0 last:pb-0">
-      <span className="w-[74px] shrink-0 font-mono text-[10px] tracking-[0.16em] text-white/34 uppercase">
+    <div className="flex items-baseline gap-5 border-t border-border py-3.75 first:border-t-0 first:pt-0 last:pb-0">
+      <span className="w-18.5 shrink-0 font-mono text-[10px] tracking-[0.16em] text-white/34 uppercase">
         {label}
       </span>
       <span className="text-[clamp(15px,1.3vw,17.5px)] leading-[1.35] font-light">
@@ -111,7 +111,7 @@ function Detail({ tool }: { tool: IndexedTool }) {
     <div className="grid md:grid-cols-[1fr_minmax(330px,40%)]">
       {/* A floor, so the panel does not jolt between a one-line summary and
           a two-line one. */}
-      <div className="min-h-[178px] px-[34px] py-[32px]">
+      <div className="min-h-[178px] px-8.5 py-8">
         <div className="mb-4 flex items-center gap-3 font-mono text-[10.5px] tracking-[0.14em] text-white/45 uppercase">
           <span>
             {String(tool.groupIndex + 1).padStart(2, "0")} &middot; {tool.group}
@@ -133,7 +133,7 @@ function Detail({ tool }: { tool: IndexedTool }) {
 
       {/* Stretched so the rule beside it runs the panel's full height, with
           the readings centred inside rather than the column shrinking. */}
-      <div className="flex flex-col justify-center border-t border-border px-[34px] py-[26px] md:border-t-0 md:border-l">
+      <div className="flex flex-col justify-center border-t border-border px-8.5 py-6.5 md:border-t-0 md:border-l">
         <Reading label="Touches">
           <span
             className={
@@ -432,18 +432,18 @@ export function ToolsSection() {
       id="features"
       className="relative py-[clamp(96px,12.5vh,158px)]"
     >
-      <div className="mx-auto w-full max-w-[1240px] px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="everything it can do"
           title="Ten groups. Fifty-nine tools."
-          className="mb-[62px]"
+          className="mb-16"
         >
           You never name one. Pick any tick to see what it reaches — and what it
           has to ask you for first.
         </SectionHead>
 
         {/* ── The readout ────────────────────────────────────────────── */}
-        <div className="relative overflow-hidden rounded-[22px] border border-input bg-card">
+        <div className="relative overflow-hidden rounded-3xl border border-input bg-card">
           {/* Two readouts are mounted for the length of a swap: the pick
               travels in from the edge you clicked toward and shoves the old
               one out the other side. The panel clips, so both leave the frame
@@ -573,7 +573,7 @@ export function ToolsSection() {
                             bars.current[i] = el;
                           }}
                           className={cn(
-                            "w-[2px] origin-bottom rounded-full transition-[width] duration-200",
+                            "w-0.5 origin-bottom rounded-full transition-[width] duration-200",
                             "group-hover/tick:w-[3px] group-focus-visible/tick:w-[3px]",
                             t.gated ? "bg-brand-red-text" : "bg-white",
                           )}
@@ -591,20 +591,20 @@ export function ToolsSection() {
           </TooltipProvider>
 
           {/* The axis, and the ten territories on it. */}
-          <div className="relative z-10 mt-2.5 h-[30px]">
+          <div className="relative z-10 mt-2.5 h-7.5">
             {GROUP_SPANS.map((g, i) => (
               <div
                 key={g.name}
                 ref={(el) => {
                   rails.current[i] = el;
                 }}
-                className="absolute inset-y-0 px-[2px] transition-opacity duration-300"
+                className="absolute inset-y-0 px-0.5 transition-opacity duration-300"
                 style={{
                   left: `${(g.start / N) * 100}%`,
                   width: `${((g.end - g.start + 1) / N) * 100}%`,
                 }}
               >
-                <span className="block h-[6px] rounded-b-[3px] border-x border-b border-white/30" />
+                <span className="block h-1.5 rounded-b-[3px] border-x border-b border-white/30" />
                 {/* Below `sm` a five-tool group gets ~30px, which turns every
                     label into an ellipsis. The brackets still draw the
                     territories, and the panel already names the group. */}
@@ -617,7 +617,7 @@ export function ToolsSection() {
         </div>
 
         {/* The count the spectrum is making, said plainly. */}
-        <div className="mt-9 flex flex-wrap items-center gap-x-[18px] gap-y-2 border-t border-border pt-5 font-mono text-[11.5px] tracking-[0.06em] text-white/36">
+        <div className="mt-9 flex flex-wrap items-center gap-x-4.5 gap-y-2 border-t border-border pt-5 font-mono text-[11.5px] tracking-[0.06em] text-white/36">
           <span>
             <b className="font-normal text-white/72">59</b> tools
           </span>

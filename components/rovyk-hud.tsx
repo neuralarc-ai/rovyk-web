@@ -47,10 +47,10 @@ export type HudBeat = "listening" | "thinking" | "gate" | "speaking";
 /** The notch's four sizes. Width and radius are fixed per view; height is
  *  not — expanded, it depends on how long the flow's chain is. */
 const VIEW_SHELL: Record<HudView, string> = {
-  notch: "w-[156px] rounded-b-[13px]",
-  compact: "w-[192px] rounded-b-[17px]",
-  exp: "w-[368px] rounded-b-[21px]",
-  idle: "w-[272px] rounded-b-[19px]",
+  notch: "w-[156px] rounded-b-xl",
+  compact: "w-[192px] rounded-b-2xl",
+  exp: "w-[368px] rounded-b-3xl",
+  idle: "w-[272px] rounded-b-2xl",
 };
 
 const VIEW_H: Record<Exclude<HudView, "exp">, number> = {
@@ -150,7 +150,7 @@ function ChromeIcon({
   return (
     <span
       className={cn(
-        "grid size-[22px] shrink-0 place-items-center",
+        "grid size-5.5 shrink-0 place-items-center",
         danger ? "text-brand-red" : dim ? "text-white/34" : "text-white/42",
       )}
     >
@@ -470,7 +470,7 @@ export function RovykHud({
         {/* ── Sliver: just a pulse and a word ─────────────────────── */}
         <View
           on={s.view === "notch"}
-          className="flex items-center justify-between px-[7px]"
+          className="flex items-center justify-between px-2"
         >
           <HeroOrb state={s.orb} size={14} paused={s.view !== "notch"} />
           <span className={cn("text-[8px] font-medium", TONE[s.tone])}>
@@ -481,7 +481,7 @@ export function RovykHud({
         {/* ── Compact: listening ──────────────────────────────────── */}
         <View
           on={s.view === "compact"}
-          className="flex items-center gap-1.5 pr-2 pl-[9px]"
+          className="flex items-center gap-1.5 pr-2 pl-2"
         >
           <HeroOrb state={s.orb} size={21} paused={s.view !== "compact"} />
           <Label tone={s.tone}>{s.label}</Label>
@@ -494,7 +494,7 @@ export function RovykHud({
         {/* ── Expanded: the actual work ───────────────────────────── */}
         <View
           on={s.view === "exp"}
-          className="flex flex-col gap-1.5 px-[9px] pt-[7px] pb-[9px]"
+          className="flex flex-col gap-1.5 px-2 pt-2 pb-2"
         >
           <div className="flex items-center gap-1.5">
             <HeroOrb state={s.orb} size={16} paused={s.view !== "exp"} />
@@ -547,8 +547,8 @@ export function RovykHud({
           >
             <p
               className={cn(
-                "flex-1 pr-[9px] leading-[1.34] tracking-[-0.005em]",
-                s.variant === "thinking" && "text-[12px] text-white/55",
+                "flex-1 pr-2 leading-[1.34] tracking-[-0.005em]",
+                s.variant === "thinking" && "text-xs text-white/55",
                 s.variant === "speaking" &&
                   "text-[12.5px] font-light text-white/90",
                 s.variant === "said" &&
@@ -564,7 +564,7 @@ export function RovykHud({
             <div
               className={cn(
                 "w-px shrink-0 bg-white/25 transition-opacity duration-300",
-                hasTasks ? "my-[3px] opacity-100" : "opacity-0",
+                hasTasks ? "my-0.75 opacity-100" : "opacity-0",
               )}
             />
 
@@ -574,7 +574,7 @@ export function RovykHud({
             <div
               className={cn(
                 "flex shrink-0 flex-col gap-1 overflow-hidden transition-[width,padding-left] duration-[450ms] ease-[cubic-bezier(.22,1,.36,1)]",
-                hasTasks ? "w-[150px] pl-[9px]" : "w-0 pl-0",
+                hasTasks ? "w-[150px] pl-2" : "w-0 pl-0",
               )}
             >
               {flow.tasks.map((task, i) => (
@@ -606,7 +606,7 @@ export function RovykHud({
           {flow.gate && (
             <div
               className={cn(
-                "flex flex-col gap-1.5 rounded-[10px] border border-brand-red-edge bg-brand-red-tint p-2 transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)]",
+                "flex flex-col gap-1.5 rounded-lg border border-brand-red-edge bg-brand-red-tint p-2 transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)]",
                 s.gate
                   ? "translate-y-0 opacity-100"
                   : "translate-y-[5px] opacity-0",
@@ -630,7 +630,7 @@ export function RovykHud({
         {/* ── Idle: nothing running ───────────────────────────────── */}
         <View
           on={s.view === "idle"}
-          className="flex flex-col gap-[3px] px-[7px] pt-[5px] pb-[7px]"
+          className="flex flex-col gap-0.75 px-2 pt-1 pb-2"
         >
           <div className="flex items-center justify-end gap-0.5">
             <ChromeIcon as={MicrophoneIcon} />

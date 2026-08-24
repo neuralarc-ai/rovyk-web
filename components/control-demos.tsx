@@ -33,16 +33,16 @@ export function Viz({
   return (
     <div
       className={cn(
-        "relative flex flex-col overflow-hidden rounded-[18px] border border-border bg-card",
+        "relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card",
         className,
       )}
     >
-      <p className="border-b border-border px-5 py-[15px] text-center text-[12.5px] text-white/52 italic">
+      <p className="border-b border-border px-5 py-3.75 text-center text-[12.5px] text-white/52 italic">
         {caption}
       </p>
-      <div className="relative grid flex-1 place-items-center px-[26px] py-[26px]">
+      <div className="relative grid flex-1 place-items-center px-6.5 py-6.5">
         <Skel />
-        <div className="relative z-10 w-full max-w-[330px] rounded-2xl border border-input bg-secondary p-[17px] shadow-[0_24px_54px_-24px_#000]">
+        <div className="relative z-10 w-full max-w-[330px] rounded-2xl border border-input bg-secondary p-4.25 shadow-[0_24px_54px_-24px_#000]">
           {children}
         </div>
       </div>
@@ -58,7 +58,7 @@ export function Head({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mb-3 flex items-center gap-2.5 text-[12px] text-white/52">
+    <div className="mb-3 flex items-center gap-2.5 text-xs text-white/52">
       <i aria-hidden className={cn("size-1.5 shrink-0 rounded-full", dot)} />
       {children}
     </div>
@@ -76,7 +76,7 @@ export function GateDemo({ className }: { className?: string }) {
   return (
     <Viz caption="Try it. Cancel actually cancels." className={className}>
       <Head dot="bg-brand-red">Confirmation required</Head>
-      <p className="mb-[11px] text-[14.5px] leading-[1.35] tracking-[-0.012em]">
+      <p className="mb-3 text-[14.5px] leading-[1.35] tracking-[-0.012em]">
         Move 47 files from Downloads to Archive?
       </p>
       <p className="mb-3.5 font-mono text-[10.5px] leading-[1.7] text-white/40">
@@ -108,7 +108,7 @@ export function GateDemo({ className }: { className?: string }) {
       <p
         aria-live="polite"
         className={cn(
-          "mt-[11px] min-h-[13px] font-mono text-[10.5px] transition-colors duration-300",
+          "mt-3 min-h-[13px] font-mono text-[10.5px] transition-colors duration-300",
           note?.done ? "text-white" : "text-white/45",
         )}
       >
@@ -249,7 +249,7 @@ export function PermsDemo({ className }: { className?: string }) {
               <span
                 className={cn(
                   "absolute top-0.5 size-[15px] rounded-full transition-[left,background] duration-300 ease-[cubic-bezier(.52,.52,0,1)]",
-                  on[i] ? "left-[15px] bg-[#0B0B0B]" : "left-0.5 bg-white/45",
+                  on[i] ? "left-3.75 bg-[#0B0B0B]" : "left-0.5 bg-white/45",
                 )}
               />
             </span>
