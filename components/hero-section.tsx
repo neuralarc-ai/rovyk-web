@@ -139,7 +139,7 @@ export function HeroSection() {
       </div>
 
       {/* ── Copy ───────────────────────────────────────────────────── */}
-      <div className="relative z-20 flex w-full max-w-[1120px] flex-col items-center px-6 pt-[clamp(74px,9.5vh,124px)] text-center sm:px-10">
+      <div className="relative z-20 flex w-full max-w-280 flex-col items-center px-6 pt-[clamp(74px,9.5vh,124px)] text-center sm:px-10">
         <div
           data-rise
           className="mb-5 inline-flex items-center gap-2 text-[12.5px] text-muted-foreground"
@@ -184,7 +184,7 @@ export function HeroSection() {
           of instead of a screenshot in a box. */}
       <div
         data-display
-        className="mask-fade-b relative z-20 mt-[clamp(22px,3.2vh,46px)] flex max-h-[48vh] min-h-[190px] w-full flex-1 justify-center overflow-hidden"
+        className="mask-fade-b relative z-20 mt-[clamp(22px,3.2vh,46px)] flex max-h-[48vh] min-h-47.5 w-full flex-1 justify-center overflow-hidden"
       >
         <div className="relative aspect-16/10 w-[min(1080px,86vw)] overflow-hidden rounded-3xl bg-background shadow-[0_0_0_1px_rgba(255,255,255,.18),0_0_0_6px_rgba(255,255,255,.035),0_40px_90px_-30px_rgba(0,0,0,.9)]">
           <div className="bg-display-wall absolute inset-0" />
@@ -222,8 +222,8 @@ export function HeroSection() {
       <div className="absolute bottom-0 left-1/2 z-30 flex -translate-x-1/2 items-end">
         <span className="mask-fillet-bl -mr-px size-6.5 shrink-0 bg-background" />
         <div className="relative flex h-14.5 w-[min(480px,54vw)] items-center overflow-hidden rounded-t-3xl bg-background">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-18 bg-gradient-to-r from-background to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-18 bg-gradient-to-l from-background to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-18 bg-linear-to-r from-background to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-18 bg-linear-to-l from-background to-transparent" />
           <div className="animate-marquee flex w-max items-center gap-9.5 pl-5 motion-reduce:animate-none">
             {/* Three passes: the keyframe travels exactly one third, so the
                 loop point lands on an identical frame. */}

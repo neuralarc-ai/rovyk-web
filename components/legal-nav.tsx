@@ -94,7 +94,7 @@ export function LegalNav({
                 href={`#${id}`}
                 onClick={(e) => jump(e, id)}
                 aria-current={on ? "true" : undefined}
-                className="group/toc flex items-baseline gap-3 py-[5px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className="group/toc flex items-baseline gap-3 py-1.25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 <span
                   className={cn(

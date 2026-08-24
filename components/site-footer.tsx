@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { DownloadButton, GhostButton } from "@/components/cta-button";
+import { DownloadButton } from "@/components/cta-button";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { RovykWordmark } from "@/components/rovyk-wordmark";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 /* ────────────────────────────────────────────────────────────────────
    The footer — the sheet's last surface, and the page's index.
@@ -79,7 +79,7 @@ const LINKS: { heading: string; items: [label: string, href: string][] }[] = [
 /** Two columns, wide over narrow, used for both of the upper bands. */
 const BAND = "grid gap-10 md:grid-cols-[1.35fr_1fr]";
 
-const DOT = "size-[3px] shrink-0 rounded-full bg-white/30";
+const DOT = "size-0.75 shrink-0 rounded-full bg-white/30";
 
 export function SiteFooter() {
   return (
@@ -104,7 +104,6 @@ export function SiteFooter() {
 
             <div className="mt-6 flex flex-wrap gap-2.5">
               <DownloadButton>Download for Apple Silicon</DownloadButton>
-              <GhostButton href="#">Changelog</GhostButton>
             </div>
           </div>
 
@@ -150,7 +149,7 @@ export function SiteFooter() {
                     <El
                       key={label}
                       href={href}
-                      className="py-[5px] text-sm text-white/68 transition-colors duration-200 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                      className="py-1.25 text-sm text-white/68 transition-colors duration-200 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                     >
                       {label}
                     </El>

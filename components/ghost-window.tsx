@@ -33,7 +33,7 @@ export function GhostWindow({
           <span
             key={i}
             style={{ width: `${w}%` }}
-            className="h-[5px] rounded-[3px] bg-white/10"
+            className="h-1.25 rounded-[3px] bg-white/10"
           />
         ))}
       </div>

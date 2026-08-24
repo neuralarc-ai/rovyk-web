@@ -42,7 +42,7 @@ export function Viz({
       </p>
       <div className="relative grid flex-1 place-items-center px-6.5 py-6.5">
         <Skel />
-        <div className="relative z-10 w-full max-w-[330px] rounded-2xl border border-input bg-secondary p-4.25 shadow-[0_24px_54px_-24px_#000]">
+        <div className="relative z-10 w-full max-w-82.5 rounded-2xl border border-input bg-secondary p-4.25 shadow-[0_24px_54px_-24px_#000]">
           {children}
         </div>
       </div>
@@ -108,7 +108,7 @@ export function GateDemo({ className }: { className?: string }) {
       <p
         aria-live="polite"
         className={cn(
-          "mt-3 min-h-[13px] font-mono text-[10.5px] transition-colors duration-300",
+          "mt-3 min-h-3.25 font-mono text-[10.5px] transition-colors duration-300",
           note?.done ? "text-white" : "text-white/45",
         )}
       >
@@ -144,19 +144,16 @@ export function HonestyDemo({ className }: { className?: string }) {
           <span
             aria-hidden
             className={cn(
-              "mt-0.5 grid size-[15px] shrink-0 place-items-center rounded-full border",
+              "mt-0.5 grid size-3.75 shrink-0 place-items-center rounded-full border",
               claim.ok
                 ? "border-brand-green-edge bg-brand-green-tint"
                 : "border-brand-red-edge bg-brand-red-tint",
             )}
           >
             {claim.ok ? (
-              <CheckIcon
-                weight="bold"
-                className="size-[9px] text-brand-green"
-              />
+              <CheckIcon weight="bold" className="size-2.25 text-brand-green" />
             ) : (
-              <XIcon weight="bold" className="size-[9px] text-brand-red" />
+              <XIcon weight="bold" className="size-2.25 text-brand-red" />
             )}
           </span>
           <span>
@@ -231,16 +228,12 @@ export function PermsDemo({ className }: { className?: string }) {
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
             )}
           >
-            <Icon
-              weight="regular"
-              className="size-[15px] shrink-0"
-              aria-hidden
-            />
+            <Icon weight="regular" className="size-3.75 shrink-0" aria-hidden />
             {perm.name}
             <span
               aria-hidden
               className={cn(
-                "relative ml-auto h-[19px] w-8 shrink-0 rounded-full transition-colors duration-300",
+                "relative ml-auto h-4.75 w-8 shrink-0 rounded-full transition-colors duration-300",
                 on[i]
                   ? "bg-brand-green"
                   : "bg-white/10 shadow-[0_0_0_1px_var(--input)_inset]",
@@ -248,7 +241,7 @@ export function PermsDemo({ className }: { className?: string }) {
             >
               <span
                 className={cn(
-                  "absolute top-0.5 size-[15px] rounded-full transition-[left,background] duration-300 ease-[cubic-bezier(.52,.52,0,1)]",
+                  "absolute top-0.5 size-3.75 rounded-full transition-[left,background] duration-300 ease-[cubic-bezier(.52,.52,0,1)]",
                   on[i] ? "left-3.75 bg-[#0B0B0B]" : "left-0.5 bg-white/45",
                 )}
               />
@@ -258,7 +251,7 @@ export function PermsDemo({ className }: { className?: string }) {
       })}
       <p
         aria-live="polite"
-        className="mt-3 min-h-[13px] font-mono text-[10.5px] text-white/45"
+        className="mt-3 min-h-3.25 font-mono text-[10.5px] text-white/45"
       >
         {note}
       </p>

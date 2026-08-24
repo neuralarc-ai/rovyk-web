@@ -112,7 +112,7 @@ function Beat({ beat, n }: { beat: OrbBeat; n: number }) {
             key={label}
             className="flex items-baseline gap-5 border-t border-border py-2.5"
           >
-            <dt className="w-[82px] shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase">
+            <dt className="w-20.5 shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase">
               {label}
             </dt>
             <dd className="text-[13.5px] font-light text-white/85">{value}</dd>
@@ -288,7 +288,7 @@ export function OrbSection() {
                   aria-hidden
                   style={{ background: GLOW[g] }}
                   className={cn(
-                    "pointer-events-none absolute -inset-[60%] transition-opacity duration-700",
+                    "pointer-events-none absolute inset-[-60%] transition-opacity duration-700",
                     beat.glow === g ? "opacity-100" : "opacity-0",
                   )}
                 />
@@ -330,7 +330,7 @@ export function OrbSection() {
           aria-label="Orb states"
           className="pointer-events-auto sticky top-1/2 flex -translate-y-1/2 items-stretch"
         >
-          <div className="flex h-[132px] flex-col items-end justify-between">
+          <div className="flex h-33 flex-col items-end justify-between">
             {ORB_RAIL.map((node, i) =>
               node.stop ? (
                 <button
@@ -358,8 +358,8 @@ export function OrbSection() {
                     className={cn(
                       "h-px transition-all duration-350 ease-[cubic-bezier(.52,.52,0,1)]",
                       active === node.beat
-                        ? "w-[13px] bg-white"
-                        : "w-[7px] bg-white/20 group-hover/stop:bg-white/45",
+                        ? "w-3.25 bg-white"
+                        : "w-1.75 bg-white/20 group-hover/stop:bg-white/45",
                     )}
                   />
                 </button>
@@ -372,7 +372,7 @@ export function OrbSection() {
                   aria-hidden
                   className="flex h-2 items-center justify-end"
                 >
-                  <span className="h-px w-[7px] bg-white/20 transition-all duration-350 data-[cur=true]:w-[11px] data-[cur=true]:bg-white/60" />
+                  <span className="h-px w-1.75 bg-white/20 transition-all duration-350 data-[cur=true]:w-2.75 data-[cur=true]:bg-white/60" />
                 </span>
               ),
             )}

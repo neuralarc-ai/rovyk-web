@@ -42,7 +42,7 @@ export function NewsletterForm() {
           });
           if (ok) setEmail("");
         }}
-        className="flex max-w-[430px] gap-2.5"
+        className="flex max-w-107.5 gap-2.5"
       >
         <input
           type="email"

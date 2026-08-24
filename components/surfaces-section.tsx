@@ -23,11 +23,11 @@ const STAGE =
 
 /** Both artifacts float at the same width and cast the same shadow. */
 const FLOAT =
-  "relative w-full max-w-[520px] overflow-hidden rounded-2xl shadow-[0_30px_64px_-28px_#000]";
+  "relative w-full max-w-130 overflow-hidden rounded-2xl shadow-[0_30px_64px_-28px_#000]";
 
 function Kbd({ children }: { children: React.ReactNode }) {
   return (
-    <kbd className="inline-flex h-[19px] min-w-[19px] items-center justify-center rounded-sm border border-input bg-accent px-1.5 font-mono text-[11px] leading-none text-white">
+    <kbd className="inline-flex h-4.75 min-w-4.75 items-center justify-center rounded-sm border border-input bg-accent px-1.5 font-mono text-[11px] leading-none text-white">
       {children}
     </kbd>
   );
@@ -69,7 +69,7 @@ function MetaStrip({
           {i > 0 ? (
             <i
               aria-hidden
-              className="size-[3px] shrink-0 rounded-full bg-white/22"
+              className="size-0.75 shrink-0 rounded-full bg-white/22"
             />
           ) : null}
           <span className="flex items-center gap-1.5">{item}</span>
@@ -142,11 +142,11 @@ function FocusStage() {
           </span>
         </div>
 
-        <div className="flex min-h-[150px] flex-col gap-3 p-4">
-          <p className="max-w-[86%] self-end rounded-xl rounded-br-sm bg-accent px-3.5 py-2.5 text-[12.5px] leading-[1.5] text-white">
+        <div className="flex min-h-37.5 flex-col gap-3 p-4">
+          <p className="max-w-[86%] self-end rounded-xl rounded-br-sm bg-accent px-3.5 py-2.5 text-[12.5px] leading-normal text-white">
             Find the invoice from Northlane and rename it properly.
           </p>
-          <p className="max-w-[86%] self-start rounded-xl rounded-bl-sm border border-input px-3.5 py-2.5 text-[12.5px] leading-[1.5] text-muted-foreground">
+          <p className="max-w-[86%] self-start rounded-xl rounded-bl-sm border border-input px-3.5 py-2.5 text-[12.5px] leading-normal text-muted-foreground">
             Found{" "}
             <b className="font-medium text-white">inv_8823_final_FINAL.pdf</b>{" "}
             in Downloads.
@@ -265,7 +265,7 @@ export function SurfacesSection() {
             className="bg-hairline-grid mask-grid-right pointer-events-none absolute inset-0 [--grid-size:96px]"
           />
 
-          <div className="relative z-10 min-w-[260px] flex-1">
+          <div className="relative z-10 min-w-65 flex-1">
             <h3 className="mb-2 text-[clamp(22px,2.4vw,30px)] leading-[1.1] font-medium tracking-[-0.03em] text-balance">
               Both surfaces, one&nbsp;84&nbsp;MB download
             </h3>
@@ -286,21 +286,21 @@ export function SurfacesSection() {
 
             <div className="flex flex-wrap items-center gap-3.5 font-mono text-[12.5px] tracking-[0.04em] text-white/36">
               <span>Free</span>
-              <i aria-hidden className="size-[3px] rounded-full bg-white/22" />
+              <i aria-hidden className="size-0.75 rounded-full bg-white/22" />
               <a
                 href="#"
                 className="border-b border-input pb-px text-white/68 transition-colors hover:border-brand-indigo hover:text-white"
               >
                 Homebrew
               </a>
-              <i aria-hidden className="size-[3px] rounded-full bg-white/22" />
+              <i aria-hidden className="size-0.75 rounded-full bg-white/22" />
               <a
                 href="#"
                 className="border-b border-input pb-px text-white/68 transition-colors hover:border-brand-indigo hover:text-white"
               >
                 Changelog
               </a>
-              <i aria-hidden className="size-[3px] rounded-full bg-white/22" />
+              <i aria-hidden className="size-0.75 rounded-full bg-white/22" />
               <span>v0.9</span>
             </div>
           </div>

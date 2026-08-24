@@ -53,7 +53,7 @@ function Block({ block }: { block: LegalBlock }) {
             key={label}
             className="flex flex-col gap-1.5 border-t border-border py-3 sm:flex-row sm:items-baseline sm:gap-6"
           >
-            <dt className="shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase sm:w-[142px]">
+            <dt className="shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase sm:w-35.5">
               {label}
             </dt>
             <dd className="text-[14px] leading-[1.6] font-light text-white/85">

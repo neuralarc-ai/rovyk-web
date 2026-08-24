@@ -47,10 +47,10 @@ export type HudBeat = "listening" | "thinking" | "gate" | "speaking";
 /** The notch's four sizes. Width and radius are fixed per view; height is
  *  not — expanded, it depends on how long the flow's chain is. */
 const VIEW_SHELL: Record<HudView, string> = {
-  notch: "w-[156px] rounded-b-xl",
-  compact: "w-[192px] rounded-b-2xl",
-  exp: "w-[368px] rounded-b-3xl",
-  idle: "w-[272px] rounded-b-2xl",
+  notch: "w-39 rounded-b-xl",
+  compact: "w-48 rounded-b-2xl",
+  exp: "w-92 rounded-b-3xl",
+  idle: "w-68 rounded-b-2xl",
 };
 
 const VIEW_H: Record<Exclude<HudView, "exp">, number> = {
@@ -92,10 +92,10 @@ const chainRing = (n: number, total: number) => 0.18 + (0.72 * n) / total;
 
 /** Corner fillets scale with the body, or the join stops reading as carved. */
 const VIEW_FILLET: Record<HudView, string> = {
-  notch: "size-[11px]",
-  compact: "size-[15px]",
-  exp: "size-[19px]",
-  idle: "size-[15px]",
+  notch: "size-2.75",
+  compact: "size-3.75",
+  exp: "size-4.75",
+  idle: "size-3.75",
 };
 
 const TONE: Record<Tone, string> = {
@@ -450,7 +450,7 @@ export function RovykHud({
           top edge instead of hanging a pill below it. */}
       <span
         className={cn(
-          "mask-fillet-tl -mr-px shrink-0 bg-black transition-[width,height] duration-[550ms] ease-[cubic-bezier(.22,1,.36,1)]",
+          "mask-fillet-tl -mr-px shrink-0 bg-black transition-[width,height] duration-550 ease-[cubic-bezier(.22,1,.36,1)]",
           VIEW_FILLET[s.view],
         )}
       />
@@ -463,7 +463,7 @@ export function RovykHud({
               : VIEW_H[s.view],
         }}
         className={cn(
-          "relative overflow-hidden bg-black transition-[width,height,border-radius] duration-[580ms] ease-[cubic-bezier(.22,1,.36,1)]",
+          "relative overflow-hidden bg-black transition-[width,height,border-radius] duration-580 ease-[cubic-bezier(.22,1,.36,1)]",
           VIEW_SHELL[s.view],
         )}
       >
@@ -503,7 +503,7 @@ export function RovykHud({
             </Label>
             <span className="flex-1" />
             <span className="mr-0.5 flex items-center gap-0.5">
-              <svg viewBox="0 0 36 36" className="size-[13px]" aria-hidden>
+              <svg viewBox="0 0 36 36" className="size-3.25" aria-hidden>
                 <circle
                   cx="18"
                   cy="18"
@@ -557,7 +557,7 @@ export function RovykHud({
             >
               {s.transcript}
               {s.typing && (
-                <span className="animate-caret ml-px inline-block h-[11px] w-[1.4px] -translate-y-px bg-white align-[-1px]" />
+                <span className="animate-caret ml-px inline-block h-2.75 w-[1.4px] -translate-y-px bg-white align-[-1px]" />
               )}
             </p>
 
@@ -573,8 +573,8 @@ export function RovykHud({
                 in a 64px column, so the rows carry their own tight leading. */}
             <div
               className={cn(
-                "flex shrink-0 flex-col gap-1 overflow-hidden transition-[width,padding-left] duration-[450ms] ease-[cubic-bezier(.22,1,.36,1)]",
-                hasTasks ? "w-[150px] pl-2" : "w-0 pl-0",
+                "flex shrink-0 flex-col gap-1 overflow-hidden transition-[width,padding-left] duration-450 ease-[cubic-bezier(.22,1,.36,1)]",
+                hasTasks ? "w-37.5 pl-2" : "w-0 pl-0",
               )}
             >
               {flow.tasks.map((task, i) => (
@@ -584,7 +584,7 @@ export function RovykHud({
                     "flex items-center gap-1.5 whitespace-nowrap text-[10.5px] leading-[1.2] transition-all duration-300",
                     i < s.shown
                       ? "translate-y-0 opacity-100"
-                      : "translate-y-[3px] opacity-0",
+                      : "translate-y-0.75 opacity-0",
                     i < s.done ? "text-white/75" : "text-white/38",
                   )}
                 >
@@ -609,7 +609,7 @@ export function RovykHud({
                 "flex flex-col gap-1.5 rounded-lg border border-brand-red-edge bg-brand-red-tint p-2 transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)]",
                 s.gate
                   ? "translate-y-0 opacity-100"
-                  : "translate-y-[5px] opacity-0",
+                  : "translate-y-1.25 opacity-0",
               )}
             >
               <p className="text-[10.5px] leading-[1.35] font-medium text-white/90">
@@ -646,7 +646,7 @@ export function RovykHud({
 
       <span
         className={cn(
-          "mask-fillet-tr -ml-px shrink-0 bg-black transition-[width,height] duration-[550ms] ease-[cubic-bezier(.22,1,.36,1)]",
+          "mask-fillet-tr -ml-px shrink-0 bg-black transition-[width,height] duration-550 ease-[cubic-bezier(.22,1,.36,1)]",
           VIEW_FILLET[s.view],
         )}
       />

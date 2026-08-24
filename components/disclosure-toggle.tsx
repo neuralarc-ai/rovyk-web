@@ -52,10 +52,10 @@ export function PlusToggle({
         className,
       )}
     >
-      <span className="absolute h-[1.5px] w-[13px] rounded-full bg-white/80" />
+      <span className="absolute h-[1.5px] w-3.25 rounded-full bg-white/80" />
       <span
         className={cn(
-          "absolute h-[13px] w-[1.5px] rounded-full bg-white/80 transition-transform duration-400 motion-reduce:transition-none",
+          "absolute h-3.25 w-[1.5px] rounded-full bg-white/80 transition-transform duration-400 motion-reduce:transition-none",
           EASE,
           open && "scale-y-0",
         )}

@@ -66,5 +66,70 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  /* Every in-page link on this site is a fragment — the notch nav, the hero's
+     two buttons, the footer's index — and the browser answers all of them by
+     teleporting. On a page whose sections are built to arrive as you reach
+     them, that lands you mid-animation with no idea which way you travelled.
+
+     One delegated listener rather than a handler per link: they are ordinary
+     anchors in a dozen components, and the ones that matter most are inside
+     `<GhostButton>` and `<DownloadButton>`, which have no business knowing how
+     this page scrolls.
+
+     Deliberately does not use Lenis' own `anchors` option. That one never
+     calls `preventDefault`, so the browser still performs its jump and Lenis
+     glides from wherever it landed — and it offers no way to skip the `#`
+     placeholders this page is still full of. */
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      // Leave modified clicks alone: they are "open in a new tab", not "go
+      // there". A non-primary button is not a navigation at all.
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      )
+        return;
+
+      const target = event.target;
+      const link = target instanceof Element ? target.closest("a") : null;
+      const href = link?.getAttribute("href");
+
+      /* Only same-page fragments. A bare `#` is a placeholder for a page that
+         does not exist yet and should stay inert rather than gliding to the
+         top, and `/#how` — how the notch nav links home from the legal pages
+         — is a route change the router owns. */
+      if (!href?.startsWith("#") || href === "#") return;
+
+      const section = document.getElementById(
+        decodeURIComponent(href.slice(1)),
+      );
+      const lenis = getLenis();
+      // No instance means reduced motion, where an instant jump is the
+      // correct answer and the browser already gives it.
+      if (!section || !lenis) return;
+
+      event.preventDefault();
+      /* Clear of the bezel strip, which is fixed over the top `--gut` of the
+         viewport — read rather than hard-coded, so the two cannot drift. */
+      const gut =
+        parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue("--gut"),
+        ) || 0;
+      lenis.scrollTo(section, { offset: -gut, duration: 1.1 });
+
+      /* The address bar still has to move, or the section is unlinkable and
+         Back does not undo the jump. `pushState` is router-integrated in the
+         App Router, so this stays in step with `usePathname`. */
+      history.pushState(null, "", href);
+    };
+
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
+
   return <>{children}</>;
 }

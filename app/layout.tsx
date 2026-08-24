@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { NotchNav } from "@/components/notch-nav";
 import { SmoothScroll } from "@/components/smooth-scroll";
 
-const dmSans = DM_Sans({subsets:['latin'],variable:'--font-sans'});
+const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +27,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", dmSans.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        "font-sans",
+        dmSans.variable,
+      )}
     >
       {/* Black is the frame the sheet floats in, not a section background —
           so it belongs to the shell. */}

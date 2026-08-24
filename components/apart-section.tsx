@@ -72,10 +72,10 @@ function Glyph({ item, open }: { item: Apart; open: boolean }) {
       aria-hidden
       className={cn(
         "relative hidden shrink-0 place-items-center overflow-hidden rounded-2xl border border-input bg-background lg:grid",
-        "transition-[width,height,opacity,margin] duration-[550ms]",
+        "transition-[width,height,opacity,margin] duration-550",
         EASE,
         "motion-reduce:transition-none",
-        open ? "mr-7.5 size-[124px] opacity-100" : "mr-0 size-0 opacity-0",
+        open ? "mr-7.5 size-31 opacity-100" : "mr-0 size-0 opacity-0",
       )}
     >
       {/* Crosshair and corner ticks: the plate reads as a instrument face
@@ -84,14 +84,14 @@ function Glyph({ item, open }: { item: Apart; open: boolean }) {
       <span className="absolute inset-y-0 left-1/2 w-px bg-white/7" />
       <Corners inset="9px" size="size-1" />
 
-      <span className="grid size-[78px] place-items-center rounded-xl border border-border bg-accent">
+      <span className="grid size-19.5 place-items-center rounded-xl border border-border bg-accent">
         <span className="grid grid-cols-4 gap-0.75">
           {item.dots.map((lit, i) => (
             <i
               key={i}
               style={{ transitionDelay: open ? `${180 + i * 22}ms` : "0ms" }}
               className={cn(
-                "size-[5px] rounded-[1px] transition-colors duration-300 motion-reduce:transition-none",
+                "size-1.25 rounded-[1px] transition-colors duration-300 motion-reduce:transition-none",
                 lit && open ? item.ink : "bg-white/16",
               )}
             />
@@ -141,16 +141,16 @@ export function ApartSection() {
                   <span
                     aria-hidden
                     className={cn(
-                      "absolute inset-0 rounded-2xl border border-input bg-accent shadow-[0_26px_60px_-26px_#000] transition-opacity duration-[450ms]",
+                      "absolute inset-0 rounded-2xl border border-input bg-accent shadow-[0_26px_60px_-26px_#000] transition-opacity duration-450",
                       on ? "opacity-100" : "opacity-0",
                     )}
                   >
-                    <Corners inset="10px" size="size-[7px]" />
+                    <Corners inset="10px" size="size-1.75" />
                   </span>
 
                   <span
                     className={cn(
-                      "relative z-10 grid h-6.5 shrink-0 place-items-center rounded-sm border px-2.5 font-mono text-[11.5px] transition-colors duration-[450ms]",
+                      "relative z-10 grid h-6.5 shrink-0 place-items-center rounded-sm border px-2.5 font-mono text-[11.5px] transition-colors duration-450",
                       on
                         ? "border-white bg-white text-[#0A0A0A]"
                         : "border-border bg-secondary text-white/45",
@@ -162,7 +162,7 @@ export function ApartSection() {
                   <span
                     aria-hidden
                     className={cn(
-                      "relative z-10 h-px shrink-0 bg-input transition-[width] duration-[550ms]",
+                      "relative z-10 h-px shrink-0 bg-input transition-[width] duration-550",
                       EASE,
                       "motion-reduce:transition-none",
                       on ? "w-[clamp(22px,5vw,74px)]" : "w-3.5",
@@ -182,7 +182,7 @@ export function ApartSection() {
                   >
                     <span
                       className={cn(
-                        "block font-mono text-[10px] tracking-[0.18em] uppercase transition-colors duration-[450ms]",
+                        "block font-mono text-[10px] tracking-[0.18em] uppercase transition-colors duration-450",
                         on ? "text-white/45" : "text-white/28",
                       )}
                     >
@@ -192,7 +192,7 @@ export function ApartSection() {
                     <h3
                       id={head}
                       className={cn(
-                        "mt-1.5 text-[clamp(20px,1.95vw,26px)] leading-[1.16] tracking-[-0.025em] transition-colors duration-[450ms]",
+                        "mt-1.5 text-[clamp(20px,1.95vw,26px)] leading-[1.16] tracking-tight transition-colors duration-450",
                         on ? "text-white" : "text-white/68",
                       )}
                     >
@@ -206,7 +206,7 @@ export function ApartSection() {
                       role="region"
                       aria-labelledby={head}
                       className={cn(
-                        "grid transition-[grid-template-rows] duration-[550ms]",
+                        "grid transition-[grid-template-rows] duration-550",
                         EASE,
                         "motion-reduce:transition-none",
                         on ? "grid-rows-[1fr]" : "grid-rows-[0fr]",

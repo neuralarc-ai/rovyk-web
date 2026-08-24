@@ -187,7 +187,7 @@ function NavSide({
         // max-width rather than width: the body has no fixed size, it is
         // simply as wide as its content, so revealing the links is what
         // widens the notch.
-        open ? "max-w-[320px] opacity-100" : "max-w-0 opacity-0",
+        open ? "max-w-80 opacity-100" : "max-w-0 opacity-0",
         open && (side === "l" ? "pr-6.5" : "pl-6.5"),
         "motion-reduce:transition-none",
       )}
@@ -275,7 +275,7 @@ export function NotchNav() {
           // to a stop rather than snapping into place. The transition lives
           // in a class, not the style below, or `motion-reduce` could not
           // reach past the inline declaration to turn it off.
-          "transition-transform duration-[550ms] ease-[cubic-bezier(.52,.52,0,1)] motion-reduce:transition-none",
+          "transition-transform duration-550 ease-[cubic-bezier(.52,.52,0,1)] motion-reduce:transition-none",
           shown ? "pointer-events-auto" : "pointer-events-none",
         )}
         // Centring travels with it, so both axes have to be one transform:

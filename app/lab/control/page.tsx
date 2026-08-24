@@ -64,7 +64,7 @@ function SpecCard({ m, className }: { m: Mechanism; className?: string }) {
             key={k}
             className="flex items-baseline gap-5 border-t border-border py-2.5"
           >
-            <dt className="w-[128px] shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase">
+            <dt className="w-32 shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase">
               {k}
             </dt>
             <dd className="text-[13.5px] font-light text-white/85">{v}</dd>
@@ -82,7 +82,7 @@ function EditorialCard({ m, className }: { m: Mechanism; className?: string }) {
     <div className={cn("relative overflow-hidden py-2", className)}>
       <span
         aria-hidden
-        className="pointer-events-none absolute -top-6 -left-3 font-mono text-[128px] leading-none font-medium tracking-[-0.05em] text-white/[0.045] select-none"
+        className="pointer-events-none absolute -top-6 -left-3 font-mono text-[128px] leading-none font-medium tracking-tighter text-white/4.5 select-none"
       >
         {m.n}
       </span>
@@ -195,10 +195,10 @@ export default function Page() {
                 >
                   <Icon
                     weight="light"
-                    className="mb-auto size-[27px] text-white/80"
+                    className="mb-auto size-6.75 text-white/80"
                     aria-hidden
                   />
-                  <h3 className="mt-8 mb-3 text-[22px] leading-[1.2] tracking-[-0.025em]">
+                  <h3 className="mt-8 mb-3 text-[22px] leading-[1.2] tracking-tight">
                     {m.title}
                   </h3>
                   <p className="text-sm leading-[1.6] font-light text-white/68">

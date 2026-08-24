@@ -355,7 +355,7 @@ export function IntroSection() {
     <section
       ref={root}
       aria-label="Hey Rovyk, what can you do for me?"
-      className="relative h-[100svh] w-full overflow-hidden bg-black"
+      className="relative h-svh w-full overflow-hidden bg-black"
     >
       {/* Pool of light the orb sits in. */}
       <div
@@ -481,7 +481,7 @@ export function IntroSection() {
         <div className="flex flex-col items-center gap-2 font-mono text-[9.5px] uppercase tracking-[0.22em] text-white/36">
           <span
             aria-hidden
-            className="animate-scroll-cue h-6 w-px bg-gradient-to-b from-white/30 to-transparent"
+            className="animate-scroll-cue h-6 w-px bg-linear-to-b from-white/30 to-transparent"
           />
           Scroll
         </div>

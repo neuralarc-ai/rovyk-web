@@ -54,7 +54,7 @@ function SpecCard({ m, className }: { m: Mechanism; className?: string }) {
               key={label}
               className="flex items-baseline gap-5 border-t border-border py-2.5"
             >
-              <dt className="w-[128px] shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase">
+              <dt className="w-32 shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase">
                 {label}
               </dt>
               <dd className="text-[13.5px] font-light text-white/85">

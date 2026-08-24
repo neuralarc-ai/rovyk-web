@@ -111,12 +111,12 @@ function Detail({ tool }: { tool: IndexedTool }) {
     <div className="grid md:grid-cols-[1fr_minmax(330px,40%)]">
       {/* A floor, so the panel does not jolt between a one-line summary and
           a two-line one. */}
-      <div className="min-h-[178px] px-8.5 py-8">
+      <div className="min-h-44.5 px-8.5 py-8">
         <div className="mb-4 flex items-center gap-3 font-mono text-[10.5px] tracking-[0.14em] text-white/45 uppercase">
           <span>
             {String(tool.groupIndex + 1).padStart(2, "0")} &middot; {tool.group}
           </span>
-          <i aria-hidden className="size-[3px] rounded-full bg-white/22" />
+          <i aria-hidden className="size-0.75 rounded-full bg-white/22" />
           <span className="text-white/34">
             {String(tool.index + 1).padStart(2, "0")} / {N}
           </span>
@@ -126,7 +126,7 @@ function Detail({ tool }: { tool: IndexedTool }) {
           {tool.name}
         </h3>
 
-        <p className="max-w-[46ch] text-[clamp(15px,1.4vw,19px)] leading-[1.5] font-light text-white/72">
+        <p className="max-w-[46ch] text-[clamp(15px,1.4vw,19px)] leading-normal font-light text-white/72">
           {tool.summary}
         </p>
       </div>
@@ -492,7 +492,7 @@ export function ToolsSection() {
           <span
             ref={line}
             aria-hidden
-            className="absolute top-0 w-px -translate-x-1/2 bg-gradient-to-b from-white/55 to-white/18"
+            className="absolute top-0 w-px -translate-x-1/2 bg-linear-to-b from-white/55 to-white/18"
             style={{ height: LEAD, left: `${atPercent(HERO_TOOL)}%` }}
           />
 
@@ -574,7 +574,7 @@ export function ToolsSection() {
                           }}
                           className={cn(
                             "w-0.5 origin-bottom rounded-full transition-[width] duration-200",
-                            "group-hover/tick:w-[3px] group-focus-visible/tick:w-[3px]",
+                            "group-hover/tick:w-0.75 group-focus-visible/tick:w-0.75",
                             t.gated ? "bg-brand-red-text" : "bg-white",
                           )}
                           style={{ height: TICK_MAX }}
@@ -621,11 +621,11 @@ export function ToolsSection() {
           <span>
             <b className="font-normal text-white/72">59</b> tools
           </span>
-          <i aria-hidden className="size-[3px] rounded-full bg-white/22" />
+          <i aria-hidden className="size-0.75 rounded-full bg-white/22" />
           <span>
             <b className="font-normal text-white/72">10</b> groups
           </span>
-          <i aria-hidden className="size-[3px] rounded-full bg-white/22" />
+          <i aria-hidden className="size-0.75 rounded-full bg-white/22" />
           <span className="flex items-center gap-2">
             <i aria-hidden className="size-1.5 rounded-full bg-brand-red" />
             the gate stands in front of four of them

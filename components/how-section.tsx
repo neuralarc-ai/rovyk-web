@@ -339,7 +339,7 @@ export function HowSection() {
                     aria-hidden
                     className={cn(
                       "absolute inset-0 rounded-xl border border-input bg-accent shadow-[0_22px_52px_-24px_#000]",
-                      "transition-[opacity,transform] duration-[450ms] ease-[cubic-bezier(.52,.52,0,1)]",
+                      "transition-[opacity,transform] duration-450 ease-[cubic-bezier(.52,.52,0,1)]",
                       on
                         ? "scale-100 opacity-100"
                         : "scale-[.99] opacity-0 group-hover/step:opacity-40",
@@ -400,7 +400,7 @@ export function HowSection() {
                     </h3>
                     <p
                       className={cn(
-                        "max-w-[34ch] text-[13.4px] leading-[1.5] font-light transition-colors duration-400",
+                        "max-w-[34ch] text-[13.4px] leading-normal font-light transition-colors duration-400",
                         on ? "text-white/68" : "text-white/45",
                       )}
                     >
@@ -417,7 +417,7 @@ export function HowSection() {
             role="tabpanel"
             id={PANEL_ID}
             aria-labelledby={TAB_ID(active)}
-            className="relative flex min-h-[560px] flex-col overflow-hidden bg-background"
+            className="relative flex min-h-140 flex-col overflow-hidden bg-background"
           >
             {/* Outlined cells rather than hairlines — a frame the screen sits
                 inside, dissolving before it reaches the top or bottom edge. */}
@@ -474,7 +474,7 @@ export function HowSection() {
             <div className="relative z-30 flex items-center border-t border-border bg-card/40 px-16 py-4.5">
               <p
                 key={active}
-                className="animate-in fade-in-0 slide-in-from-bottom-2 flex-1 text-center text-[clamp(14px,1.1vw,15.5px)] leading-[1.45] font-light tracking-[-0.006em] text-balance text-white/88 duration-[420ms] ease-[cubic-bezier(.52,.52,0,1)]"
+                className="animate-in fade-in-0 slide-in-from-bottom-2 flex-1 text-center text-[clamp(14px,1.1vw,15.5px)] leading-[1.45] font-light tracking-[-0.006em] text-balance text-white/88 duration-420 ease-[cubic-bezier(.52,.52,0,1)]"
               >
                 {STEPS[active].caption}
               </p>
