@@ -1,16 +1,14 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   RovykWordmark,
   WORDMARK_ASPECT,
   WORDMARK_R_SHARE,
 } from "@/components/rovyk-wordmark";
 import { cn } from "@/lib/utils";
-
-gsap.registerPlugin(ScrollTrigger);
 
 /* ────────────────────────────────────────────────────────────────────
    The notch nav.
@@ -43,8 +41,12 @@ const EASE = "cubic-bezier(.52,.52,0,1)";
 /** Leaving and re-entering across the concave gap should not re-trigger. */
 const CLOSE_DELAY_MS = 120;
 
-/** Reveal once the intro screen starts moving away. */
-const REVEAL_AT = 0.12;
+/**
+ * How long after mount the notch drops in. Long enough to read as an
+ * entrance rather than as part of the first paint, short enough that nobody
+ * reaches for a nav that is not there yet.
+ */
+const REVEAL_DELAY_MS = 900;
 
 /**
  * Where the notch parks when it is away: far enough up that its bottom edge
@@ -163,7 +165,20 @@ function Fillet({ side }: { side: "l" | "r" }) {
   );
 }
 
-function NavSide({ side, open }: { side: "l" | "r"; open: boolean }) {
+/** The links are anchors into the home page. Read from anywhere else — the
+ *  legal documents, for now — they have to carry the route with them or they
+ *  are five links that do nothing. */
+const linkHref = (href: string, home: boolean) => (home ? href : `/${href}`);
+
+function NavSide({
+  side,
+  open,
+  home,
+}: {
+  side: "l" | "r";
+  open: boolean;
+  home: boolean;
+}) {
   const links = side === "l" ? LINKS_L : LINKS_R;
   return (
     <div
@@ -186,7 +201,7 @@ function NavSide({ side, open }: { side: "l" | "r"; open: boolean }) {
       {links.map((link) => (
         <a
           key={link.href}
-          href={link.href}
+          href={linkHref(link.href, home)}
           className="inline-flex h-7.5 items-center rounded-sm px-1 transition-colors duration-200 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           {link.label}
@@ -197,18 +212,23 @@ function NavSide({ side, open }: { side: "l" | "r"; open: boolean }) {
 }
 
 export function NotchNav() {
+  const home = usePathname() === "/";
   const [shown, setShown] = useState(false);
   const [open, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  /* Appears once the intro screen begins to leave. */
+  /* The entrance belongs to the page arriving, not to the reader scrolling.
+     Tying it to scroll meant the nav was absent until you had already moved
+     past something — no use on a page you land halfway down, and none at all
+     on one you were reading rather than scrolling. It drops out of the bezel
+     once, shortly after mount, and then stays.
+
+     Under reduced motion the slide is off anyway, so waiting would only make
+     it appear late for no reason. */
   useEffect(() => {
-    const trigger = ScrollTrigger.create({
-      start: 0,
-      end: "max",
-      onUpdate: (self) => setShown(self.scroll() > innerHeight * REVEAL_AT),
-    });
-    return () => trigger.kill();
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const t = setTimeout(() => setShown(true), still ? 0 : REVEAL_DELAY_MS);
+    return () => clearTimeout(t);
   }, []);
 
   useEffect(
@@ -279,10 +299,10 @@ export function NotchNav() {
           className="relative flex items-center bg-black px-5.5"
           style={{ height: NOTCH_H }}
         >
-          <NavSide side="l" open={open} />
+          <NavSide side="l" open={open} home={home} />
 
-          <a
-            href="#"
+          <Link
+            href="/"
             aria-label="Rovyk — home"
             className="flex shrink-0 items-center px-0.5 text-white transition-opacity duration-200 hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
@@ -316,9 +336,9 @@ export function NotchNav() {
                 }
               />
             </div>
-          </a>
+          </Link>
 
-          <NavSide side="r" open={open} />
+          <NavSide side="r" open={open} home={home} />
 
           {/* Lit underside along the body. The fillets continue it around
               their curves and fade it out at the bar, so the line traces the

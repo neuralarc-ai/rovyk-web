@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DownloadButton, GhostButton } from "@/components/cta-button";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { RovykWordmark } from "@/components/rovyk-wordmark";
@@ -60,15 +61,17 @@ const LINKS: { heading: string; items: [label: string, href: string][] }[] = [
       ["Control", "#safe"],
       ["Requirements", "#req"],
       ["FAQ", "#faq"],
-      ["Privacy", "#"],
     ],
   },
   {
-    heading: "social",
+    /* Where the social links were. A product asking for Accessibility
+       access and an unsandboxed install owes the reader these two more
+       than it owes them a follow button — and we had neither an account
+       to link nor a community to send them to. */
+    heading: "legal",
     items: [
-      ["X", "#"],
-      ["GitHub", "#"],
-      ["Discord", "#"],
+      ["Terms of Use", "/terms"],
+      ["Privacy Policy", "/privacy"],
     ],
   },
 ];
@@ -92,9 +95,9 @@ export function SiteFooter() {
         {/* ── Who this is, and how to reach them ──────────────────── */}
         <div className={cn(BAND, "items-start pt-14 pb-12")}>
           <div>
-            <RovykWordmark className="mb-[18px] h-[clamp(21px,2.2vw,27px)] text-white" />
+            <RovykWordmark className="mb-5 h-[clamp(20px,2.2vw,32px)] text-white" />
 
-            <p className="max-w-[40ch] text-sm leading-[1.65] font-light text-white/58">
+            <p className="max-w-[44ch] text-sn leading-[1.65] font-light text-white/58">
               A voice agent that lives in the notch and operates your Mac. Local
               by default, cloud by choice, and honest about both.
             </p>
@@ -114,7 +117,7 @@ export function SiteFooter() {
               href="mailto:hello@rovyk.app"
               className="text-[clamp(20px,2.4vw,33px)] tracking-[-0.028em] transition-opacity duration-200 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
             >
-              hello@rovyk.app
+              hello@neuralarc.ai
             </a>
           </div>
         </div>
@@ -138,15 +141,21 @@ export function SiteFooter() {
             {LINKS.map((column) => (
               <div key={column.heading} className="flex flex-col md:items-end">
                 <Kicker className="mb-4">{column.heading}</Kicker>
-                {column.items.map(([label, href]) => (
-                  <a
-                    key={label}
-                    href={href}
-                    className="py-[5px] text-sm text-white/68 transition-colors duration-200 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                  >
-                    {label}
-                  </a>
-                ))}
+                {column.items.map(([label, href]) => {
+                  /* Hashes stay plain anchors — Lenis owns those and a
+                     router push would only get in the way. A real route
+                     is a route, and gets the router. */
+                  const El = href.startsWith("/") ? Link : "a";
+                  return (
+                    <El
+                      key={label}
+                      href={href}
+                      className="py-[5px] text-sm text-white/68 transition-colors duration-200 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    >
+                      {label}
+                    </El>
+                  );
+                })}
               </div>
             ))}
           </nav>

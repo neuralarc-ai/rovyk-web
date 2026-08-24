@@ -23,6 +23,13 @@ import { cn } from "@/lib/utils";
 const BAND = "border-t border-border";
 const LABEL = "font-mono text-[10px] tracking-[0.18em] text-white/34 uppercase";
 
+/* The three marks are deliberately different heights — a die, a logo, a
+   bar meter. Left to size themselves they would push each column's value,
+   rule and note to a different baseline, so the row they sit in is given
+   the height of the tallest mark and everything is centred inside it.
+   One constant, so the row and the die cannot drift apart. */
+const MARK_SIZE = "h-12";
+
 /* ── The three little diagrams ─────────────────────────────────────── */
 
 /**
@@ -54,7 +61,12 @@ function ChipMark() {
     <span
       aria-hidden
       style={{ boxShadow: CHIP_GLOW }}
-      className=" size-12 shrink-0 place-items-center rounded border flex items-center justify-center gap-1 border-white/12 bg-black p-1"
+      className={cn(
+        "flex aspect-square shrink-0 items-center justify-center gap-1",
+        "rounded border border-white/12 bg-black p-1",
+        "font-mono text-[13px] leading-none text-white",
+        MARK_SIZE,
+      )}
     >
       <AppleLogo size={12} className="text-white" />
       <span>M1</span>
@@ -65,7 +77,7 @@ function ChipMark() {
 /** Eight segments: four for the floor, all eight for the recommendation. */
 function MemoryMark() {
   return (
-    <span aria-hidden className="flex h-7 items-end gap-0.75">
+    <span aria-hidden className="flex h-7 items-end gap-[3px]">
       {Array.from({ length: 8 }, (_, i) => (
         <i
           key={i}
@@ -109,11 +121,11 @@ const KEYED = ["Web browsing", "Web search", "The strongest reasoning"];
 export function RequirementsSection() {
   return (
     <section id="req" className="relative py-[clamp(96px,12.5vh,158px)]">
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-[1240px] px-6 sm:px-10">
         <SectionHead
           eyebrow="requirements"
           title="What it needs. What it will not do."
-          className="mb-16"
+          className="mb-[62px]"
         >
           Published in full, because a tool asking for this much access should
           tell you exactly where it stops.
@@ -136,8 +148,15 @@ export function RequirementsSection() {
                   i > 0 && "border-t border-border md:border-t-0 md:border-l",
                 )}
               >
-                <div className="mb-5 flex items-center justify-between">
-                  {spec.mark}
+                {/* Fixed height, marks centred in it: the row is the same
+                    in all three columns whatever is standing in it. */}
+                <div
+                  className={cn(
+                    "mb-5 flex items-center justify-between",
+                    MARK_SIZE,
+                  )}
+                >
+                  <span className="flex h-full items-center">{spec.mark}</span>
                   <span className={LABEL}>{spec.k}</span>
                 </div>
                 <p className="text-[clamp(20px,1.9vw,25px)] leading-[1.1] tracking-[-0.028em] text-white">
@@ -146,7 +165,9 @@ export function RequirementsSection() {
                 <p className="mt-1 text-[13.5px] font-light text-white/52">
                   {spec.sub}
                 </p>
-                <p className="mt-4 border-t border-border pt-3.5 text-[12.5px] leading-[1.5] font-light text-white/45">
+                {/* mt-auto pins the note to the bottom, so the hairline
+                    lines up across columns even if a value wraps. */}
+                <p className="mt-auto border-t border-border pt-3.5 text-[12.5px] leading-[1.5] font-light text-white/45">
                   {spec.note}
                 </p>
               </div>
@@ -158,7 +179,7 @@ export function RequirementsSection() {
               in the offline column rather than in a footnote, since it
               is the one thing a reader most needs to weigh. */}
           <div className={cn("grid md:grid-cols-2", BAND)}>
-            <div className="px-6 py-7">
+            <div className="flex flex-col px-6 py-7">
               <div className="mb-5 flex items-center gap-2.5">
                 <i
                   aria-hidden
@@ -170,7 +191,7 @@ export function RequirementsSection() {
                 {OFFLINE.map((item) => (
                   <li
                     key={item}
-                    className="flex items-center gap-3 text-sm font-light text-white/85"
+                    className="flex items-center gap-3 text-[14px] font-light text-white/85"
                   >
                     <i
                       aria-hidden
@@ -180,13 +201,13 @@ export function RequirementsSection() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-5 border-t border-border pt-4 text-[13px] leading-[1.55] font-light text-white/52">
+              <p className="mt-auto border-t border-border pt-4 text-[13px] leading-[1.55] font-light text-white/52">
                 Reasoning still runs on-device, and is measurably weaker on
                 complex, multi-step work.
               </p>
             </div>
 
-            <div className="border-t border-border px-6 py-7 md:border-t-0 md:border-l">
+            <div className="flex flex-col border-t border-border px-6 py-7 md:border-t-0 md:border-l">
               <div className="mb-5 flex items-center gap-2.5">
                 <i
                   aria-hidden
@@ -198,7 +219,7 @@ export function RequirementsSection() {
                 {KEYED.map((item) => (
                   <li
                     key={item}
-                    className="flex items-center gap-3 text-sm font-light text-white/85"
+                    className="flex items-center gap-3 text-[14px] font-light text-white/85"
                   >
                     <i
                       aria-hidden
@@ -208,7 +229,7 @@ export function RequirementsSection() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-5 border-t border-border pt-4 text-[13px] leading-[1.55] font-light text-white/52">
+              <p className="mt-auto border-t border-border pt-4 text-[13px] leading-[1.55] font-light text-white/52">
                 Your provider, your key, your bill. Nothing is billed through
                 us, and none of it is on by default.
               </p>
