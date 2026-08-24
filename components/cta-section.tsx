@@ -52,13 +52,6 @@ export function CtaSection() {
 
         <div className="mt-7.5 flex flex-wrap justify-center gap-3">
           <DownloadButton>Download for Apple Silicon</DownloadButton>
-          <GhostButton href="#features">See all 59 capabilities</GhostButton>
-        </div>
-
-        <div className="mt-4 flex gap-4 text-xs text-white/36">
-          {META.map((fact) => (
-            <span key={fact}>{fact}</span>
-          ))}
         </div>
       </div>
     </section>

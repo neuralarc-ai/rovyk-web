@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
+import { SITE_ORIGIN } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { NotchNav } from "@/components/notch-nav";
 import { SmoothScroll } from "@/components/smooth-scroll";
@@ -19,6 +20,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // Every absolute URL Next emits — the canonical link, og:url, og:image —
+  // is resolved against this, so the origin is stated once, from the env
+  // var, and every page below can keep writing relative paths.
+  metadataBase: SITE_ORIGIN,
+  alternates: { canonical: "/" },
   title: "Rovyk: voice agent for macOS",
   description:
     "Talk to your Mac and watch it work. Rovyk lives in the menu bar and operates your machine. Local by default.",

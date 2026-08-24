@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { SITE_URL } from "@/lib/site";
 import { waitlistSchema } from "@/lib/validators";
 import { confirmationEmail, notificationEmail } from "@/lib/waitlist-email";
 
@@ -93,12 +94,6 @@ function transport() {
   });
 }
 
-/** The canonical origin, as the confirmation should name it. A localhost
- *  value will not resolve in a real inbox — set `NEXT_PUBLIC_SITE_URL`. */
-function siteOrigin(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL || "https://rovyk.app";
-}
-
 export async function POST(request: Request) {
   try {
     const missing = missingEnv();
@@ -155,7 +150,7 @@ export async function POST(request: Request) {
       // First name only. Also drops anything a "name" was carrying after
       // the first token, which is where injection attempts live.
       firstName: name.split(" ")[0] || name,
-      site: siteOrigin(),
+      site: SITE_URL,
     });
 
     /* Both sends are attempted, but only one of them decides the answer.

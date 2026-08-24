@@ -29,7 +29,7 @@ export function SectionHead({
         <span className="text-white/36">]</span>
       </span>
 
-      <h2 className="max-w-[23ch] text-[clamp(32px,4.3vw,58px)] leading-[1.06] font-medium tracking-[-0.035em]">
+      <h2 className="max-w-[20ch] text-[clamp(32px,4.3vw,58px)] leading-[1.06] font-medium tracking-[-0.035em]">
         {title}
       </h2>
 
