@@ -438,7 +438,7 @@ export function ToolsSection() {
           title="Ten groups. Fifty-nine tools."
           className="mb-16"
         >
-          You never name one. Pick any tick to see what it reaches — and what it
+          You never name one. Pick any tick to see what it reaches, and what it
           has to ask you for first.
         </SectionHead>
 

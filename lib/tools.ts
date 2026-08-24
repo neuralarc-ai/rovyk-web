@@ -118,7 +118,7 @@ export const TOOL_GROUPS: ToolGroup[] = [
       // can land on a Delete button in someone else's app. Gated or not?
       {
         name: "ax_click",
-        summary: "A real synthesised click — not a guess at a screenshot.",
+        summary: "A real synthesised click, not a guess at a screenshot.",
         access: "writes",
         needs: "Accessibility permission",
       },

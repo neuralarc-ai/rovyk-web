@@ -83,7 +83,7 @@ const MONO =
    cannot afford to do in writing. */
 
 const LEDE =
-  "You are on the list for Rovyk — the voice agent that lives in your Mac's menu bar and actually operates the machine.";
+  "You are on the list for Rovyk, the voice agent that lives in your Mac's menu bar and actually operates the machine.";
 
 const PROCESS =
   "There is no date to give you, and we would rather not invent one. Invites go out in batches as seats open, and yours arrives at this address.";
@@ -92,7 +92,7 @@ const PROCESS =
 const CAVEAT =
   "Rovyk needs Apple Silicon and macOS 27 or later. Intel Macs are not supported.";
 
-const SIGN_OFF = "— Team Rovyk";
+const SIGN_OFF = "Team Rovyk";
 
 export const CONFIRMATION_SUBJECT = "You are on the Rovyk waitlist";
 
@@ -357,7 +357,7 @@ function hudHtml({ firstName, site }: ConfirmationData): string {
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             ${hudRow("done", "Address received")}
             ${hudRow("done", "Added to the waitlist")}
-            ${hudRow("pending", "Invite — goes out as seats open")}
+            ${hudRow("pending", "Invite: goes out as seats open")}
           </table>
         </td></tr>
       </table>
@@ -532,7 +532,7 @@ export function notificationEmail(fields: NotificationFields): {
 } {
   const row = (label: string, value: string) => `<tr>
     <td style="padding:11px 0;border-top:1px solid ${DARK.edgeSoft};font:400 10.5px ${MONO};letter-spacing:.16em;text-transform:uppercase;color:${DARK.faint};width:92px;vertical-align:top;">${escapeHtml(label)}</td>
-    <td style="padding:11px 0;border-top:1px solid ${DARK.edgeSoft};font:400 14px/1.5 ${SANS};color:${DARK.ink};vertical-align:top;">${escapeHtml(value) || `<span style="color:${DARK.ghost};">&mdash;</span>`}</td>
+    <td style="padding:11px 0;border-top:1px solid ${DARK.edgeSoft};font:400 14px/1.5 ${SANS};color:${DARK.ink};vertical-align:top;">${escapeHtml(value) || `<span style="color:${DARK.ghost};">not given</span>`}</td>
   </tr>`;
 
   const html = `<!doctype html>
@@ -557,8 +557,8 @@ export function notificationEmail(fields: NotificationFields): {
     text: [
       `Name:  ${fields.name}`,
       `Email: ${fields.email}`,
-      `Mac:   ${fields.mac || "—"}`,
-      `Use:   ${fields.use || "—"}`,
+      `Mac:   ${fields.mac || "not given"}`,
+      `Use:   ${fields.use || "not given"}`,
     ].join("\n"),
     html,
   };

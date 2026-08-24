@@ -340,7 +340,7 @@ export function OrbSection() {
                     rail.current[i] = el;
                   }}
                   onClick={() => jump(node.beat)}
-                  aria-label={`${ORB_BEATS[node.beat].label} — ${ORB_BEATS[node.beat].title}`}
+                  aria-label={`${ORB_BEATS[node.beat].label}: ${ORB_BEATS[node.beat].title}`}
                   aria-current={active === node.beat ? "true" : undefined}
                   className="group/stop flex h-2 cursor-pointer items-center justify-end gap-1.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                 >

@@ -24,7 +24,7 @@ export const PRIVACY: LegalDoc = {
   eyebrow: "privacy policy",
   title: "What reaches us, and what never does",
   updated: "24 August 2026",
-  lede: "Rovyk has no backend. Most of this policy is an account of the things that stay on your Mac — and then an honest, short list of what a company with a website and a mailing list does collect.",
+  lede: "Rovyk has no backend. Most of this policy is an account of the things that stay on your Mac, and then an honest, short list of what a company with a website and a mailing list does collect.",
 
   sections: [
     {
@@ -84,7 +84,7 @@ export const PRIVACY: LegalDoc = {
           rows: [
             [
               "Website",
-              "Ordinary server logs — IP address, user agent, page and timestamp — kept for security and to keep the site up.",
+              "Ordinary server logs (IP address, user agent, page and timestamp), kept for security and to keep the site up.",
             ],
             [
               "Newsletter",
@@ -145,7 +145,7 @@ export const PRIVACY: LegalDoc = {
           ],
         },
         {
-          p: "Turning a feature off, or removing its key, ends that flow at once. Read the policy of any provider you connect — on that leg of the journey, they are the ones holding your data.",
+          p: "Turning a feature off, or removing its key, ends that flow at once. Read the policy of any provider you connect; on that leg of the journey, they are the ones holding your data.",
         },
       ],
     },
@@ -285,13 +285,13 @@ export const PRIVACY: LegalDoc = {
       title: "Your rights",
       blocks: [
         {
-          p: "Depending on where you live, you can ask us to give you a copy of your personal data, correct it, delete it where nothing legal requires us to keep it, restrict or object to how we use it, hand it to another provider, or withdraw a consent you gave — which does not undo what was done before you withdrew it.",
+          p: "Depending on where you live, you can ask us to give you a copy of your personal data, correct it, delete it where nothing legal requires us to keep it, restrict or object to how we use it, hand it to another provider, or withdraw a consent you gave, which does not undo what was done before you withdrew it.",
         },
         {
           p: "You are also entitled not to be subject to a decision with legal or similarly significant effect taken solely by automated means. We take none.",
         },
         {
-          p: `Write to ${ENTITY.email}. We will answer within thirty days, it costs nothing, and we will not treat you differently for asking. If our answer does not satisfy you, you can complain to your local data protection authority — though we would rather you came to us first.`,
+          p: `Write to ${ENTITY.email}. We will answer within thirty days, it costs nothing, and we will not treat you differently for asking. If our answer does not satisfy you, you can complain to your local data protection authority, though we would rather you came to us first.`,
         },
       ],
     },

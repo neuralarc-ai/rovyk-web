@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rovyk — voice agent for macOS",
+  title: "Rovyk: voice agent for macOS",
   description:
     "Talk to your Mac and watch it work. Rovyk lives in the menu bar and operates your machine. Local by default.",
 };

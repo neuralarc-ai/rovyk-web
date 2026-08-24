@@ -207,7 +207,7 @@ export function WaitlistModal({
                 You are on the list.
               </Dialog.Title>
               <Dialog.Description className="mt-3.5 text-[14.5px] leading-[1.6] font-light text-white/68">
-                Check your inbox — there is a note confirming it. Invites go
+                Check your inbox: there is a note confirming it. Invites go
                 out in batches as seats open, and yours will arrive at the same
                 address.
               </Dialog.Description>
@@ -223,7 +223,7 @@ export function WaitlistModal({
               </Dialog.Title>
               <Dialog.Description className="mt-3 text-[14.5px] leading-[1.6] font-light text-white/68">
                 Rovyk is not out yet. Leave an address and we will write when
-                there is a build worth your time — no date invented, no
+                there is a build worth your time. No date invented, no
                 newsletter.
               </Dialog.Description>
 
@@ -240,7 +240,7 @@ export function WaitlistModal({
                       >
                         {field.label}
                         {!field.required && (
-                          <span className="text-white/32"> — optional</span>
+                          <span className="text-white/32"> (optional)</span>
                         )}
                       </label>
                       <input
@@ -312,7 +312,7 @@ export function WaitlistModal({
               <p className="mt-1 text-[11.5px] leading-[1.55] text-white/36">
                 Neural Arc, Inc. stores what you type here only to email you
                 about Rovyk. No list provider, no tracking, no other use. Ask
-                us to delete it at any time — see the{" "}
+                us to delete it at any time; see the{" "}
                 <Link
                   href="/privacy"
                   className="border-b border-input pb-px text-white/58 transition-colors hover:border-brand-indigo hover:text-white"

@@ -31,7 +31,7 @@ export const TERMS: LegalDoc = {
       title: "The agreement",
       blocks: [
         {
-          p: `These terms are a contract between you and ${ENTITY.legal}, a ${ENTITY.incorporated} corporation trading as Rovyk. They take effect when you download, install or use Rovyk, whichever happens first. There is no account to create and nothing to sign — installing the application is acceptance.`,
+          p: `These terms are a contract between you and ${ENTITY.legal}, a ${ENTITY.incorporated} corporation trading as Rovyk. They take effect when you download, install or use Rovyk, whichever happens first. There is no account to create and nothing to sign; installing the application is acceptance.`,
         },
         {
           p: "If you install Rovyk on a machine your employer owns, or run it as part of your work, you confirm you are allowed to agree to these terms on that organisation's behalf. Where that is the case, “you” means both you and that organisation.",
@@ -47,7 +47,7 @@ export const TERMS: LegalDoc = {
       title: "What Rovyk is",
       blocks: [
         {
-          p: "Rovyk is a native macOS application that runs in the menu bar. It listens for a wake word, turns speech into text on your Mac, decides what to do, and then does it — opening and driving applications, changing system settings, reading and organising folders you have granted, handling mail and calendar, browsing the web, and operating third-party software through the macOS Accessibility API by synthesising clicks and keystrokes.",
+          p: "Rovyk is a native macOS application that runs in the menu bar. It listens for a wake word, turns speech into text on your Mac, decides what to do, and then does it: opening and driving applications, changing system settings, reading and organising folders you have granted, handling mail and calendar, browsing the web, and operating third-party software through the macOS Accessibility API by synthesising clicks and keystrokes.",
         },
         {
           p: "Two things follow from that, and both are conditions of using it:",
@@ -91,7 +91,7 @@ export const TERMS: LegalDoc = {
       title: "The permissions you grant",
       blocks: [
         {
-          p: "macOS requires each of the following to be granted separately, by you, in System Settings. Rovyk asks at the point it needs one, and every one of them can be revoked at any time — the rest of the application keeps working without it.",
+          p: "macOS requires each of the following to be granted separately, by you, in System Settings. Rovyk asks at the point it needs one, and every one of them can be revoked at any time; the rest of the application keeps working without it.",
         },
         {
           rows: [
@@ -150,7 +150,7 @@ export const TERMS: LegalDoc = {
           list: [
             "break the law, infringe anyone's rights, or produce material that is illegal to produce;",
             "reach a computer, account or file you are not authorised to reach, on your machine or anyone else's;",
-            "automate around another service's terms — defeating rate limits, access controls, paywalls or bot protections, or passing as a human where a service requires disclosure;",
+            "automate around another service's terms: defeating rate limits, access controls, paywalls or bot protections, or passing as a human where a service requires disclosure;",
             "make decisions with a legal or similarly significant effect on a person without meaningful human review;",
             "handle credentials, payment card numbers or other material the application was not built to handle;",
             "run it unattended on machines you do not control, or resell access to it.",
@@ -174,7 +174,7 @@ export const TERMS: LegalDoc = {
         },
         {
           list: [
-            "Keep backups. A confirmation gate sits in front of destructive actions, written in code and independent of the model — but it cannot undo something you approved.",
+            "Keep backups. A confirmation gate sits in front of destructive actions, written in code and independent of the model, but it cannot undo something you approved.",
             "Read what it is asking before you approve it.",
             "Check consequential output. A model can be wrong in a way that reads as certain, and a synthesised click can land on the wrong control.",
           ],
@@ -206,7 +206,7 @@ export const TERMS: LegalDoc = {
           p: "Rovyk may check for updates and offer to install them. We recommend taking them; security fixes arrive that way.",
         },
         {
-          p: "The application will change. Capabilities may be added, altered or withdrawn — sometimes because a provider withdrew something first, sometimes because macOS changed underneath it. We will avoid removing something you obviously depend on without notice, but we do not promise that any particular capability will exist forever.",
+          p: "The application will change. Capabilities may be added, altered or withdrawn, sometimes because a provider withdrew something first, sometimes because macOS changed underneath it. We will avoid removing something you obviously depend on without notice, but we do not promise that any particular capability will exist forever.",
         },
       ],
     },
@@ -216,7 +216,7 @@ export const TERMS: LegalDoc = {
       title: "Intellectual property",
       blocks: [
         {
-          p: "We own Rovyk — the application, its configuration and prompts, the documentation, the name, the mark and this website. These terms transfer none of it.",
+          p: "We own Rovyk: the application, its configuration and prompts, the documentation, the name, the mark and this website. These terms transfer none of it.",
         },
         {
           p: "You own what you make with it. Files it writes, messages it drafts and work it produces on your machine are yours. We have no rights in them, and no access to them.",
@@ -254,7 +254,7 @@ export const TERMS: LegalDoc = {
           p: "Each party's total liability under these terms is capped at the greater of what you paid us in the twelve months before the event giving rise to the claim, or one hundred United States dollars.",
         },
         {
-          p: "Those caps do not apply to amounts you owe us, to your indemnity below, or to any liability that cannot lawfully be limited — including death or personal injury caused by negligence, and fraud.",
+          p: "Those caps do not apply to amounts you owe us, to your indemnity below, or to any liability that cannot lawfully be limited, including death or personal injury caused by negligence, and fraud.",
         },
       ],
     },
@@ -283,7 +283,7 @@ export const TERMS: LegalDoc = {
           p: "We can end it if you break these terms or if the law requires us to. When it ends, your licence ends with it and you should remove the application from your machines.",
         },
         {
-          p: "The sections meant to outlive the agreement — intellectual property, warranties, liability, indemnity and governing law — do.",
+          p: "The sections meant to outlive the agreement (intellectual property, warranties, liability, indemnity and governing law) do.",
         },
       ],
     },

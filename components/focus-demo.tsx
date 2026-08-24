@@ -423,7 +423,7 @@ export function FocusDemo({ className }: { className?: string }) {
         {mode === "voice" ? (
           <>
             <span className="flex-1 truncate text-[12.5px] text-white/28">
-              Listening — say what you need
+              Listening: say what you need
             </span>
             {/* Stopping the mic is exactly what switching to chat means, so
                 the control does the real thing rather than miming it. */}
