@@ -37,6 +37,13 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 type HudView = "notch" | "compact" | "exp" | "idle";
 type Tone = "idle" | "on" | "work" | "say";
 
+/**
+ * One held moment of a run, rather than the whole loop. The "how it works"
+ * section walks these one at a time, so the HUD has to be able to sit at a
+ * beat and stay there instead of always playing through.
+ */
+export type HudBeat = "listening" | "thinking" | "gate" | "speaking";
+
 /** The notch's four sizes. Width and radius are fixed per view; height is
  *  not — expanded, it depends on how long the flow's chain is. */
 const VIEW_SHELL: Record<HudView, string> = {
@@ -152,12 +159,69 @@ function ChromeIcon({
   );
 }
 
+/** Where the HUD sits at a given beat, derived from whatever flow it holds. */
+function beatState(flow: HudFlow, beat: HudBeat): HudState {
+  const total = flow.tasks.length;
+  const base = { ...START, view: "exp" as const };
+  switch (beat) {
+    case "listening":
+      return {
+        ...base,
+        orb: "listening",
+        label: "Listening",
+        tone: "on",
+        variant: "said",
+        typing: true,
+      };
+    case "thinking":
+      return {
+        ...base,
+        orb: "solving",
+        label: "Thinking",
+        tone: "work",
+        transcript: flow.planning,
+        variant: "thinking",
+      };
+    case "gate":
+      return {
+        ...base,
+        orb: "working",
+        label: "Thinking",
+        tone: "work",
+        transcript: flow.planning,
+        variant: "thinking",
+        shown: total,
+        done: total - 1,
+        ring: chainRing(total, total),
+        gate: flow.gate !== null,
+      };
+    case "speaking":
+      return {
+        ...base,
+        orb: "composing",
+        label: "Speaking",
+        tone: "say",
+        transcript: flow.spoken,
+        variant: "speaking",
+        shown: total,
+        done: total,
+        ring: 1,
+      };
+  }
+}
+
 export function RovykHud({
   flow = MAIL_FLOW,
+  beat,
   className,
 }: {
   /** The run to play. See `lib/hud-flows.ts`. */
   flow?: HudFlow;
+  /**
+   * Hold one beat of that run instead of looping it. The looping timeline is
+   * not built at all in this mode — the caller is driving.
+   */
+  beat?: HudBeat;
   className?: string;
 }) {
   const [s, setS] = useState<HudState>(START);
@@ -168,8 +232,51 @@ export function RovykHud({
   useGSAP(
     () => {
       const total = flow.tasks.length;
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      /* Driven from outside: land on the beat, and play only the small part
+         of it that is still in motion. No loop, no ScrollTrigger. */
+      if (beat) {
+        setS(beatState(flow, beat));
+        if (reduced || beat === "gate" || beat === "speaking") return;
+
+        const tl = gsap.timeline();
+        if (beat === "listening") {
+          const cursor = { n: 0 };
+          tl.fromTo(
+            cursor,
+            { n: 0 },
+            {
+              n: flow.request.length,
+              duration: flow.request.length * 0.034,
+              ease: "none",
+              onUpdate: () =>
+                patch({
+                  transcript: flow.request.slice(0, Math.round(cursor.n)),
+                }),
+              onComplete: () => patch({ typing: false }),
+            },
+            0.24,
+          );
+        } else {
+          /* The chain lands step by step, stopping one short — the last one
+             is what the gate in the next beat is about. */
+          for (let i = 1; i < total; i++)
+            tl.call(
+              () => patch({ shown: i, done: i - 1, ring: chainRing(i, total) }),
+              undefined,
+              0.3 + (i - 1) * 0.52,
+            );
+          tl.call(
+            () => patch({ shown: total - 1, done: total - 1 }),
+            undefined,
+            0.3 + (total - 1) * 0.52,
+          );
+        }
+        return () => void tl.kill();
+      }
+
+      if (reduced) {
         // A single legible frame: two steps from the end, gate open, so the
         // still image still says "it does work and it asks first".
         const done = Math.max(1, total - 2);
@@ -315,10 +422,12 @@ export function RovykHud({
 
       return () => trigger.kill();
     },
-    { scope: root, dependencies: [flow], revertOnUpdate: true },
+    { scope: root, dependencies: [flow, beat], revertOnUpdate: true },
   );
 
-  const hasTasks = s.shown > 0;
+  /* Driven mode keeps the column open across every beat: stepping from
+     "listening" to "thinking" should not also resize the shell sideways. */
+  const hasTasks = beat ? true : s.shown > 0;
 
   return (
     <div
@@ -363,7 +472,7 @@ export function RovykHud({
           on={s.view === "notch"}
           className="flex items-center justify-between px-[7px]"
         >
-          <HeroOrb state={s.orb} size={14} />
+          <HeroOrb state={s.orb} size={14} paused={s.view !== "notch"} />
           <span className={cn("text-[8px] font-medium", TONE[s.tone])}>
             {s.label}
           </span>
@@ -374,7 +483,7 @@ export function RovykHud({
           on={s.view === "compact"}
           className="flex items-center gap-1.5 pr-2 pl-[9px]"
         >
-          <HeroOrb state={s.orb} size={21} />
+          <HeroOrb state={s.orb} size={21} paused={s.view !== "compact"} />
           <Label tone={s.tone}>{s.label}</Label>
           <span className="flex-1" />
           <ChromeIcon as={ArrowsOutSimpleIcon} />
@@ -388,7 +497,7 @@ export function RovykHud({
           className="flex flex-col gap-1.5 px-[9px] pt-[7px] pb-[9px]"
         >
           <div className="flex items-center gap-1.5">
-            <HeroOrb state={s.orb} size={16} />
+            <HeroOrb state={s.orb} size={16} paused={s.view !== "exp"} />
             <Label tone={s.tone} small>
               {s.label}
             </Label>

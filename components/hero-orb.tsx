@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MODE_DRAWS, resolvePreset, type OrbSize, type OrbState } from "thinking-orbs/engine";
+import {
+  MODE_DRAWS,
+  resolvePreset,
+  type OrbSize,
+  type OrbState,
+} from "thinking-orbs/engine";
 import { cn } from "@/lib/utils";
 
 /**
@@ -40,9 +45,17 @@ function presetFor(size: number): OrbSize {
   return size < 40 ? 20 : 64;
 }
 
-function paintLayer(layer: Layer, size: number, seconds: number, speedScale: number) {
+function paintLayer(
+  layer: Layer,
+  size: number,
+  seconds: number,
+  speedScale: number,
+) {
   const { mode, speed, opts } = resolvePreset(layer.state, presetFor(size));
-  const dpr = Math.min(2, (typeof devicePixelRatio !== "undefined" && devicePixelRatio) || 1);
+  const dpr = Math.min(
+    2,
+    (typeof devicePixelRatio !== "undefined" && devicePixelRatio) || 1,
+  );
 
   if (layer.canvas.width !== Math.round(size * dpr)) {
     layer.canvas.width = Math.round(size * dpr);
@@ -65,14 +78,29 @@ export function HeroOrb({
    * looping beside it. See the voice research notes.
    */
   amplitude = 0,
+  paused = false,
   className,
 }: {
   state: OrbState;
   size: number;
   amplitude?: number;
+  /**
+   * Stop the loop outright. The HUD stacks one orb per view and only ever
+   * shows one, so the other three would otherwise burn a frame loop each
+   * painting into a container at opacity zero.
+   */
+  paused?: boolean;
   className?: string;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
+  /* The running loop reads this rather than being torn down and rebuilt,
+     which would reset the orb's phase every time a view changes. */
+  const syncRef = useRef<() => void>(() => {});
+  const pausedRef = useRef(paused);
+  useEffect(() => {
+    pausedRef.current = paused;
+    syncRef.current();
+  }, [paused]);
   // The rAF loop reads the latest props from here, so a state change never
   // tears down and restarts the loop (which would reset the orb's phase).
   const liveRef = useRef({ state, size, amplitude });
@@ -91,7 +119,8 @@ export function HeroOrb({
     const makeLayer = (initial: OrbState, opacity: number): Layer | null => {
       const canvas = document.createElement("canvas");
       canvas.setAttribute("aria-hidden", "true");
-      canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block";
+      canvas.style.cssText =
+        "position:absolute;inset:0;width:100%;height:100%;display:block";
       host.appendChild(canvas);
       const ctx = canvas.getContext("2d");
       if (!ctx) return null;
@@ -112,6 +141,8 @@ export function HeroOrb({
     }
 
     let raf = 0;
+    let running = false;
+    let onScreen = false;
     let last = performance.now();
     // Our own clock, so a speed change ramps rather than jumping phase.
     let clock = 0;
@@ -124,7 +155,9 @@ export function HeroOrb({
 
       if (wanted !== shown) {
         // Newest state always lands on whichever layer is currently fading out.
-        const incoming = layers.reduce((a, b) => (a.opacity <= b.opacity ? a : b));
+        const incoming = layers.reduce((a, b) =>
+          a.opacity <= b.opacity ? a : b,
+        );
         const outgoing = incoming === layers[0] ? layers[1] : layers[0];
         incoming.state = wanted;
         incoming.target = 1;
@@ -148,21 +181,34 @@ export function HeroOrb({
       raf = requestAnimationFrame(frame);
     };
 
-    raf = requestAnimationFrame(frame);
-
-    const onVisibility = () => {
-      if (document.visibilityState === "hidden") {
-        cancelAnimationFrame(raf);
-      } else {
+    /* Three reasons to be idle — off screen, backgrounded tab, or a view
+       that is not the one being shown — and one place that resolves them.
+       An orb nobody can see should not be costing a frame loop. */
+    const sync = () => {
+      const want =
+        onScreen && !pausedRef.current && document.visibilityState !== "hidden";
+      if (want === running) return;
+      running = want;
+      if (want) {
         last = performance.now();
         raf = requestAnimationFrame(frame);
+      } else {
+        cancelAnimationFrame(raf);
       }
     };
-    document.addEventListener("visibilitychange", onVisibility);
+    syncRef.current = sync;
+
+    const io = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      sync();
+    });
+    io.observe(host);
+    document.addEventListener("visibilitychange", sync);
 
     return () => {
       cancelAnimationFrame(raf);
-      document.removeEventListener("visibilitychange", onVisibility);
+      io.disconnect();
+      document.removeEventListener("visibilitychange", sync);
       layers.forEach((l) => l.canvas.remove());
     };
   }, []);

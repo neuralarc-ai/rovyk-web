@@ -100,10 +100,15 @@
   --accent: #1e1e1e; /* raised — active rows, selected states */
   --accent-foreground: #ffffff;
   --destructive: #fe4e4e; /* state/danger — brand red */
-  --border: rgba(255, 255, 255, 0.10); /* border/hairline */
+  --border: rgba(255, 255, 255, 0.1); /* border/hairline */
   --input: rgba(255, 255, 255, 0.17); /* border/panel */
   --ring: #555af4; /* accent/focus — indigo, on every interactive element */
-  --chart-1: rgba(255, 255, 255, 0.87); /* charts are not in the palette; monochrome */
+  --chart-1: rgba(
+    255,
+    255,
+    255,
+    0.87
+  ); /* charts are not in the palette; monochrome */
   --chart-2: rgba(255, 255, 255, 0.68);
   --chart-3: rgba(255, 255, 255, 0.52);
   --chart-4: rgba(255, 255, 255, 0.36);
@@ -119,7 +124,7 @@
   --sidebar-primary-foreground: #000000;
   --sidebar-accent: #1e1e1e; /* raised */
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.10); /* border/hairline */
+  --sidebar-border: rgba(255, 255, 255, 0.1); /* border/hairline */
   --sidebar-ring: #555af4; /* accent/focus */
   --background: #0b0b0b; /* ground — the sheet, every section sits on this */
   --foreground: #ffffff; /* ink */
@@ -184,7 +189,7 @@
   --accent: #1e1e1e;
   --accent-foreground: #ffffff;
   --destructive: #fe4e4e;
-  --border: rgba(255, 255, 255, 0.10);
+  --border: rgba(255, 255, 255, 0.1);
   --input: rgba(255, 255, 255, 0.17);
   --ring: #555af4;
   --chart-1: rgba(255, 255, 255, 0.87);
@@ -198,7 +203,7 @@
   --sidebar-primary-foreground: #000000;
   --sidebar-accent: #1e1e1e;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.10);
+  --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: #555af4;
 }
 
@@ -209,7 +214,8 @@
   body {
     @apply bg-background text-foreground;
   }
-  button:not(:disabled), [role="button"]:not(:disabled) {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
     cursor: pointer;
   }
   html {
@@ -222,12 +228,21 @@
    survive arbitrary-value parsing. Everything else is utilities. */
 
 @keyframes caret {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
 @keyframes scroll-cue {
-  0%, 100% { opacity: 0.25; transform: scaleY(0.55); }
-  50%      { opacity: 1;    transform: scaleY(1); }
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scaleY(0.55);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
 }
 
 /* Film grain over the void, so the black reads as a surface not an
@@ -241,8 +256,16 @@
    core and a wide falloff that never quite reaches the edges. */
 @utility bg-intro-glow {
   background-image:
-    radial-gradient(26% 22% at 50% 50%, rgba(255, 255, 255, 0.10), transparent 70%),
-    radial-gradient(52% 44% at 50% 50%, rgba(85, 90, 244, 0.065), transparent 72%);
+    radial-gradient(
+      26% 22% at 50% 50%,
+      rgba(255, 255, 255, 0.1),
+      transparent 70%
+    ),
+    radial-gradient(
+      52% 44% at 50% 50%,
+      rgba(85, 90, 244, 0.065),
+      transparent 72%
+    );
 }
 
 /* ── Hero section ──────────────────────────────────────────────────
@@ -250,15 +273,24 @@
    recipes, mask geometry, and keyframes. */
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.08; }
-  50%      { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 /* Travels exactly one third, because the app list is rendered three
    times — so the reset lands on an identical frame. */
 @keyframes marquee {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-33.3333%, 0, 0); }
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-33.3333%, 0, 0);
+  }
 }
 
 /* The scrim over the hero wallpaper. Keeps the headline readable and
@@ -276,24 +308,54 @@
       rgba(11, 11, 11, 0.94) 87%,
       #0b0b0b 100%
     ),
-    radial-gradient(76% 56% at 50% 16%, rgba(0, 0, 0, 0.44) 0%, transparent 74%),
-    radial-gradient(120% 92% at 50% 46%, transparent 42%, rgba(0, 0, 0, 0.48) 100%);
+    radial-gradient(
+      76% 56% at 50% 16%,
+      rgba(0, 0, 0, 0.44) 0%,
+      transparent 74%
+    ),
+    radial-gradient(
+      120% 92% at 50% 46%,
+      transparent 42%,
+      rgba(0, 0, 0, 0.48) 100%
+    );
 }
 
 /* Inside the Mac window: a lit desktop wallpaper, top-left key light. */
 @utility bg-display-wall {
   background-image:
-    radial-gradient(66% 56% at 26% 14%, rgba(255, 255, 255, 0.17) 0%, transparent 62%),
-    radial-gradient(56% 48% at 80% 30%, rgba(255, 255, 255, 0.09) 0%, transparent 64%),
-    radial-gradient(90% 76% at 50% 104%, rgba(255, 255, 255, 0.05) 0%, transparent 70%),
+    radial-gradient(
+      66% 56% at 26% 14%,
+      rgba(255, 255, 255, 0.17) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      56% 48% at 80% 30%,
+      rgba(255, 255, 255, 0.09) 0%,
+      transparent 64%
+    ),
+    radial-gradient(
+      90% 76% at 50% 104%,
+      rgba(255, 255, 255, 0.05) 0%,
+      transparent 70%
+    ),
     linear-gradient(155deg, #242424 0%, #161616 46%, #0e0e0e 100%);
 }
 
 /* The window is cropped rather than ended — it runs off the bottom of
    the section instead of sitting in it. */
 @utility mask-fade-b {
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 var(--fade-start, 54%), transparent 100%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 var(--fade-start, 54%), transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 var(--fade-start, 54%),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 var(--fade-start, 54%),
+    transparent 100%
+  );
 }
 
 /* Concave corner fillets. These are what make the notch read as carved
@@ -301,22 +363,53 @@
    `-t-` hangs from the top edge (HUD), `-b-` rises from the bottom
    (the app marquee). */
 @utility mask-fillet-tl {
-  -webkit-mask-image: radial-gradient(circle farthest-side at 0 100%, transparent calc(100% - 0.6px), #000 100%);
-  mask-image: radial-gradient(circle farthest-side at 0 100%, transparent calc(100% - 0.6px), #000 100%);
+  -webkit-mask-image: radial-gradient(
+    circle farthest-side at 0 100%,
+    transparent calc(100% - 0.6px),
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    circle farthest-side at 0 100%,
+    transparent calc(100% - 0.6px),
+    #000 100%
+  );
 }
 @utility mask-fillet-tr {
-  -webkit-mask-image: radial-gradient(circle farthest-side at 100% 100%, transparent calc(100% - 0.6px), #000 100%);
-  mask-image: radial-gradient(circle farthest-side at 100% 100%, transparent calc(100% - 0.6px), #000 100%);
+  -webkit-mask-image: radial-gradient(
+    circle farthest-side at 100% 100%,
+    transparent calc(100% - 0.6px),
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    circle farthest-side at 100% 100%,
+    transparent calc(100% - 0.6px),
+    #000 100%
+  );
 }
 @utility mask-fillet-bl {
-  -webkit-mask-image: radial-gradient(circle farthest-side at 0 0, transparent calc(100% - 0.7px), #000 100%);
-  mask-image: radial-gradient(circle farthest-side at 0 0, transparent calc(100% - 0.7px), #000 100%);
+  -webkit-mask-image: radial-gradient(
+    circle farthest-side at 0 0,
+    transparent calc(100% - 0.7px),
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    circle farthest-side at 0 0,
+    transparent calc(100% - 0.7px),
+    #000 100%
+  );
 }
 @utility mask-fillet-br {
-  -webkit-mask-image: radial-gradient(circle farthest-side at 100% 0, transparent calc(100% - 0.7px), #000 100%);
-  mask-image: radial-gradient(circle farthest-side at 100% 0, transparent calc(100% - 0.7px), #000 100%);
+  -webkit-mask-image: radial-gradient(
+    circle farthest-side at 100% 0,
+    transparent calc(100% - 0.7px),
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    circle farthest-side at 100% 0,
+    transparent calc(100% - 0.7px),
+    #000 100%
+  );
 }
-
 
 /* ── macOS window controls ─────────────────────────────────────────
    Quoted verbatim from the system, and deliberately NOT part of the
@@ -342,19 +435,48 @@
 }
 
 /* Grid centred under a floating artifact. */
+@utility mask-fade-y {
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0,
+    #000 12%,
+    #000 84%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0,
+    #000 12%,
+    #000 84%,
+    transparent 100%
+  );
+}
+
 @utility mask-grid-center {
-  -webkit-mask-image: radial-gradient(90% 80% at 50% 50%, #000 15%, transparent 78%);
+  -webkit-mask-image: radial-gradient(
+    90% 80% at 50% 50%,
+    #000 15%,
+    transparent 78%
+  );
   mask-image: radial-gradient(90% 80% at 50% 50%, #000 15%, transparent 78%);
 }
 
 /* Grid pushed to the right, behind a call to action. */
 @utility mask-grid-right {
-  -webkit-mask-image: radial-gradient(80% 140% at 82% 50%, #000 5%, transparent 74%);
+  -webkit-mask-image: radial-gradient(
+    80% 140% at 82% 50%,
+    #000 5%,
+    transparent 74%
+  );
   mask-image: radial-gradient(80% 140% at 82% 50%, #000 5%, transparent 74%);
 }
 
 /* The light the download CTA sits in — off-centre, so the bar has a
    bright end and a quiet end rather than being evenly lit. */
 @utility bg-cta-glow {
-  background-image: radial-gradient(64% 130% at 78% 50%, rgba(255, 255, 255, 0.075), transparent 70%);
+  background-image: radial-gradient(
+    64% 130% at 78% 50%,
+    rgba(255, 255, 255, 0.075),
+    transparent 70%
+  );
 }

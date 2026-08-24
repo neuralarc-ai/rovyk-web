@@ -1,5 +1,7 @@
 import { MicrophoneIcon } from "@phosphor-icons/react/dist/ssr";
+import { GhostWindow } from "@/components/ghost-window";
 import { RovykHud } from "@/components/rovyk-hud";
+import { ScreenMenuBar } from "@/components/screen-menu-bar";
 import { SectionHead } from "@/components/section-head";
 import { MacWindow } from "@/components/ui/mac-window";
 import { DOWNLOADS_FLOW } from "@/lib/hud-flows";
@@ -88,37 +90,6 @@ function StageGrid() {
 }
 
 /**
- * A faint app window on the desktop behind the notch, so the screen does not
- * read as empty. Furniture — no real content, just the shape of work.
- */
-function GhostWindow() {
-  return (
-    <div
-      aria-hidden
-      className="mask-fade-b absolute inset-x-[11%] -bottom-[6%] h-[62%] overflow-hidden rounded-xl border border-white/10 shadow-[0_26px_60px_-30px_#000] [--fade-start:52%] [background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.018))]"
-    >
-      <div className="flex items-center gap-[5px] border-b border-white/8 px-2.5 py-2">
-        <span className="size-1.5 rounded-full bg-white/20" />
-        <span className="size-1.5 rounded-full bg-white/20" />
-        <span className="size-1.5 rounded-full bg-white/20" />
-        <span className="ml-2 font-mono text-[8.5px] tracking-[0.14em] text-white/34 uppercase">
-          Downloads
-        </span>
-      </div>
-      <div className="flex flex-col gap-2 px-3 py-3">
-        {[64, 88, 41, 73, 55].map((w, i) => (
-          <span
-            key={i}
-            style={{ width: `${w}%` }}
-            className="h-[5px] rounded-[3px] bg-white/10"
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/**
  * The notch, on a screen fragment that dissolves before the panel ends.
  *
  * `labels` puts the menu bar's own furniture — app name, menus, clock — back
@@ -137,21 +108,9 @@ function NotchStage({ labels = false }: { labels?: boolean }) {
           "shadow-[0_0_0_1px_rgba(255,255,255,.17),0_0_0_5px_rgba(255,255,255,.03),0_30px_64px_-28px_#000]",
         )}
       >
-        <div className="absolute inset-x-0 top-0 z-20 flex h-[22px] items-center justify-between px-3 text-[9px] text-white/72 backdrop-blur-sm [background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.06))]">
-          {labels && (
-            <>
-              <div className="flex items-center gap-3">
-                <b className="font-semibold">Rovyk</b>
-                <span>File</span>
-                <span>Edit</span>
-                <span>View</span>
-              </div>
-              <span>9:41</span>
-            </>
-          )}
-        </div>
+        <ScreenMenuBar labels={labels} />
 
-        <GhostWindow />
+        <GhostWindow label="Downloads" />
 
         {/* A different run from the hero's, so the page is not telling the
             same story twice — and a longer chain, which is the case the
