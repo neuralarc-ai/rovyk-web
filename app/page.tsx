@@ -1,3 +1,5 @@
+import { ApartSection } from "@/components/apart-section";
+import { ControlSection } from "@/components/control-section";
 import { HeroSection } from "@/components/hero-section";
 import { HowSection } from "@/components/how-section";
 import { IntroSection } from "@/components/intro-section";
@@ -20,6 +22,8 @@ export default function Page() {
         <ToolsSection />
         <HowSection />
         <OrbSection />
+        <ApartSection />
+        <ControlSection />
       </main>
     </>
   );
