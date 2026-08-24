@@ -79,6 +79,8 @@
   /* Hero-section motion — see components/hero-section.tsx */
   --animate-twinkle: twinkle 6s ease-in-out infinite;
   --animate-marquee: marquee 42s linear infinite;
+  /* Focus demo — the open mic's level meter. */
+  --animate-waveform: waveform 900ms ease-in-out infinite;
 }
 
 :root {
@@ -490,4 +492,23 @@
     rgba(255, 255, 255, 0.075),
     transparent 70%
   );
+}
+
+/* A list that dissolves at both ends rather than being cut off by its
+   container — for a rail whose contents outgrow it. */
+@utility mask-fade-y {
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 var(--fade-y, 14px), #000 calc(100% - var(--fade-y, 14px)), transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 var(--fade-y, 14px), #000 calc(100% - var(--fade-y, 14px)), transparent);
+}
+
+/* An open microphone, as five bars. Each is offset by its own delay so the
+   row ripples rather than pulsing as one block. */
+@keyframes waveform {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
 }

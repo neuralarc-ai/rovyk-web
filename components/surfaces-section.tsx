@@ -1,4 +1,4 @@
-import { MicrophoneIcon } from "@phosphor-icons/react/dist/ssr";
+import { FocusDemo } from "@/components/focus-demo";
 import { GhostWindow } from "@/components/ghost-window";
 import { RovykHud } from "@/components/rovyk-hud";
 import { ScreenMenuBar } from "@/components/screen-menu-bar";
@@ -19,7 +19,7 @@ import { AppleLogo } from "./apple-logo";
 
 /** Two thirds of the card. The copy gets what is left. */
 const STAGE =
-  "relative flex h-[clamp(360px,40vh,470px)] items-center justify-center overflow-hidden border-b border-border bg-background px-6 sm:px-7.5";
+  "relative flex h-[clamp(390px,44vh,500px)] items-center justify-center overflow-hidden border-b border-border bg-background px-6 sm:px-7.5";
 
 /** Both artifacts float at the same width and cast the same shadow. */
 const FLOAT =
@@ -127,53 +127,12 @@ function NotchStage({ labels = false }: { labels?: boolean }) {
   );
 }
 
-/**
- * Focus mode. The card's own chrome already carries the window controls, so
- * this bar only needs to say what the window is.
- */
+/** Focus mode — the window, running its own errand. See `FocusDemo`. */
 function FocusStage() {
   return (
-    <div className={STAGE}>
+    <div className={cn(STAGE, "items-stretch p-4 sm:p-5")}>
       <StageGrid />
-      <div className={cn(FLOAT, "border border-input bg-secondary")}>
-        <div className="flex items-center gap-3 border-b border-border bg-accent px-3.5 py-2.5">
-          <span className="font-mono text-[10.5px] tracking-[0.12em] text-white/45">
-            FOCUS MODE
-          </span>
-        </div>
-
-        <div className="flex min-h-37.5 flex-col gap-3 p-4">
-          <p className="max-w-[86%] self-end rounded-xl rounded-br-sm bg-accent px-3.5 py-2.5 text-[12.5px] leading-normal text-white">
-            Find the invoice from Northlane and rename it properly.
-          </p>
-          <p className="max-w-[86%] self-start rounded-xl rounded-bl-sm border border-input px-3.5 py-2.5 text-[12.5px] leading-normal text-muted-foreground">
-            Found{" "}
-            <b className="font-medium text-white">inv_8823_final_FINAL.pdf</b>{" "}
-            in Downloads.
-            <br />
-            Rename to{" "}
-            <b className="font-medium text-white">
-              2026-08 Northlane invoice.pdf
-            </b>
-            ?
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2.5 border-t border-border bg-background px-3 py-2.5">
-          <span className="flex shrink-0 items-center overflow-hidden rounded-lg border border-input font-mono text-[10px] tracking-wide uppercase">
-            <span className="bg-white/90 px-2 py-1 text-black">voice</span>
-            <span className="px-2 py-1 text-white/40">chat</span>
-          </span>
-          <span className="flex-1 truncate text-[12.5px] text-white/28">
-            Type, or hold to talk
-          </span>
-          <MicrophoneIcon
-            weight="regular"
-            className="size-4 shrink-0 text-white/45"
-            aria-hidden
-          />
-        </div>
-      </div>
+      <FocusDemo className="relative h-full w-full overflow-hidden rounded-2xl border border-input bg-secondary shadow-[0_30px_64px_-28px_#000]" />
     </div>
   );
 }

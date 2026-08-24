@@ -5,12 +5,10 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import type { OrbState } from "thinking-orbs/engine";
-import {
-  ArrowClockwiseIcon,
-  MicrophoneIcon,
-} from "@phosphor-icons/react/dist/ssr";
+import { ArrowClockwiseIcon } from "@phosphor-icons/react/dist/ssr";
 import { RovykWordmark } from "@/components/rovyk-wordmark";
 import { HeroOrb } from "@/components/hero-orb";
+import { CaretDoubleDownIcon } from "@phosphor-icons/react";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -34,9 +32,6 @@ const REPLY = [
  */
 const ORB_PX = 200;
 const ORB_REST = 0.86;
-
-/** Level meter beside the question. Decorative — nothing is being recorded. */
-const BARS = [0.4, 0.75, 1, 0.65, 0.35];
 
 /* ── Cue sheet ────────────────────────────────────────────────────────
    Absolute seconds, not relative offsets. Every beat is positioned
@@ -75,10 +70,7 @@ export function IntroSection() {
       const glow = q("[data-glow]");
       const orb = q("[data-orb]");
       const askLine = q("[data-ask]");
-      const chip = q("[data-chip]");
-      const halo = q("[data-halo]");
       const caret = q("[data-caret]");
-      const bars = q("[data-bar]");
       const replyLines = q("[data-reply-line]");
       const replyWords = q("[data-word]");
       const foot = q("[data-foot]");
@@ -95,18 +87,6 @@ export function IntroSection() {
         }
       };
 
-      /* The chip's resting and committed skins. Transcribing is dim and
-         provisional; once the request lands it brightens and stays — it is a
-         record of what was said, not a transient caption. */
-      const CHIP_LIVE = {
-        borderColor: "rgba(255,255,255,0.10)",
-        backgroundColor: "rgba(255,255,255,0.03)",
-      };
-      const CHIP_DONE = {
-        borderColor: "rgba(255,255,255,0.22)",
-        backgroundColor: "rgba(255,255,255,0.06)",
-      };
-
       /* Reduced motion: no performance, just the finished frame. */
       if (reduced) {
         setOrbState("searching");
@@ -116,9 +96,7 @@ export function IntroSection() {
         });
         gsap.set(orb, { scale: ORB_REST });
         gsap.set(replyWords, { y: 0, filter: "blur(0px)" });
-        gsap.set(bars, { scaleY: 0.22 });
-        gsap.set([caret, halo], { autoAlpha: 0 });
-        gsap.set(chip, CHIP_DONE);
+        gsap.set(caret, { autoAlpha: 0 });
         writeAsk(ASK.length);
         return;
       }
@@ -137,11 +115,8 @@ export function IntroSection() {
         .set([glow, orb, askLine, replyLines, foot], { autoAlpha: 0 }, 0)
         .set(orb, { scale: 0 }, 0)
         .set(askLine, { y: 14, scale: 0.96, filter: "blur(5px)" }, 0)
-        .set(chip, CHIP_LIVE, 0)
-        .set(halo, { autoAlpha: 0 }, 0)
         .set(replyWords, { autoAlpha: 0, y: "0.35em", filter: "blur(6px)" }, 0)
         .set(caret, { autoAlpha: 1 }, 0)
-        .set(bars, { scaleY: 0.22 }, 0)
         .call(() => writeAsk(0), undefined, 0)
 
         /* ── Splash ──────────────────────────────────────────────────
@@ -208,30 +183,6 @@ export function IntroSection() {
           },
           CUE.listen,
         )
-        /* Live-mic halo: breathes only while the mic is actually open. */
-        .to(
-          halo,
-          {
-            autoAlpha: 0.55,
-            duration: 0.9,
-            ease: "sine.inOut",
-            repeat: 1,
-            yoyo: true,
-          },
-          CUE.listen + 0.2,
-        )
-        .to(
-          bars,
-          {
-            scaleY: () => gsap.utils.random(0.35, 1),
-            duration: 0.28,
-            ease: "sine.inOut",
-            stagger: { each: 0.06, from: "center" },
-            repeat: 2,
-            repeatRefresh: true,
-          },
-          CUE.listen,
-        )
         .fromTo(
           typed,
           { chars: 0 },
@@ -246,23 +197,15 @@ export function IntroSection() {
 
         /* ── Commit ──────────────────────────────────────────────────
            The request lands. Rather than fading into the background once
-           the reply arrives, the chip brightens and holds: the caret and
-           the halo go, the meter settles, the border firms up. What was
-           said stays on the record for the whole section. */
-        .to(
-          bars,
-          { scaleY: 0.22, duration: 0.4, ease: "power2.out" },
-          CUE.settle,
-        )
-        .to([caret, halo], { autoAlpha: 0, duration: 0.3 }, CUE.settle)
+           the reply arrives, it brightens and holds: the caret goes and the
+           line comes up to full. What was said stays on the record for the
+           whole section, and one opacity carries that — the border and fill
+           that used to firm up alongside it were the same beat, said twice
+           in furniture. */
+        .to(caret, { autoAlpha: 0, duration: 0.3 }, CUE.settle)
         .to(
           askLine,
           { autoAlpha: 1, duration: 0.55, ease: "power2.out" },
-          CUE.settle,
-        )
-        .to(
-          chip,
-          { ...CHIP_DONE, duration: 0.55, ease: "power2.out" },
           CUE.settle,
         )
 
@@ -381,57 +324,39 @@ export function IntroSection() {
         data-core
         className="absolute inset-0 grid grid-rows-[1fr_auto_1fr] justify-items-center px-6 pb-28 sm:px-8"
       >
-        {/* Above: the request, as a transcript chip. Deliberately an object
-            on the screen rather than floating text — it has to survive the
-            arrival of a 31px reply directly beneath it. */}
+        {/* Above: the request, transcribed. No container — what separates
+            it from the reply is register, not a border: mono against sans,
+            the same way an eyebrow is separated from a title everywhere
+            else on this page. It earns its place against a 31px line
+            beneath it by being a different kind of writing, rather than by
+            being fenced off from it.
+
+            The level meter went with the box. The orb directly below is the
+            listening indicator — that is the entire claim the orb section
+            makes — so a row of bouncing bars beside it was a second one,
+            in the idiom every voice product on the internet ships. */}
         <div className="flex w-full max-w-xl flex-col items-center justify-end self-end pb-6 sm:pb-8">
           <div data-ask className="opacity-0">
-            <div
-              data-chip
-              className="relative inline-flex items-center gap-3 rounded-full border px-4 py-2 font-mono text-[11.5px] tracking-tight sm:gap-3.5 sm:px-4.5 sm:text-[13.5px]"
-            >
-              {/* Live-mic halo. Pink is the palette's voice signal. */}
+            {/* Stacked cells: a hidden copy of the full request reserves the
+                line's width, so the transcript grows from a fixed left edge
+                instead of re-centring itself on every character. */}
+            <span className="grid font-mono text-[14px] tracking-[-0.01em] sm:text-base">
               <span
-                data-halo
                 aria-hidden
-                className="pointer-events-none absolute -inset-px rounded-full opacity-0 ring-1 ring-brand-pink/45"
-              />
-              <MicrophoneIcon
-                weight="regular"
-                className="size-3.5 shrink-0 text-white/45"
-                aria-hidden
-              />
-              <span aria-hidden className="flex h-3.5 items-center gap-0.75">
-                {BARS.map((h, i) => (
-                  <span
-                    key={i}
-                    data-bar
-                    style={{ height: `${h * 100}%` }}
-                    className="w-px origin-center rounded-full bg-brand-pink-text/70"
-                  />
-                ))}
+                className="invisible col-start-1 row-start-1 whitespace-pre"
+              >
+                {ASK}
               </span>
-              {/* Stacked cells: a hidden copy of the full request reserves the
-                  line's width, so the mic and meter hold still while the text
-                  types instead of being shoved left by every character. */}
-              <span className="grid">
+              <span className="col-start-1 row-start-1 whitespace-pre text-left">
+                <span ref={wakeRef} className="text-brand-indigo-text" />
+                <span ref={restRef} className="text-white/92" />
                 <span
+                  data-caret
                   aria-hidden
-                  className="invisible col-start-1 row-start-1 whitespace-pre"
-                >
-                  {ASK}
-                </span>
-                <span className="col-start-1 row-start-1 whitespace-pre text-left">
-                  <span ref={wakeRef} className="text-brand-indigo-text" />
-                  <span ref={restRef} className="text-white/92" />
-                  <span
-                    data-caret
-                    aria-hidden
-                    className="ml-0.5 inline-block h-[0.8em] w-px -translate-y-px animate-caret bg-white/70 align-[-0.06em]"
-                  />
-                </span>
+                  className="ml-0.5 inline-block h-[0.8em] w-px -translate-y-px animate-caret bg-white/70 align-[-0.06em]"
+                />
               </span>
-            </div>
+            </span>
           </div>
         </div>
 
@@ -464,24 +389,37 @@ export function IntroSection() {
         </div>
       </div>
 
-      {/* Foot: replay, and the cue that there is more below. */}
+      {/* Foot: replay, and the cue that there is more below. Stacked on the
+          centre line, in one register — the control keeps the cue's voice
+          rather than a border of its own, since it is a demo control and was
+          otherwise the loudest thing on the first screen. */}
       <div
         data-foot
         className="pointer-events-none absolute inset-x-0 bottom-8 flex flex-col items-center gap-5 opacity-0"
       >
+        {/* The negative margin and the padding cancel, so the hit target is
+            finger-sized without the label shifting off the centre line. */}
         <button
           data-replay
           type="button"
-          className="pointer-events-auto inline-flex h-9 items-center gap-2.5 rounded-full border border-input px-4 font-mono text-[10.5px] uppercase tracking-[0.12em] text-white/55 transition-colors duration-200 hover:border-white/30 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="group/replay pointer-events-auto -m-2 flex items-center gap-2 p-2 font-mono text-xs tracking-[0.22em] text-white/36 uppercase transition-colors duration-200 hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          <ArrowClockwiseIcon weight="bold" className="size-3" aria-hidden />
+          <ArrowClockwiseIcon
+            weight="bold"
+            className="size-3 transition-transform duration-500 ease-[cubic-bezier(.52,.52,0,1)] group-hover/replay:-rotate-180"
+            aria-hidden
+          />
           Replay
         </button>
 
-        <div className="flex flex-col items-center gap-2 font-mono text-[9.5px] uppercase tracking-[0.22em] text-white/36">
-          <span
+        <div className="flex items-center gap-2 font-mono text-xs tracking-[0.22em] text-white/36 uppercase">
+          {/* <span
             aria-hidden
-            className="animate-scroll-cue h-6 w-px bg-linear-to-b from-white/30 to-transparent"
+            className="animate-scroll-cue h-6 w-px bg-linear-to-b from-white to-transparent animate-"
+            /> */}
+          <CaretDoubleDownIcon
+            size={20}
+            className="animate-bounce duration-700! "
           />
           Scroll
         </div>

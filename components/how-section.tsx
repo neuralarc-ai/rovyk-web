@@ -79,6 +79,23 @@ const IDLE_MS = 8000;
 const TAB_ID = (i: number) => `how-step-${i}`;
 const PANEL_ID = "how-panel";
 
+/**
+ * The notch is drawn at real macOS pixels — 406 across, fillets included —
+ * and only ever scaled. So the scale has to be a ratio to the screen it hangs
+ * in, and that screen is a percentage of a panel, which a viewport breakpoint
+ * has no way to know the width of. Pinning the two to different rulers is
+ * what let the shell run past the screen's edge at some widths and shrink to
+ * a stamp at others; the screen is measured instead, and the notch follows.
+ */
+const HUD_W = 406;
+/** How much of the screen's width the expanded shell takes across its widest
+ *  point. Under 1, always, so the fillets can never reach the bezel. */
+const HUD_FILL = 0.86;
+/** Only ever on screen for the frame before the observer reports. Deliberately
+ *  the smallest of the old breakpoint scales — too small is a frame nobody
+ *  catches, too big is a frame that overflows. */
+const HUD_FALLBACK = 0.4;
+
 /** Row proportions for the lattice behind the screen. The centre column is
  *  taller in the middle so the frame opens up exactly where the screen sits. */
 const CELLS = [
@@ -100,6 +117,15 @@ export function HowSection() {
 
   const root = useRef<HTMLElement>(null);
   const activeRef = useRef(0);
+  /* Measured, not guessed: see HUD_W. The observer fires on observe, so the
+     fallback below is never on screen for a frame anyone can see. */
+  const [screenW, setScreenW] = useState(0);
+  const screenBox = useCallback((el: HTMLDivElement | null) => {
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setScreenW(e.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const tl = useRef<gsap.core.Timeline | null>(null);
   const started = useRef(false);
 
@@ -444,22 +470,29 @@ export function HowSection() {
 
             <div className="relative z-20 grid flex-1 place-items-center px-5.5 pt-8.5 pb-6.5">
               {/* The machine, cropped to a fragment. Same screen as the hero,
-                  a third of the size. */}
-              <div className="relative aspect-16/10 w-[min(410px,94%)] overflow-hidden rounded-2xl bg-[#080808] md:w-[min(410px,74%)] shadow-[0_0_0_1px_rgba(255,255,255,.15),0_0_0_5px_rgba(255,255,255,.028),0_40px_80px_-30px_rgba(0,0,0,.98)]">
-                <div className="bg-display-wall mask-fade-b absolute inset-0 [--fade-start:62%]" />
-                <ScreenMenuBar />
+                  a third of the size — and given more of the pane than it had,
+                  since the notch inside it is the evidence the whole section
+                  is pointing at. */}
+              <div
+                ref={screenBox}
+                className="relative aspect-16/10 w-[min(520px,94%)] overflow-hidden rounded-2xl bg-[#080808] md:w-[min(520px,86%)] shadow-[0_0_0_1px_rgba(255,255,255,.15),0_0_0_5px_rgba(255,255,255,.028),0_40px_80px_-30px_rgba(0,0,0,.98)]"
+              >
+                <div className="bg-display-wall mask-fade-b absolute inset-0 [--fade-start:62%] " />
+                {/* <ScreenMenuBar /> */}
                 <GhostWindow label="Mail" />
 
-                {/* Held at the active step's beat rather than looping. */}
-                {/* Scaled to the screen, not to the viewport. Expanded, the
-                    notch is 406px across including its fillets, so every one
-                    of these has to clear that at whatever width the screen
-                    above happens to be — the inset above widens on small
-                    panes for the same reason, because 74% of a pane that
-                    keeps shrinking will lose the fillets off both edges. */}
+                {/* Held at the active step's beat rather than looping, and
+                    sized off the screen it hangs in rather than off the
+                    viewport — so the fillets clear the bezel at every width
+                    instead of at the four the breakpoints happened to name. */}
                 <RovykHud
                   beat={STEPS[active].beat}
-                  className="z-30 scale-[0.4] sm:scale-[0.52] md:scale-[0.56] lg:scale-[0.82]"
+                  className="z-30"
+                  style={{
+                    scale: String(
+                      screenW ? (screenW * HUD_FILL) / HUD_W : HUD_FALLBACK,
+                    ),
+                  }}
                 />
               </div>
             </div>

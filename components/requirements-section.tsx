@@ -89,7 +89,7 @@ function MemoryMark() {
         <i
           key={i}
           className={cn(
-            "block w-1 h-6 rounded-[1px]",
+            "block w-1.5 h-6 rounded-[1px]",
             i < 4 ? " bg-white/55" : " border border-white/25",
           )}
         />
@@ -109,15 +109,15 @@ const SPECS = [
   {
     mark: <AppleLogo size={36} />,
     k: "System",
-    v: "macOS 15",
+    v: "macOS 27",
     sub: "or later",
     note: "A menu bar utility, not a windowed app.",
   },
   {
     mark: <MemoryMark />,
     k: "Memory",
-    v: "16 GB",
-    sub: "32 GB recommended",
+    v: "8 GB",
+    sub: "16 GB recommended",
     note: "To run local models well.",
   },
 ];
@@ -235,12 +235,12 @@ export function RequirementsSection() {
                 <p className="text-[clamp(20px,1.9vw,25px)] leading-[1.1] tracking-[-0.028em] text-white">
                   {spec.v}
                 </p>
-                <p className="mt-1 text-[13.5px] font-light text-white/52">
+                <p className="mt-1 text-base font-light text-white/52">
                   {spec.sub}
                 </p>
                 {/* mt-auto pins the note to the bottom, so the hairline
                     lines up across columns even if a value wraps. */}
-                <p className="mt-auto border-t border-border pt-3.5 text-[12.5px] leading-normal font-light text-white/45">
+                <p className="border-t border-border mt-2 pt-2 text-sm leading-normal font-light text-white/45">
                   {spec.note}
                 </p>
               </div>

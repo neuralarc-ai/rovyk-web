@@ -214,6 +214,7 @@ export function RovykHud({
   flow = MAIL_FLOW,
   beat,
   className,
+  style,
 }: {
   /** The run to play. See `lib/hud-flows.ts`. */
   flow?: HudFlow;
@@ -223,6 +224,12 @@ export function RovykHud({
    */
   beat?: HudBeat;
   className?: string;
+  /**
+   * For a caller whose scale is a measurement rather than a breakpoint. Set
+   * `scale` here rather than a `scale-*` class: it is its own CSS property,
+   * so it cannot clobber the centring translate the shell relies on.
+   */
+  style?: React.CSSProperties;
 }) {
   const [s, setS] = useState<HudState>(START);
   const root = useRef<HTMLDivElement>(null);
@@ -433,6 +440,7 @@ export function RovykHud({
     <div
       ref={root}
       aria-hidden
+      style={style}
       className={cn(
         // Above the menu bar, not behind it: the notch is display hardware
         // that the menu bar flows around. Behind it, the bar's backdrop-blur
