@@ -18,6 +18,13 @@ import { cn } from "@/lib/utils";
    must not overstate: everything local works, and the reasoning is
    measurably weaker without a key. Set side by side, that is legible
    at a glance instead of buried at the end of a sentence.
+
+   It is set as prose below the plate rather than as two more bands
+   inside it. The plate is a spec label — three fixed numbers about a
+   machine, and a window frame is the right furniture for that. Where
+   the product stops is an argument, and stacking it into the same
+   chrome made a claim look like a fourth row of specifications. Two
+   blocks, two registers, one heading each.
    ──────────────────────────────────────────────────────────────────── */
 
 const BAND = "border-t border-border";
@@ -77,7 +84,7 @@ function ChipMark() {
 /** Eight segments: four for the floor, all eight for the recommendation. */
 function MemoryMark() {
   return (
-    <span aria-hidden className="flex h-7 items-end gap-[3px]">
+    <span aria-hidden className="flex h-7 items-end gap-0.75">
       {Array.from({ length: 8 }, (_, i) => (
         <i
           key={i}
@@ -115,29 +122,95 @@ const SPECS = [
   },
 ];
 
-const OFFLINE = ["System control", "Files", "Mail and calendar"];
-const KEYED = ["Web browsing", "Web search", "The strongest reasoning"];
+/**
+ * The two halves. `lit` is the difference between them and is carried by the
+ * marker alone — filled green for what the machine can do by itself, an empty
+ * ring for what waits on a key you bring. Green means available everywhere
+ * else on this page, so it cannot mean anything else here.
+ */
+const STOPS = [
+  {
+    kicker: "Works fully offline",
+    lit: true,
+    items: ["System control", "Files", "Mail and calendar"],
+    note: "Reasoning still runs on-device, and is measurably weaker on complex, multi-step work.",
+  },
+  {
+    kicker: "Needs your own key",
+    lit: false,
+    items: ["Web browsing", "Web search", "The strongest reasoning"],
+    note: "Your provider, your key, your bill. Nothing is billed through us, and none of it is on by default.",
+  },
+];
+
+function Stop({
+  stop,
+  className,
+}: {
+  stop: (typeof STOPS)[number];
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex flex-col", className)}>
+      <div className="mb-6 flex items-center gap-2.5">
+        <i
+          aria-hidden
+          className={cn(
+            "size-1.5 shrink-0 rounded-full",
+            stop.lit ? "bg-brand-green" : "border border-white/45",
+          )}
+        />
+        <span className={LABEL}>{stop.kicker}</span>
+      </div>
+
+      <ul className="flex flex-col gap-3">
+        {stop.items.map((item) => (
+          <li
+            key={item}
+            className="flex items-center gap-3.5 text-[15.5px] leading-[1.4] font-light text-white/85"
+          >
+            <i
+              aria-hidden
+              className={cn(
+                "size-1 shrink-0 rounded-full",
+                stop.lit ? "bg-brand-green" : "border border-white/40",
+              )}
+            />
+            {item}
+          </li>
+        ))}
+      </ul>
+
+      {/* mt-auto pins the note to the bottom, so the two hairlines line up
+          across the columns however the lists above them differ. */}
+      <p className="mt-auto max-w-[38ch] pt-5 text-[13.5px] leading-[1.6] font-light text-white/50">
+        {stop.note}
+      </p>
+    </div>
+  );
+}
 
 export function RequirementsSection() {
   return (
     <section id="req" className="relative py-[clamp(96px,12.5vh,158px)]">
-      <div className="mx-auto w-full max-w-[1240px] px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="requirements"
           title="What it needs. What it will not do."
-          className="mb-[62px]"
+          className="mb-15.5"
         >
           Published in full, because a tool asking for this much access should
           tell you exactly where it stops.
         </SectionHead>
 
-        {/* The window's own bar is the plate header — controls, a name and
-            the one number worth reading, same as the surfaces cards. */}
+        {/* ── What it needs ──────────────────────────────────────────
+            The window's own bar is the plate header — controls, a name and
+            the one number worth reading, same as the surfaces cards. Only
+            the three machine specs live inside it. */}
         <MacWindow
           title={<span className={LABEL}>Requirements</span>}
           trailing={<span className={LABEL}>84 MB &middot; v0.9</span>}
         >
-          {/* ── What it needs ──────────────────────────────────────── */}
           {/* No rule of its own: the title bar already draws one. */}
           <div className="grid md:grid-cols-3">
             {SPECS.map((spec, i) => (
@@ -167,89 +240,48 @@ export function RequirementsSection() {
                 </p>
                 {/* mt-auto pins the note to the bottom, so the hairline
                     lines up across columns even if a value wraps. */}
-                <p className="mt-auto border-t border-border pt-3.5 text-[12.5px] leading-[1.5] font-light text-white/45">
+                <p className="mt-auto border-t border-border pt-3.5 text-[12.5px] leading-normal font-light text-white/45">
                   {spec.note}
                 </p>
               </div>
             ))}
           </div>
-
-          {/* ── Where it stops ─────────────────────────────────────
-              Two columns, because this is a comparison. The caveat sits
-              in the offline column rather than in a footnote, since it
-              is the one thing a reader most needs to weigh. */}
-          <div className={cn("grid md:grid-cols-2", BAND)}>
-            <div className="flex flex-col px-6 py-7">
-              <div className="mb-5 flex items-center gap-2.5">
-                <i
-                  aria-hidden
-                  className="size-1.5 shrink-0 rounded-full bg-brand-green"
-                />
-                <span className={LABEL}>Works fully offline</span>
-              </div>
-              <ul className="flex flex-col gap-2.5">
-                {OFFLINE.map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-center gap-3 text-[14px] font-light text-white/85"
-                  >
-                    <i
-                      aria-hidden
-                      className="size-1 shrink-0 rounded-full bg-brand-green"
-                    />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-auto border-t border-border pt-4 text-[13px] leading-[1.55] font-light text-white/52">
-                Reasoning still runs on-device, and is measurably weaker on
-                complex, multi-step work.
-              </p>
-            </div>
-
-            <div className="flex flex-col border-t border-border px-6 py-7 md:border-t-0 md:border-l">
-              <div className="mb-5 flex items-center gap-2.5">
-                <i
-                  aria-hidden
-                  className="size-1.5 shrink-0 rounded-full border border-white/45"
-                />
-                <span className={LABEL}>Needs your own key</span>
-              </div>
-              <ul className="flex flex-col gap-2.5">
-                {KEYED.map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-center gap-3 text-[14px] font-light text-white/85"
-                  >
-                    <i
-                      aria-hidden
-                      className="size-1 shrink-0 rounded-full border border-white/40"
-                    />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-auto border-t border-border pt-4 text-[13px] leading-[1.55] font-light text-white/52">
-                Your provider, your key, your bill. Nothing is billed through
-                us, and none of it is on by default.
-              </p>
-            </div>
-          </div>
-
-          {/* ── The footnote nobody else prints ────────────────────── */}
-          <div
-            className={cn(
-              "flex flex-wrap items-center gap-x-2.5 gap-y-1 px-6 py-4 font-mono text-[11.5px] text-white/40",
-              BAND,
-            )}
-          >
-            <span>Direct DMG download</span>
-            <i aria-hidden className="size-[3px] rounded-full bg-white/22" />
-            <span>outside the App Store</span>
-            <i aria-hidden className="size-[3px] rounded-full bg-white/22" />
-            <span className="text-brand-red-text">not sandboxed</span>
-          </div>
         </MacWindow>
+
+        {/* ── The other requirement ──────────────────────────────────
+            Out of the frame, and headed by the division rather than by
+            one side of it. Both columns below are requirements — one
+            half needs nothing but the machine on the plate above, the
+            other needs a key. A heading naming only the keyed half
+            would be contradicted by the first column under it. */}
+        <h3 className="mt-16 mb-9 text-[clamp(22px,2.4vw,30px)] leading-[1.1] font-medium tracking-[-0.03em]">
+          What needs a key, and what doesn&rsquo;t.
+        </h3>
+
+        {/* Two columns, because this is a comparison. The caveat sits in
+            the offline column rather than in a footnote, since it is the
+            one thing a reader most needs to weigh. */}
+        <div className={cn("grid md:grid-cols-2", BAND, "pt-9")}>
+          <Stop stop={STOPS[0]} className="md:pr-14" />
+          <Stop
+            stop={STOPS[1]}
+            className="mt-10 pt-10 border-t border-border pt-10 md:mt-0 md:border-t-0 md:border-l md:pt-0 md:pl-14"
+          />
+        </div>
+
+        {/* ── The footnote nobody else prints ────────────────────── */}
+        <div
+          className={cn(
+            "mt-11 flex flex-wrap items-center gap-x-2.5 gap-y-1 pt-5 font-mono text-xs text-white/40",
+            BAND,
+          )}
+        >
+          <span>Direct DMG download</span>
+          <i aria-hidden className="size-0.75 rounded-full bg-white/22" />
+          <span>outside the App Store</span>
+          <i aria-hidden className="size-0.75 rounded-full bg-white/22" />
+          <span className="text-brand-red-text">not sandboxed</span>
+        </div>
       </div>
     </section>
   );
