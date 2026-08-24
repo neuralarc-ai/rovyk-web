@@ -1,6 +1,7 @@
 import { HeroSection } from "@/components/hero-section";
 import { HowSection } from "@/components/how-section";
 import { IntroSection } from "@/components/intro-section";
+import { OrbSection } from "@/components/orb-section";
 import { SurfacesSection } from "@/components/surfaces-section";
 import { ToolsSection } from "@/components/tools-section";
 
@@ -18,6 +19,7 @@ export default function Page() {
         <SurfacesSection />
         <ToolsSection />
         <HowSection />
+        <OrbSection />
       </main>
     </>
   );

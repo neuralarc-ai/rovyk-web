@@ -7,6 +7,17 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/* Lenis owns scrolling, so anything wanting to move the page has to ask it
+   rather than calling `scrollTo` behind its back — a native jump gets read
+   back as user input on the next frame and fights the glide. Kept at module
+   scope rather than in context: there is exactly one instance, and the
+   callers are event handlers, not renders. */
+let instance: Lenis | null = null;
+
+/** The running instance, or `null` under reduced motion, where there is
+ *  none and the caller should fall back to native scrolling. */
+export const getLenis = () => instance;
+
 /**
  * Global smooth scroll, with Lenis and GSAP sharing one clock.
  *
@@ -46,10 +57,12 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     // Without this, a long frame makes gsap "catch up" and Lenis jumps.
     gsap.ticker.lagSmoothing(0);
     lenis.on("scroll", ScrollTrigger.update);
+    instance = lenis;
 
     return () => {
       gsap.ticker.remove(update);
       lenis.destroy();
+      instance = null;
     };
   }, []);
 
