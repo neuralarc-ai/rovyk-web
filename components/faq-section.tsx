@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { PlusToggle } from "@/components/disclosure-toggle";
 import { SectionHead } from "@/components/section-head";
 import { cn } from "@/lib/utils";
@@ -28,6 +28,15 @@ import { cn } from "@/lib/utils";
    something on the left — two changes in distant places at once, which
    reads as the page rearranging itself. Held to a column, each side is
    self-contained, and clicking the open one shuts it.
+
+   The first of each column starts open, which reads as a pair while the
+   columns are side by side. Stacked they are not a pair: they are the
+   first and the fourth of one list of six, so the section opened with
+   two answers scattered through it and the first of them cost a third of
+   the screen before the reader had seen what else was asked. Below `md`
+   it opens closed — six questions, which is the index this is supposed
+   to be. Every row carries a plus, so nothing is lost by not
+   demonstrating that they open.
    ──────────────────────────────────────────────────────────────────── */
 
 const FAQ: [question: string, answer: string][] = [
@@ -65,6 +74,13 @@ const HALF = Math.ceil(FAQ.length / 2);
 const COLUMNS = [FAQ.slice(0, HALF), FAQ.slice(HALF)];
 
 const EASE = "ease-[cubic-bezier(.52,.52,0,1)]";
+
+/** Where the two columns stop being two columns. */
+const WIDE = "(min-width: 768px)";
+
+/** The first of each column, or neither. `-1` is a column with nothing open. */
+const SHUT: [number, number] = [-1, -1];
+const FIRST: [number, number] = [0, 0];
 
 function Item({
   q,
@@ -141,23 +157,41 @@ function Item({
 }
 
 export function FaqSection() {
-  /* Which item is open in each column, or -1 for none. */
-  const [open, setOpen] = useState<[number, number]>([0, 0]);
+  /* Which item is open in each column, or -1 for none. Shut to start with:
+     it is the correct state for the narrower layout, and the one a reader
+     gets if the media query never resolves. */
+  const [open, setOpen] = useState<[number, number]>(SHUT);
+  /** Once the reader has opened or shut anything themselves, the default
+   *  stops applying — resizing a window should not undo a choice. */
+  const chosen = useRef(false);
 
-  const toggle = (column: number, item: number) =>
+  useEffect(() => {
+    const mq = matchMedia(WIDE);
+    const read = () => {
+      if (chosen.current) return;
+      setOpen(mq.matches ? FIRST : SHUT);
+    };
+    read();
+    mq.addEventListener("change", read);
+    return () => mq.removeEventListener("change", read);
+  }, []);
+
+  const toggle = (column: number, item: number) => {
+    chosen.current = true;
     setOpen((prev) => {
       const next: [number, number] = [...prev];
       next[column] = prev[column] === item ? -1 : item;
       return next;
     });
+  };
 
   return (
-    <section id="faq" className="relative py-[clamp(96px,12.5vh,158px)]">
+    <section id="faq" className="relative py-(--section-y)">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="faq"
           title="Everything you need to know"
-          className="mb-14"
+          className="mb-9 sm:mb-14"
         />
 
         <div className="grid gap-x-4 md:grid-cols-2">

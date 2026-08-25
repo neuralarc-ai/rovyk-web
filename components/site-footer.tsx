@@ -1,4 +1,5 @@
 import { DownloadButton } from "@/components/cta-button";
+import { Kicker } from "@/components/kicker";
 import { RovykWordmark } from "@/components/rovyk-wordmark";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -15,30 +16,6 @@ import Link from "next/link";
    It darkens downwards, from the sheet's own ground to a shade below
    it, so the page has a floor rather than simply stopping.
    ──────────────────────────────────────────────────────────────────── */
-
-/** The footer's small caps, bracketed the way every eyebrow on this page
- *  is. Brackets dimmer than the word, so they read as punctuation rather
- *  than as two more characters. */
-function Kicker({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 font-mono text-[10.5px] tracking-[0.16em] text-white/40 uppercase",
-        className,
-      )}
-    >
-      <span className="text-white/22">[</span>
-      {children}
-      <span className="text-white/22">]</span>
-    </span>
-  );
-}
 
 const LINKS: { heading: string; items: [label: string, href: string][] }[] = [
   {

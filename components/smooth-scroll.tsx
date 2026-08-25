@@ -48,9 +48,7 @@ function anchorHandler(lenis: Lenis) {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
     const link = (e.target as Element | null)?.closest?.("a[href]") as
-      | HTMLAnchorElement
-      | null
-      | undefined;
+      HTMLAnchorElement | null | undefined;
     if (!link || link.target === "_blank" || link.hasAttribute("download"))
       return;
 

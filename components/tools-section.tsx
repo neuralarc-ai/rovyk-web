@@ -427,16 +427,12 @@ export function ToolsSection() {
   const tool = TOOLS[sel];
 
   return (
-    <section
-      ref={root}
-      id="features"
-      className="relative py-[clamp(96px,12.5vh,158px)]"
-    >
+    <section ref={root} id="features" className="relative py-(--section-y)">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="everything it can do"
           title="Ten groups. Fifty-nine tools."
-          className="mb-16"
+          className="mb-10 sm:mb-16"
         >
           You never name one. Pick any tick to see what it reaches, and what it
           has to ask you for first.

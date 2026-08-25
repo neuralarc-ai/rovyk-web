@@ -29,7 +29,7 @@ export function CtaSection() {
   return (
     <section
       id="cta"
-      className="relative overflow-hidden py-[clamp(112px,15vh,180px)]"
+      className="relative overflow-hidden py-[calc(var(--section-y)*1.2)]"
     >
       {/* A single soft bloom behind the orb, lifted from 40% rather than
           centred, so the light lands on the orb and the headline and falls

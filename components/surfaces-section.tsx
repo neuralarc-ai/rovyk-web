@@ -18,9 +18,23 @@ import { DownloadButton } from "./cta-button";
    fragment of a screen caught mid-work.
    ──────────────────────────────────────────────────────────────────── */
 
-/** Two thirds of the card. The copy gets what is left. */
+/**
+ * Two thirds of the card. The copy gets what is left.
+ *
+ * Sized against the card rather than the viewport. The height used to floor
+ * at 390px, which is most of a phone screen and nearly twice as tall as the
+ * artifact it was framing — a 16:11 screen at 302px of card is 175px, so the
+ * stage was 200px of empty graph paper wrapped around it. It is worse than
+ * it sounds in a two-column row, where the card is half the width but the
+ * stage was still the same fixed height.
+ *
+ * `cqw` is the card's own width, so one expression covers a phone, a single
+ * column and a two-column row without knowing which it is in. The floor is
+ * what the focus demo needs: a header, a footer and three lines of transcript
+ * between them.
+ */
 const STAGE =
-  "relative flex h-[clamp(390px,44vh,500px)] items-center justify-center overflow-hidden border-b border-border bg-background px-6 sm:px-7.5";
+  "relative flex h-[clamp(268px,70cqw,500px)] items-center justify-center overflow-hidden border-b border-border bg-background px-6 sm:px-7.5";
 
 /** Both artifacts float at the same width and cast the same shadow. */
 const FLOAT =
@@ -35,17 +49,27 @@ function Kbd({ children }: { children: React.ReactNode }) {
 }
 
 function ChromeTitle({ children }: { children: React.ReactNode }) {
+  /* `min-w-0 truncate` so a bar too narrow for both loses the tail of the
+     index rather than wrapping to a second line inside a 44px strip and
+     pushing the tag out through the chrome. */
   return (
-    <span className="font-mono text-[10px] tracking-[0.16em] text-white/45 uppercase">
+    <span className="min-w-0 truncate font-mono text-[10px] tracking-[0.16em] text-white/45 uppercase">
       {children}
     </span>
   );
 }
 
-/** A pill in the title bar, carrying the one number worth reading. */
+/**
+ * A pill in the title bar, carrying the one number worth reading.
+ *
+ * Below about 26rem of card there is no room for it and the index together —
+ * which is a card width, not a screen width, so it happens on a phone and
+ * again in a narrow two-column row. It leaves rather than truncating: half a
+ * measurement is worse than none, and the index is the label of the two.
+ */
 function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full border border-input bg-background px-2.5 py-1 font-mono text-[10px] tracking-[0.12em] text-white/55 uppercase">
+    <span className="hidden shrink-0 rounded-full border border-input bg-background px-2.5 py-1 font-mono text-[10px] tracking-[0.12em] whitespace-nowrap text-white/55 uppercase @[26rem]/surface:inline">
       {children}
     </span>
   );
@@ -117,11 +141,12 @@ function NotchStage({ labels = false }: { labels?: boolean }) {
             same story twice — and a longer chain, which is the case the
             shell has to grow for.
 
-            Scaled to the artifact, not the viewport — expanded the notch is
-            404px, wider than this screen on a phone. */}
+            Scaled to the card it is in rather than to the viewport —
+            expanded the notch is 404px, wider than this screen on a phone,
+            and a two-column row makes the card narrow at any screen size. */}
         <RovykHud
           flow={DOWNLOADS_FLOW}
-          className="z-30 scale-[0.55] md:scale-[0.62] lg:scale-[0.8]"
+          className="z-30 scale-[0.55] @[26rem]/surface:scale-[0.7] @[34rem]/surface:scale-[0.8]"
         />
       </div>
     </div>
@@ -176,20 +201,26 @@ const SURFACES = [
 
 export function SurfacesSection() {
   return (
-    <section id="where" className="relative py-[clamp(96px,12.5vh,158px)]">
+    <section id="where" className="relative py-(--section-y)">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="surfaces"
           title="Where can I be?"
-          className="mb-16"
+          className="mb-10 sm:mb-16"
         >
           Two surfaces, one agent. Switch mid-sentence, it keeps the thread.
         </SectionHead>
 
-        <div className="grid gap-4.5 md:grid-cols-2">
+        {/* Two columns from `lg`. At `md` the row splits a 648px container
+            into 315px cards — narrower than the single column a phone gets,
+            so the artwork got smaller as the screen got bigger. */}
+        <div className="grid gap-4.5 lg:grid-cols-2">
           {SURFACES.map((surface) => (
             <MacWindow
               key={surface.id}
+              // The card is the container everything inside it measures
+              // against — the stage's height, the tag, the notch's scale.
+              className="@container/surface"
               title={<ChromeTitle>{surface.index}</ChromeTitle>}
               trailing={<Tag>{surface.tag}</Tag>}
             >
@@ -215,7 +246,7 @@ export function SurfacesSection() {
 
         {/* One download for both. Lit from the right so the bar has a bright
             end and a quiet end rather than being evenly filled. */}
-        <div className="relative mt-4.5 flex flex-wrap items-center gap-x-8.5 gap-y-8 overflow-hidden rounded-3xl border border-input bg-card px-8.5 py-8">
+        <div className="relative mt-4.5 flex flex-col items-start gap-6 overflow-hidden rounded-3xl border border-input bg-card px-6 py-7 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8.5 sm:gap-y-8 sm:px-8.5 sm:py-8">
           <div
             aria-hidden
             className="bg-cta-glow pointer-events-none absolute inset-0"
@@ -225,7 +256,7 @@ export function SurfacesSection() {
             className="bg-hairline-grid mask-grid-right pointer-events-none absolute inset-0 [--grid-size:96px]"
           />
 
-          <div className="relative z-10 min-w-65 flex-1">
+          <div className="relative z-10 w-full sm:min-w-65 sm:flex-1">
             <h3 className="mb-2 text-[clamp(22px,2.4vw,30px)] leading-[1.1] font-medium tracking-[-0.03em] text-balance">
               Both surfaces, one&nbsp;84&nbsp;MB download
             </h3>
@@ -244,7 +275,9 @@ export function SurfacesSection() {
               Download for Apple Silicon
             </a>
           </div> */}
-          <DownloadButton href="#cta">Download for Mac</DownloadButton>
+          <DownloadButton href="#cta" className="w-full sm:w-auto">
+            Download for Mac
+          </DownloadButton>
         </div>
       </div>
     </section>

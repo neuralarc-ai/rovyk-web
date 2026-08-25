@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { OrbState } from "thinking-orbs/engine";
 import { ArrowUpIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
 import { HeroOrb } from "@/components/hero-orb";
@@ -335,13 +335,40 @@ const MODES: { id: Mode; label: string }[] = [
   { id: "chat", label: "chat" },
 ];
 
+/** What the orb leaves for the line under it: the gap, three lines of
+ *  transcript at 1.45, and a little air. */
+const CAPTION_H = 78;
+
+/** The orb's drawn size on a pane with room for it. */
+const ORB_MAX = 148;
+const ORB_MIN = 64;
+
 export function FocusDemo({ className }: { className?: string }) {
   const { mode, changeMode, state, hostRef } = useFocusRunner();
+
+  /* The orb is a canvas, so it is sized in pixels rather than by CSS — and a
+     transform would not help, since a scaled element still occupies its
+     unscaled box and it is the box that has to fit. Measured off the space it
+     is actually in: at 148px in a pane 151px tall, the orb and the line under
+     it ran out through the footer. */
+  const [bodyH, setBodyH] = useState(0);
+  const bodyBox = useCallback((el: HTMLDivElement | null) => {
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setBodyH(e.contentRect.height));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const orbSize = bodyH
+    ? Math.max(ORB_MIN, Math.min(ORB_MAX, Math.round(bodyH - CAPTION_H)))
+    : ORB_MAX;
 
   return (
     <div
       ref={hostRef}
-      className={cn("@container/focus flex flex-col overflow-hidden", className)}
+      className={cn(
+        "@container/focus flex flex-col overflow-hidden",
+        className,
+      )}
     >
       <div className="flex items-center justify-between border-b border-border bg-accent px-4 py-3">
         <span className="font-mono text-[10.5px] tracking-[0.12em] text-white/45">
@@ -355,15 +382,19 @@ export function FocusDemo({ className }: { className?: string }) {
       {/* One continuous space: the centre sits in the middle of the whole
           window, with the rails floating clear of it rather than walling
           it into a column. */}
-      <div className="relative flex-1">
-        <div className="absolute inset-0 flex items-center justify-center px-20 @[440px]/focus:px-36">
+      <div ref={bodyBox} className="relative flex-1">
+        {/* The padding is what keeps the transcript clear of the rails, so
+            the two move together. Below 360px there are no rails to clear —
+            two 96px columns on a 270px pane left the line 78px, or three
+            words. */}
+        <div className="absolute inset-0 flex items-center justify-center px-8 @[360px]/focus:px-20 @[440px]/focus:px-36">
           <div className="flex h-full flex-col items-center justify-center gap-4">
             {/* Voice only — the orb is what makes the two surfaces look
                 different. Everything below it is deliberately identical. */}
             {mode === "voice" && (
               <HeroOrb
                 state={ORB_STATE[state.phase]}
-                size={148}
+                size={orbSize}
                 className="shrink-0 opacity-90"
               />
             )}
@@ -382,12 +413,12 @@ export function FocusDemo({ className }: { className?: string }) {
           </div>
         </div>
 
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex w-24 flex-col justify-start gap-2 pt-5 pl-4 @[440px]/focus:w-34 @[440px]/focus:pl-5">
+        <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-24 flex-col justify-start gap-2 pt-5 pl-4 @[360px]/focus:flex @[440px]/focus:w-34 @[440px]/focus:pl-5">
           {state.done.map((task) => (
             <TaskItem key={task} task={task} done />
           ))}
         </div>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex w-24 flex-col items-end justify-start gap-2 pt-5 pr-4 @[440px]/focus:w-34 @[440px]/focus:pr-5">
+        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-24 flex-col items-end justify-start gap-2 pt-5 pr-4 @[360px]/focus:flex @[440px]/focus:w-34 @[440px]/focus:pr-5">
           {state.pending.map((task) => (
             <TaskItem key={task} task={task} reverse />
           ))}

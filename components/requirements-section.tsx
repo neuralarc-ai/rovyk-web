@@ -192,12 +192,12 @@ function Stop({
 
 export function RequirementsSection() {
   return (
-    <section id="req" className="relative py-[clamp(96px,12.5vh,158px)]">
+    <section id="req" className="relative py-(--section-y)">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="requirements"
           title="What it needs. What it will not do."
-          className="mb-15.5"
+          className="mb-10 sm:mb-15.5"
         >
           Published in full, because a tool asking for this much access should
           tell you exactly where it stops.
@@ -254,7 +254,7 @@ export function RequirementsSection() {
             half needs nothing but the machine on the plate above, the
             other needs a key. A heading naming only the keyed half
             would be contradicted by the first column under it. */}
-        <h3 className="mt-16 mb-9 text-[clamp(22px,2.4vw,30px)] leading-[1.1] font-medium tracking-[-0.03em]">
+        <h3 className="mt-11 mb-6 text-[clamp(22px,2.4vw,30px)] sm:mt-16 sm:mb-9 leading-[1.1] font-medium tracking-[-0.03em]">
           What needs a key, and what doesn&rsquo;t.
         </h3>
 
@@ -265,14 +265,14 @@ export function RequirementsSection() {
           <Stop stop={STOPS[0]} className="md:pr-14" />
           <Stop
             stop={STOPS[1]}
-            className="mt-10 pt-10 border-t border-border pt-10 md:mt-0 md:border-t-0 md:border-l md:pt-0 md:pl-14"
+            className="mt-8 border-t border-border pt-8 md:mt-0 md:border-t-0 md:border-l md:pt-0 md:pl-14"
           />
         </div>
 
         {/* ── The footnote nobody else prints ────────────────────── */}
         <div
           className={cn(
-            "mt-11 flex flex-wrap items-center gap-x-2.5 gap-y-1 pt-5 font-mono text-xs text-white/40",
+            "mt-8 flex flex-wrap items-center gap-x-2.5 gap-y-1 pt-5 font-mono text-xs text-white/40 sm:mt-11",
             BAND,
           )}
         >

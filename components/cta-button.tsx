@@ -37,7 +37,9 @@ export function DownloadButton({
 }) {
   if (WAITLIST_MODE) {
     return (
-      <JoinWaitlistButton className={cn(BASE, PRIMARY, "cursor-pointer", className)}>
+      <JoinWaitlistButton
+        className={cn(BASE, PRIMARY, "cursor-pointer", className)}
+      >
         {WAITLIST_LABEL}
       </JoinWaitlistButton>
     );

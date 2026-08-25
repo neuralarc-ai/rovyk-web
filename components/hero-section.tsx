@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -96,7 +96,14 @@ export function HeroSection() {
   return (
     <section
       ref={root}
-      className="relative z-10 flex min-h-[calc(100svh-var(--gut)*2)] flex-col items-center overflow-hidden rounded-t-4xl border-t border-border bg-background"
+      /* Full height from `sm` up, and content height below it. A 16:10
+         window at 86vw is 210px tall on a phone, and no arrangement of it
+         fills the ~150px a forced 100svh leaves over — the only way to close
+         that would be to run the machine off both sides of the screen and
+         crop away the menu bar it is recognisable by. So the hero ends where
+         its content ends and the marquee sits on that floor, which is what
+         it already does on a desktop. */
+      className="relative z-10 flex flex-col items-center overflow-hidden rounded-t-4xl border-t border-border bg-background sm:min-h-[calc(100svh-var(--gut)*2)]"
     >
       {/* The wallpaper the whole section is lit by. Statically imported so
           Next infers its dimensions and generates the blur placeholder;
@@ -180,12 +187,33 @@ export function HeroSection() {
       {/* ── The machine ────────────────────────────────────────────────
           Cropped rather than framed: the window runs off the bottom of the
           section, so it reads as a real screen the page is sitting on top
-          of instead of a screenshot in a box. */}
+          of instead of a screenshot in a box.
+
+          The crop is the container's job, not the window's. This used to be
+          a `flex-1` box with a `max-h`, and a flex row stretches its children
+          by default — which handed the window a definite height and made
+          `aspect-16/10` inert. On a wide screen that squashed it; on a phone,
+          where the leftover space is taller than 86vw is wide, it stood the
+          Mac on its end. So the window is aligned to the top and keeps its
+          own ratio, and the container is given the height to show it at.
+
+          `--screen` is declared once and read by both, so the two cannot
+          disagree about how wide the machine is. The container is the
+          window's own 16:10 height, or 48vh where that is less — so a
+          desktop crops the machine well above its bottom edge, and a phone,
+          which has no height to spare, shows all of it and lets the mask and
+          the marquee do the cropping instead. */}
       <div
         data-display
-        className="mask-fade-b relative z-20 mt-[clamp(22px,3.2vh,46px)] flex max-h-[48vh] min-h-47.5 w-full flex-1 justify-center overflow-hidden"
+        className="mask-fade-b relative z-20 mt-[clamp(22px,3.2vh,46px)] flex w-full items-start justify-center overflow-hidden"
+        style={
+          {
+            "--screen": "min(1080px, 86vw)",
+            height: "min(48vh, calc(var(--screen) / 1.6))",
+          } as CSSProperties
+        }
       >
-        <div className="relative aspect-16/10 w-[min(1080px,86vw)] overflow-hidden rounded-3xl bg-background shadow-[0_0_0_1px_rgba(255,255,255,.18),0_0_0_6px_rgba(255,255,255,.035),0_40px_90px_-30px_rgba(0,0,0,.9)]">
+        <div className="relative aspect-16/10 w-(--screen) shrink-0 overflow-hidden rounded-3xl bg-background shadow-[0_0_0_1px_rgba(255,255,255,.18),0_0_0_6px_rgba(255,255,255,.035),0_40px_90px_-30px_rgba(0,0,0,.9)]">
           <div className="bg-display-wall absolute inset-0" />
 
           {/* Menu bar — the notch hangs from this edge. */}

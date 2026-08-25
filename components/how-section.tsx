@@ -96,13 +96,41 @@ const HUD_FILL = 0.86;
  *  catches, too big is a frame that overflows. */
 const HUD_FALLBACK = 0.4;
 
-/** Row proportions for the lattice behind the screen. The centre column is
- *  taller in the middle so the frame opens up exactly where the screen sits. */
+/**
+ * The lattice, which the screen is one cell of.
+ *
+ * It used to be an absolutely positioned decoration with the machine centred
+ * over it at a size that had nothing to do with the cells, so it read as a
+ * window dropped on top of some graph paper. Now there is one grid: the
+ * outer columns are empty cells, and the middle column's middle cell is the
+ * machine itself — same track, same gutter, edges landing on the same lines.
+ *
+ * The middle row is `auto` rather than a fraction, because the machine is
+ * 16:10 and has to stay that way. Sizing the row from the cell would hand it
+ * a definite height and the ratio would be ignored — so the row takes its
+ * height from the screen, and the cells above and below share what is left.
+ */
 const CELLS = [
-  { rows: "0.8fr 1.35fr 1fr", grow: false },
-  { rows: "0.55fr 1.9fr 0.7fr", grow: true },
-  { rows: "0.8fr 1.35fr 1fr", grow: false },
+  { rows: "0.8fr 1.35fr 1fr", screen: false },
+  { rows: "0.62fr auto 0.78fr", screen: true },
+  { rows: "0.8fr 1.35fr 1fr", screen: false },
 ];
+
+/** An empty cell of the frame. */
+function Cell({ dim }: { dim?: boolean }) {
+  return (
+    <i
+      aria-hidden
+      className={cn(
+        "block rounded-xl border",
+        // The middle column cannot carry the column-wide fade — it would take
+        // the machine down with it — so its two cells recede by weight
+        // instead.
+        dim ? "border-border/55" : "border-border",
+      )}
+    />
+  );
+}
 
 export function HowSection() {
   const [active, setActive] = useState(0);
@@ -128,6 +156,53 @@ export function HowSection() {
   }, []);
   const tl = useRef<gsap.core.Timeline | null>(null);
   const started = useRef(false);
+
+  /* ── The rail ──────────────────────────────────────────────────────
+     One element, two behaviours. Above `md` it is the column it has always
+     been. Below it, where the four steps stacked into a wall of text you
+     had to scroll past to reach the screen they describe, it is a scroll
+     snap carousel showing one step at a time — so the machine sits at the
+     top of the card and the narration is swiped underneath it.
+
+     Native scroll snapping rather than a gesture handler: it is the
+     platform's own swipe, so it carries the momentum, the rubber-banding
+     and the accessibility of one, and there is nothing to fight Lenis
+     over. */
+  const rail = useRef<HTMLDivElement>(null);
+  /** True while the rail is being moved for the reader rather than by them,
+   *  so a smooth scroll of our own is not read back as a swipe. */
+  const syncing = useRef(false);
+  const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** `aria-orientation` is not a style, so the layout switch has to be
+   *  observed rather than left to CSS. Desktop-first, to match the server. */
+  const [wide, setWide] = useState(true);
+
+  useEffect(() => {
+    const mq = matchMedia("(min-width: 768px)");
+    const read = () => setWide(mq.matches);
+    read();
+    mq.addEventListener("change", read);
+    return () => mq.removeEventListener("change", read);
+  }, []);
+
+  /** Which step the rail has come to rest on, by whichever centre is
+   *  nearest its own. Measured rather than divided by a page width: the
+   *  scroller carries padding, so the two do not agree. */
+  const restingStep = (el: HTMLElement) => {
+    const box = el.getBoundingClientRect();
+    const mid = box.left + box.width / 2;
+    let best = Infinity;
+    let at = 0;
+    Array.from(el.children).forEach((kid, i) => {
+      const r = kid.getBoundingClientRect();
+      const d = Math.abs(r.left + r.width / 2 - mid);
+      if (d < best) {
+        best = d;
+        at = i;
+      }
+    });
+    return at;
+  };
 
   /* The standing intent, and the two things that defer to it. `engaged` is
      one idea deliberately: a hand-picked step and a pointer working its way
@@ -212,9 +287,41 @@ export function HowSection() {
       progress.current.v = 0;
       go(i);
       engage();
+
+      /* Only when the rail is actually a rail — above `md` it is a column
+         with nothing to scroll, and asking would move the page instead. */
+      const el = rail.current;
+      if (!el || el.scrollWidth <= el.clientWidth + 1) return;
+      syncing.current = true;
+      el.children[i]?.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest",
+      });
     },
     [go, engage],
   );
+
+  /* Committed on settle rather than per frame: a swipe fires scroll dozens
+     of times on the way, and only where it stops is a choice. */
+  const onRailScroll = useCallback(() => {
+    if (settle.current) clearTimeout(settle.current);
+    settle.current = setTimeout(() => {
+      const el = rail.current;
+      if (!el || el.scrollWidth <= el.clientWidth + 1) return;
+      const at = restingStep(el);
+      /* Arriving where we asked to be is our own scroll finishing, not the
+         reader choosing anything. */
+      if (at === activeRef.current) {
+        syncing.current = false;
+        return;
+      }
+      if (syncing.current) return;
+      progress.current.v = 0;
+      go(at);
+      engage();
+    }, 90);
+  }, [go, engage]);
 
   useGSAP(
     () => {
@@ -267,7 +374,10 @@ export function HowSection() {
   );
 
   useEffect(() => {
-    return () => void (idle.current && clearTimeout(idle.current));
+    return () => {
+      if (idle.current) clearTimeout(idle.current);
+      if (settle.current) clearTimeout(settle.current);
+    };
   }, []);
 
   /** The one control that sets the standing intent. Sticky in both
@@ -305,16 +415,12 @@ export function HowSection() {
   };
 
   return (
-    <section
-      ref={root}
-      id="how"
-      className="relative py-[clamp(96px,12.5vh,158px)]"
-    >
+    <section ref={root} id="how" className="relative py-(--section-y)">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="how it works"
           title="Say it once. Watch the whole chain run."
-          className="mb-16"
+          className="mb-10 sm:mb-16"
         >
           No command list, no scripts to wire up. One sentence, and Rovyk
           decides what to call, asks before anything irreversible, then tells
@@ -330,112 +436,159 @@ export function HowSection() {
           onBlurCapture={(e) => {
             if (!e.currentTarget.contains(e.relatedTarget)) disengage();
           }}
-          className="grid overflow-hidden rounded-3xl border border-input bg-card md:grid-cols-[37%_63%]"
+          // The card is what the pane measures its height against — below `md`
+          // the pane is the whole card, so one is the other.
+          className="@container/how grid overflow-hidden rounded-3xl border border-input bg-card md:grid-cols-[37%_63%]"
         >
-          {/* ── The narration ──────────────────────────────────────── */}
-          <div
-            role="tablist"
-            aria-orientation="vertical"
-            aria-label="How it works"
-            onKeyDown={onKeys}
-            className="flex flex-col border-b border-border p-1.5 md:border-r md:border-b-0"
-          >
-            {STEPS.map((step, i) => {
-              const on = i === active;
-              const passed = i <= active;
-              return (
-                <button
-                  key={step.title}
-                  type="button"
-                  role="tab"
-                  id={TAB_ID(i)}
-                  aria-selected={on}
-                  aria-controls={PANEL_ID}
-                  // One tab stop for the set; the arrows move between them.
-                  tabIndex={on ? 0 : -1}
-                  onClick={() => pick(i)}
-                  className={cn(
-                    "group/step relative flex flex-1 cursor-pointer items-stretch gap-4 px-4 py-5 text-left",
-                    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-                  )}
-                >
-                  {/* The raised card, behind the copy rather than a
-                      background on it, so it can scale without the text. */}
-                  <span
-                    aria-hidden
+          {/* ── The narration ────────────────────────────────────────
+              Second on a phone. The screen is what the section is
+              actually pointing at, and stacked the other way round it
+              sat under four paragraphs, off the bottom of the fold —
+              you read the claims and never reached the evidence. */}
+          {/* `min-w-0` is load-bearing. A grid item's automatic minimum is
+              its min-content width, and a flex row of four `shrink-0` pages
+              reports the sum of all four — so the column blew out to 446px
+              inside a 300px card and the card just clipped it. Overridden,
+              the track takes the width it is given and the rail scrolls. */}
+          <div className="order-2 flex min-w-0 flex-col border-t border-border md:order-none md:border-t-0 md:border-r">
+            <div
+              ref={rail}
+              role="tablist"
+              aria-orientation={wide ? "vertical" : "horizontal"}
+              aria-label="How it works"
+              onKeyDown={onKeys}
+              onScroll={onRailScroll}
+              className={cn(
+                "flex min-w-0 flex-1 p-1.5",
+                // Below md: one step per screen, swiped. `overscroll-x-contain`
+                // so running off the last one is not read as the browser's own
+                // back gesture.
+                "snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth",
+                "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+                "md:snap-none md:flex-col md:overflow-visible",
+              )}
+            >
+              {STEPS.map((step, i) => {
+                const on = i === active;
+                const passed = i <= active;
+                return (
+                  <button
+                    key={step.title}
+                    type="button"
+                    role="tab"
+                    id={TAB_ID(i)}
+                    aria-selected={on}
+                    aria-controls={PANEL_ID}
+                    // One tab stop for the set; the arrows move between them.
+                    tabIndex={on ? 0 : -1}
+                    onClick={() => pick(i)}
                     className={cn(
-                      "absolute inset-0 rounded-xl border border-input bg-accent shadow-[0_22px_52px_-24px_#000]",
-                      "transition-[opacity,transform] duration-450 ease-[cubic-bezier(.52,.52,0,1)]",
-                      on
-                        ? "scale-100 opacity-100"
-                        : "scale-[.99] opacity-0 group-hover/step:opacity-40",
+                      "group/step relative flex cursor-pointer text-left",
+                      // A page of the carousel below md, a row of the column
+                      // above it. `shrink-0` is what stops four of them being
+                      // squeezed onto one screen instead of four.
+                      "w-full shrink-0 snap-center flex-col gap-3 px-5 py-6",
+                      "md:w-auto md:flex-1 md:flex-row md:items-stretch md:gap-4 md:px-4 md:py-5",
+                      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
                     )}
-                  />
+                  >
+                    {/* The raised card, behind the copy rather than a
+                      background on it, so it can scale without the text. */}
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "absolute inset-0 rounded-xl border border-input bg-accent shadow-[0_22px_52px_-24px_#000]",
+                        "transition-[opacity,transform] duration-450 ease-[cubic-bezier(.52,.52,0,1)]",
+                        on
+                          ? "scale-100 opacity-100"
+                          : "scale-[.99] opacity-0 group-hover/step:opacity-40",
+                      )}
+                    />
 
-                  {/* The spine. Lit above the current node, counting down
+                    {/* The spine. Lit above the current node, counting down
                       below it — so the sequence, the position in it and the
                       time until the next step are all one mark. */}
-                  <span
-                    aria-hidden
-                    className="relative z-10 flex w-5.5 shrink-0 flex-col items-center"
-                  >
-                    <span className="relative w-px flex-1 bg-border">
-                      <span
-                        ref={(el) => {
-                          tops.current[i] = el;
-                        }}
-                        className="absolute inset-0 origin-top bg-white/70"
-                        style={{ transform: "scaleY(0)" }}
-                      />
-                    </span>
-
                     <span
-                      className={cn(
-                        "my-2 grid size-5.5 shrink-0 place-items-center rounded-full border font-mono text-[9.5px] transition-colors duration-400",
-                        on
-                          ? "border-white bg-white text-[#0A0A0A]"
-                          : passed
-                            ? "border-white/45 text-white/70"
-                            : "border-white/22 text-white/40",
-                      )}
+                      aria-hidden
+                      className="relative z-10 flex shrink-0 items-center md:w-5.5 md:flex-col"
                     >
-                      {i + 1}
-                    </span>
+                      <span className="relative hidden w-px flex-1 bg-border md:block">
+                        <span
+                          ref={(el) => {
+                            tops.current[i] = el;
+                          }}
+                          className="absolute inset-0 origin-top bg-white/70"
+                          style={{ transform: "scaleY(0)" }}
+                        />
+                      </span>
 
-                    <span className="relative w-px flex-1 bg-border">
                       <span
-                        ref={(el) => {
-                          bots.current[i] = el;
-                        }}
-                        className="absolute inset-0 origin-top bg-white/70"
-                        style={{ transform: "scaleY(0)" }}
-                      />
-                    </span>
-                  </span>
+                        className={cn(
+                          "grid size-5.5 shrink-0 place-items-center rounded-full border font-mono text-[9.5px] transition-colors duration-400 md:my-2",
+                          on
+                            ? "border-white bg-white text-[#0A0A0A]"
+                            : passed
+                              ? "border-white/45 text-white/70"
+                              : "border-white/22 text-white/40",
+                        )}
+                      >
+                        {i + 1}
+                      </span>
 
-                  <span className="relative z-10 flex flex-1 flex-col justify-center">
-                    <h3
-                      className={cn(
-                        "mb-2 text-[clamp(18px,1.6vw,23px)] leading-[1.16] tracking-[-0.028em] transition-colors duration-400",
-                        on
-                          ? "text-white"
-                          : "text-white/68 group-hover/step:text-white/88",
-                      )}
-                    >
-                      {step.title}
-                    </h3>
-                    <p
-                      className={cn(
-                        "max-w-[34ch] text-[13.4px] leading-normal font-light transition-colors duration-400",
-                        on ? "text-white/68" : "text-white/45",
-                      )}
-                    >
-                      {step.body}
-                    </p>
-                  </span>
-                </button>
-              );
-            })}
+                      <span className="relative hidden w-px flex-1 bg-border md:block">
+                        <span
+                          ref={(el) => {
+                            bots.current[i] = el;
+                          }}
+                          className="absolute inset-0 origin-top bg-white/70"
+                          style={{ transform: "scaleY(0)" }}
+                        />
+                      </span>
+                    </span>
+
+                    <span className="relative z-10 flex flex-1 flex-col justify-start md:justify-center">
+                      <h3
+                        className={cn(
+                          "mb-2 text-[clamp(18px,1.6vw,23px)] leading-[1.16] tracking-[-0.028em] transition-colors duration-400",
+                          on
+                            ? "text-white"
+                            : "text-white/68 group-hover/step:text-white/88",
+                        )}
+                      >
+                        {step.title}
+                      </h3>
+                      <p
+                        className={cn(
+                          "max-w-[34ch] text-[13.4px] leading-normal font-light transition-colors duration-400",
+                          on ? "text-white/68" : "text-white/45",
+                        )}
+                      >
+                        {step.body}
+                      </p>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Where you are in the set, and that there is a set. Decorative:
+                the tabs themselves are the control surface, and a second one
+                pointing at the same steps would only be a second thing for a
+                screen reader to walk. */}
+            <div
+              aria-hidden
+              className="flex items-center justify-center gap-1.5 pt-1 pb-4 md:hidden"
+            >
+              {STEPS.map((step, i) => (
+                <span
+                  key={step.title}
+                  className={cn(
+                    "h-1 rounded-full transition-all duration-400 ease-[cubic-bezier(.52,.52,0,1)]",
+                    i === active ? "w-5 bg-white/80" : "w-1 bg-white/22",
+                  )}
+                />
+              ))}
+            </div>
           </div>
 
           {/* ── The evidence ───────────────────────────────────────── */}
@@ -443,58 +596,84 @@ export function HowSection() {
             role="tabpanel"
             id={PANEL_ID}
             aria-labelledby={TAB_ID(active)}
-            className="relative flex min-h-140 flex-col overflow-hidden bg-background"
+            /* 560px is right once the pane is 63% of a wide card. Stacked on
+               a phone it is not, and a flat floor is the wrong shape of
+               answer anyway: the screen is 16:10 of the track, so its height
+               grows with the card while a fixed pane height does not — which
+               is what crushed the cells above and below it to 14px on a
+               phone and to nothing again around 600px.
+
+               So below `md` the floor is the screen's own height plus what
+               the rest of the pane needs: two cells, three gutters and the
+               caption. The frame then keeps its proportions at every width
+               rather than at the ones a breakpoint happened to name. */
+            className="relative order-1 flex min-h-[calc(62.5cqw+208px)] flex-col overflow-hidden bg-background md:order-none md:min-h-140"
           >
-            {/* Outlined cells rather than hairlines — a frame the screen sits
-                inside, dissolving before it reaches the top or bottom edge. */}
-            <div
-              aria-hidden
-              className="mask-fade-y pointer-events-none absolute inset-0 z-0 grid grid-cols-[1fr_2.4fr_1fr] gap-3.5 p-3.5"
-            >
-              {CELLS.map((col, i) => (
-                <span
-                  key={i}
-                  style={{ gridTemplateRows: col.rows }}
-                  className={cn(
-                    "grid gap-3.5",
-                    // Below md the outer two would crush to nothing.
-                    !col.grow && "hidden md:grid",
-                  )}
-                >
-                  <i className="block rounded-xl border border-border" />
-                  <i className="block rounded-xl border border-border" />
-                  <i className="block rounded-xl border border-border" />
-                </span>
-              ))}
-            </div>
+            {/* The frame, and the machine inside it. One grid: the cells and
+                the screen are laid out by the same tracks, so the screen's
+                edges land on the same lines the empty cells do rather than
+                floating over them.
 
-            <div className="relative z-20 grid flex-1 place-items-center px-5.5 pt-8.5 pb-6.5">
-              {/* The machine, cropped to a fragment. Same screen as the hero,
-                  a third of the size — and given more of the pane than it had,
-                  since the notch inside it is the evidence the whole section
-                  is pointing at. */}
-              <div
-                ref={screenBox}
-                className="relative aspect-16/10 w-[min(520px,94%)] overflow-hidden rounded-2xl bg-[#080808] md:w-[min(520px,86%)] shadow-[0_0_0_1px_rgba(255,255,255,.15),0_0_0_5px_rgba(255,255,255,.028),0_40px_80px_-30px_rgba(0,0,0,.98)]"
-              >
-                <div className="bg-display-wall mask-fade-b absolute inset-0 [--fade-start:62%] " />
-                {/* <ScreenMenuBar /> */}
-                <GhostWindow label="Mail" />
+                Below `md` only the middle column renders, which leaves the
+                machine as the middle cell of a single column — the same
+                reading, one track wide. */}
+            <div className="relative grid flex-1 grid-cols-1 gap-3.5 p-3.5 md:grid-cols-[0.7fr_3fr_0.7fr]">
+              {CELLS.map((col, i) =>
+                col.screen ? (
+                  <div
+                    key={i}
+                    style={{ gridTemplateRows: col.rows }}
+                    className="grid gap-3.5"
+                  >
+                    <Cell dim />
 
-                {/* Held at the active step's beat rather than looping, and
-                    sized off the screen it hangs in rather than off the
-                    viewport — so the fillets clear the bezel at every width
-                    instead of at the four the breakpoints happened to name. */}
-                <RovykHud
-                  beat={STEPS[active].beat}
-                  className="z-30"
-                  style={{
-                    scale: String(
-                      screenW ? (screenW * HUD_FILL) / HUD_W : HUD_FALLBACK,
-                    ),
-                  }}
-                />
-              </div>
+                    {/* The machine, cropped to a fragment. Same screen as the
+                        hero, a third of the size.
+
+                        `self-start` so the row never hands it a definite
+                        height — a stretched grid item ignores `aspect-ratio`,
+                        which is how a 16:10 Mac ends up standing on its end. */}
+                    <div
+                      ref={screenBox}
+                      className="relative aspect-16/10 self-start overflow-hidden rounded-xl border border-input bg-[#080808] shadow-[0_20px_46px_-30px_#000]"
+                    >
+                      <div className="bg-display-wall mask-fade-b absolute inset-0 [--fade-start:62%]" />
+                      <GhostWindow label="Mail" />
+
+                      {/* Held at the active step's beat rather than looping,
+                          and sized off the screen it hangs in rather than off
+                          the viewport — so the fillets clear the bezel at
+                          every width instead of at the four the breakpoints
+                          happened to name. */}
+                      <RovykHud
+                        beat={STEPS[active].beat}
+                        className="z-30"
+                        style={{
+                          scale: String(
+                            screenW
+                              ? (screenW * HUD_FILL) / HUD_W
+                              : HUD_FALLBACK,
+                          ),
+                        }}
+                      />
+                    </div>
+
+                    <Cell dim />
+                  </div>
+                ) : (
+                  <div
+                    key={i}
+                    aria-hidden
+                    style={{ gridTemplateRows: col.rows }}
+                    /* Below md the outer two would crush to nothing. */
+                    className="mask-fade-y hidden gap-3.5 md:grid"
+                  >
+                    <Cell />
+                    <Cell />
+                    <Cell />
+                  </div>
+                ),
+              )}
             </div>
 
             {/* Under the screen, because it is a caption for it — above, it
@@ -504,7 +683,11 @@ export function HowSection() {
                 is set to be read rather than skimmed past: no italic, which
                 only ever cost legibility at this size, and it arrives on the
                 same upward slide the tool readout uses. */}
-            <div className="relative z-30 flex items-center border-t border-border bg-card/40 px-16 py-4.5">
+            <div /* 64px either side leaves a 302px card 174px of caption. The
+                 padding only has to clear the play button — 44px does, and
+                 gives the line 40 more characters. */
+              className="relative z-30 flex items-center border-t border-border bg-card/40 px-11 py-4.5 sm:px-16"
+            >
               <p
                 key={active}
                 className="animate-in fade-in-0 slide-in-from-bottom-2 flex-1 text-center text-[clamp(14px,1.1vw,15.5px)] leading-[1.45] font-light tracking-[-0.006em] text-balance text-white/88 duration-420 ease-[cubic-bezier(.52,.52,0,1)]"

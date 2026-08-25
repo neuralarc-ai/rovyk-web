@@ -40,7 +40,10 @@ export function Viz({
       <p className="border-b border-border px-5 py-3.75 text-center text-[12.5px] text-white/52 italic">
         {caption}
       </p>
-      <div className="relative grid flex-1 place-items-center px-6.5 py-6.5">
+      {/* 26px of graph paper either side is right on a wide cell. On a
+          302px one it is 52px spent framing a card that then has to wrap
+          its own copy — so the demo gets the width back below `sm`. */}
+      <div className="relative grid flex-1 place-items-center px-4.5 py-5.5 sm:px-6.5 sm:py-6.5">
         <Skel />
         <div className="relative z-10 w-full max-w-82.5 rounded-2xl border border-input bg-secondary p-4.25 shadow-[0_24px_54px_-24px_#000]">
           {children}
@@ -91,7 +94,11 @@ export function GateDemo({ className }: { className?: string }) {
           onClick={() =>
             setNote({ text: "Cancelled. Nothing moved.", done: false })
           }
-          className="h-8 flex-1 cursor-pointer rounded-lg border border-input text-[12.5px] font-medium transition-transform duration-200 hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          /* `h-11` on touch, `h-8` above it. The card is quoting a macOS
+             dialog, and a 32px button is what that dialog has — but the
+             caption says "try it", and on a phone a 32px target is a claim
+             about control you cannot exercise. */
+          className="h-11 flex-1 cursor-pointer rounded-lg border border-input text-[12.5px] font-medium transition-transform duration-200 hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:h-8"
         >
           Cancel
         </button>
@@ -100,7 +107,7 @@ export function GateDemo({ className }: { className?: string }) {
           onClick={() =>
             setNote({ text: "47 files moved. Undo for 30 days.", done: true })
           }
-          className="h-8 flex-1 cursor-pointer rounded-lg border border-brand-red bg-brand-red text-[12.5px] font-medium text-brand-red-on transition-transform duration-200 hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="h-11 flex-1 cursor-pointer rounded-lg border border-brand-red bg-brand-red text-[12.5px] font-medium text-brand-red-on transition-transform duration-200 hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:h-8"
         >
           Confirm
         </button>
@@ -137,7 +144,10 @@ export function HonestyDemo({ className }: { className?: string }) {
         <div
           key={claim.text}
           className={cn(
-            "flex items-start gap-2.5 py-2.5 text-[12.4px] leading-[1.45] text-white/68",
+            // Balanced: at any width where the row takes two lines, the
+            // verdict is the part that gets orphaned — "it did / not" reads
+            // as a different answer to the one it is giving.
+            "flex items-start gap-2.5 py-2.5 text-[12.4px] leading-[1.45] text-balance text-white/68",
             i > 0 && "border-t border-border",
           )}
         >
@@ -222,7 +232,10 @@ export function PermsDemo({ className }: { className?: string }) {
               setOn((prev) => prev.map((v, k) => (k === i ? !v : v)))
             }
             className={cn(
-              "flex w-full cursor-pointer items-center gap-2.5 py-2.5 text-left text-[12.5px] transition-colors duration-200",
+              // 39px rows on a phone, and every one of them is a switch.
+              // Taller below `sm`; the mock reads as airier there, which is
+              // what a touch surface should look like anyway.
+              "flex w-full cursor-pointer items-center gap-2.5 py-3.5 text-left text-[12.5px] transition-colors duration-200 sm:py-2.5",
               i > 0 && "border-t border-border",
               on[i] ? "text-white/68" : "text-white/34",
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",

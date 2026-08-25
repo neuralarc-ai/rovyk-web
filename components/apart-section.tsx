@@ -65,17 +65,27 @@ const ITEMS: Apart[] = [
 
 const EASE = "ease-[cubic-bezier(.52,.52,0,1)]";
 
-/** The plate. Grows out of nothing as its claim opens. */
+/**
+ * The plate. Grows out of nothing as its claim opens.
+ *
+ * It used to be `hidden lg:grid`, which meant the one move this section is
+ * built around — the row making room for a plate rather than the panel
+ * expanding — happened only on a desktop. Below `md` the row wraps, so the
+ * plate has a line of its own to grow into and costs the copy nothing; above
+ * it, it sits inline and the size follows the width available.
+ */
 function Glyph({ item, open }: { item: Apart; open: boolean }) {
   return (
     <span
       aria-hidden
       className={cn(
-        "relative hidden shrink-0 place-items-center overflow-hidden rounded-2xl border border-input bg-background lg:grid",
+        "relative grid shrink-0 place-items-center overflow-hidden rounded-2xl border border-input bg-background",
         "transition-[width,height,opacity,margin] duration-550",
         EASE,
         "motion-reduce:transition-none",
-        open ? "mr-7.5 size-31 opacity-100" : "mr-0 size-0 opacity-0",
+        open
+          ? "mr-4 size-20 opacity-100 md:mr-5 md:size-25 lg:mr-7.5 lg:size-31"
+          : "mr-0 size-0 opacity-0",
       )}
     >
       {/* Crosshair and corner ticks: the plate reads as a instrument face
@@ -84,7 +94,9 @@ function Glyph({ item, open }: { item: Apart; open: boolean }) {
       <span className="absolute inset-y-0 left-1/2 w-px bg-white/7" />
       <Corners inset="9px" size="size-1" />
 
-      <span className="grid size-19.5 place-items-center rounded-xl border border-border bg-accent">
+      {/* 63% of the plate, so the face follows it rather than being
+          three more numbers to keep in step. */}
+      <span className="grid size-[63%] place-items-center rounded-xl border border-border bg-accent">
         <span className="grid grid-cols-4 gap-0.75">
           {item.dots.map((lit, i) => (
             <i
@@ -107,12 +119,12 @@ export function ApartSection() {
   const uid = useId();
 
   return (
-    <section id="uses" className="relative py-[clamp(96px,12.5vh,158px)]">
+    <section id="uses" className="relative py-(--section-y)">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
         <SectionHead
           eyebrow="what sets it apart"
           title="Built for how you actually use a Mac"
-          className="mb-16"
+          className="mb-10 sm:mb-16"
         >
           Three things no other assistant on this machine will do for you.
         </SectionHead>
@@ -126,7 +138,15 @@ export function ApartSection() {
               <div key={item.n} className="relative">
                 <div
                   className={cn(
-                    "relative flex items-center transition-[padding] duration-500",
+                    // Wraps below `md`: the number, the rule, the plate and
+                    // the toggle take more than half of the 246px a row has
+                    // on a phone, which left the heading and its copy 115px —
+                    // nine characters a line. Wrapped, the gutter and the
+                    // toggle share the first line and the copy gets the whole
+                    // of the second. `md` rather than `sm` because that is
+                    // where the row is wide enough to carry the plate inline
+                    // without taking the width back off the copy.
+                    "relative flex flex-wrap items-center gap-y-3 transition-[padding] duration-500 md:flex-nowrap md:gap-y-0",
                     EASE,
                     "motion-reduce:transition-none",
                     on ? "px-5 pt-5.5 pb-6" : "px-4 py-4.5",
@@ -159,13 +179,19 @@ export function ApartSection() {
                     {item.n}
                   </span>
 
+                  {/* The rule belongs to the open state. Shut, it was a 14px
+                      stub hanging off the number with nothing on the other
+                      end of it — and worse once the row wraps, where it
+                      pointed across an empty line at the toggle. Now it
+                      grows out of the number as the plate makes room, which
+                      is the same gesture the rest of the row is making. */}
                   <span
                     aria-hidden
                     className={cn(
                       "relative z-10 h-px shrink-0 bg-input transition-[width] duration-550",
                       EASE,
                       "motion-reduce:transition-none",
-                      on ? "w-[clamp(22px,5vw,74px)]" : "w-3.5",
+                      on ? "w-[clamp(22px,5vw,74px)]" : "w-0",
                     )}
                   />
 
@@ -175,9 +201,13 @@ export function ApartSection() {
 
                   <div
                     className={cn(
-                      "relative z-10 min-w-0 flex-1 transition-[padding] duration-500",
+                      "relative z-10 order-2 min-w-0 grow basis-full transition-[padding] duration-500 md:order-none md:basis-0",
                       EASE,
-                      on ? "pl-0" : "pl-4",
+                      // The indent pushes the copy clear of the rule beside
+                      // it. Wrapped there is no rule beside it, and the
+                      // indent only knocked every shut row 16px out of line
+                      // with the number above it.
+                      on ? "pl-0" : "pl-0 md:pl-4",
                     )}
                   >
                     <span
@@ -222,7 +252,7 @@ export function ApartSection() {
 
                   <PlusToggle
                     open={on}
-                    className="relative z-10 ml-6 size-10"
+                    className="relative z-10 order-1 ml-auto size-10 md:order-none md:ml-6"
                   />
                 </div>
 
