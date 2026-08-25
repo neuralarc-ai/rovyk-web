@@ -316,9 +316,14 @@ export function NotchNavTouch({ shown }: { shown: boolean }) {
           )}
           style={{
             height: DRAWER_H,
-            // Its own width, so it parks exactly off the left edge whatever
-            // the screen measures.
-            transform: open ? "translateX(0)" : "translateX(-100%)",
+            /* Its own width *and* the gutter it is inset by. `-100%` alone
+               parks the right edge at `--gut` rather than at zero — and the
+               nav sits above the bezel, so what was left on screen was a
+               20px column of the panel's own ground painted over the frame's
+               black, the full height of the page. */
+            transform: open
+              ? "translateX(0)"
+              : "translateX(calc(-100% - var(--gut)))",
             boxShadow: `inset 0 -1px 0 rgba(255,255,255,${EDGE_BLEED / 2})`,
           }}
         >
@@ -334,7 +339,9 @@ export function NotchNavTouch({ shown }: { shown: boolean }) {
             <Kicker
               className={cn(
                 "mb-4 transition-[opacity,transform] duration-500 ease-[cubic-bezier(.52,.52,0,1)] motion-reduce:transition-none",
-                open ? "translate-x-0 opacity-100" : "-translate-x-6 opacity-0",
+                open
+                  ? "translate-x-0 opacity-100"
+                  : "-translate-x-50 opacity-0",
               )}
             >
               where to go
@@ -466,7 +473,7 @@ export function NotchNavTouch({ shown }: { shown: boolean }) {
               /* The tab is 34px tall, which is short of a comfortable target.
                  The pseudo-element grows the hit area downward into the frame
                  without moving anything that is drawn. */
-              className="relative bg-black after:absolute after:-inset-y-2.5 after:-right-3 after:left-0 after:content-['']"
+              className="relative bg-black after:absolute after:-inset-y-2.5 after:-right-3 after:left-0 after:content-['']" 
               style={{ width: HAM_W, height: NOTCH_H }}
             >
               {RULES.map(({ top, y, turn }, i) => (
@@ -499,7 +506,7 @@ export function NotchNavTouch({ shown }: { shown: boolean }) {
             <Link
               href="/"
               aria-label="Rovyk home"
-              className="relative flex items-center justify-center bg-black text-white transition-opacity duration-200 active:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              className="relative flex items-center justify-center bg-black text-white transition-opacity duration-200 active:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring pb-3"
               style={{ width: WORD_BODY_W, height: NOTCH_H }}
             >
               <RovykWordmark style={{ height: WORD_H }} />

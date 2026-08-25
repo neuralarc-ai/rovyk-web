@@ -1,7 +1,13 @@
 "use client";
 
 import { useId } from "react";
-import { EDGE_BLEED, EDGE_LIGHT, FILLET_W, NOTCH_H } from "@/lib/notch";
+import {
+  EDGE_BLEED,
+  EDGE_LIGHT,
+  FILLET_H,
+  FILLET_W,
+  NOTCH_H,
+} from "@/lib/notch";
 import { cn } from "@/lib/utils";
 
 /* ────────────────────────────────────────────────────────────────────
@@ -55,7 +61,8 @@ export function Fillet({
     <svg
       width={w}
       height={h}
-      viewBox={`0 0 ${FILLET_W} ${NOTCH_H}`}
+      // The artwork's own box, never the rendered size — see `lib/notch.ts`.
+      viewBox={`0 0 ${FILLET_W} ${FILLET_H}`}
       // Squashing and stretching are the point, so the artwork is not allowed
       // to letterbox itself back to its native ratio.
       preserveAspectRatio="none"

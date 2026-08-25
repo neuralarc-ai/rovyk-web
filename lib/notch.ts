@@ -22,8 +22,28 @@
 
 import { WORDMARK_ASPECT, WORDMARK_R_SHARE } from "@/components/rovyk-wordmark";
 
-/** Straight from the Figma path: the fillet runs 87px across a 34px drop. */
+/* Straight from the Figma path: the fillet runs 87px across a 34px drop.
+   These two are the artwork's own coordinate space — the curve's control
+   points are written in them — so they are what the SVG's viewBox is, and
+   never what it is rendered at. Rendered size is the `w`/`h` props, and the
+   difference between the two is the scale. Conflating them is why the notch
+   could not be made taller: `NOTCH_H` was the viewBox height as well as the
+   drawn height, so raising it stretched the box the curve lives in while
+   leaving the curve at 34, and the fillet stopped short of its own bottom
+   edge. */
 export const FILLET_W = 87;
+export const FILLET_H = 34;
+
+/**
+ * How tall the notch is drawn — the one knob for it.
+ *
+ * Everything follows: both tabs, both navs' bodies, the fillets beside them,
+ * where the hamburger's rules sit, how far the drawer is padded down from the
+ * bar, and how far the whole thing parks off-screen. There is no padding to
+ * add anywhere; a fillet's height has to equal the height of the mass it
+ * joins or its horizontal tangent runs into a vertical edge, so the two
+ * cannot be set independently and this is the number that sets both.
+ */
 export const NOTCH_H = 34;
 
 /**

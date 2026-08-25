@@ -416,7 +416,7 @@ export function HowSection() {
 
   return (
     <section ref={root} id="how" className="relative py-(--section-y)">
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-4">
         <SectionHead
           eyebrow="how it works"
           title="Say it once. Watch the whole chain run."

@@ -56,7 +56,7 @@ const DOT = "size-0.75 shrink-0 rounded-full bg-white/30";
 export function SiteFooter() {
   return (
     <footer className="relative overflow-hidden rounded-b-4xl border-t border-input [background:linear-gradient(180deg,var(--background)_0%,var(--muted)_46%,#141414_100%)]">
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4">
         {/* ── Who this is, how to reach them, where else to go ───── */}
         <div className={cn(BAND, "items-start pt-14 pb-12")}>
           <div>

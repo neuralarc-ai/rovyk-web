@@ -187,7 +187,7 @@ export function FaqSection() {
 
   return (
     <section id="faq" className="relative py-(--section-y)">
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-4">
         <SectionHead
           eyebrow="faq"
           title="Everything you need to know"

@@ -89,7 +89,7 @@ export function ControlSection() {
 
   return (
     <section id="safe" className="relative py-(--section-y)">
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-4">
         <SectionHead
           eyebrow="control"
           title="Why you can hand it the keys to your Mac"

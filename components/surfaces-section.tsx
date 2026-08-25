@@ -202,7 +202,7 @@ const SURFACES = [
 export function SurfacesSection() {
   return (
     <section id="where" className="relative py-(--section-y)">
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-4">
         <SectionHead
           eyebrow="surfaces"
           title="Where can I be?"
@@ -246,16 +246,7 @@ export function SurfacesSection() {
 
         {/* One download for both. Lit from the right so the bar has a bright
             end and a quiet end rather than being evenly filled. */}
-        <div className="relative mt-4.5 flex flex-col items-start gap-6 overflow-hidden rounded-3xl border border-input bg-card px-6 py-7 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8.5 sm:gap-y-8 sm:px-8.5 sm:py-8">
-          <div
-            aria-hidden
-            className="bg-cta-glow pointer-events-none absolute inset-0"
-          />
-          <div
-            aria-hidden
-            className="bg-hairline-grid mask-grid-right pointer-events-none absolute inset-0 [--grid-size:96px]"
-          />
-
+        <div className="relative mt-4.5 flex flex-col items-start gap-6 overflow-hidden px-6 py-7 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8.5 sm:gap-y-8 sm:px-8.5 sm:py-8">
           <div className="relative z-10 w-full sm:min-w-65 sm:flex-1">
             <h3 className="mb-2 text-[clamp(22px,2.4vw,30px)] leading-[1.1] font-medium tracking-[-0.03em] text-balance">
               Both surfaces, one&nbsp;84&nbsp;MB download

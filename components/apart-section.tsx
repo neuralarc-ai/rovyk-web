@@ -120,7 +120,7 @@ export function ApartSection() {
 
   return (
     <section id="uses" className="relative py-(--section-y)">
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-4">
         <SectionHead
           eyebrow="what sets it apart"
           title="Built for how you actually use a Mac"

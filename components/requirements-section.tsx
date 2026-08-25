@@ -39,35 +39,11 @@ const MARK_SIZE = "h-12";
 
 /* ── The three little diagrams ─────────────────────────────────────── */
 
-/**
- * The bloom Apple lights its own silicon with, in our four hues — one to a
- * corner, so the die sits in the middle of a colour wheel rather than on a
- * single wash. Written off the palette variables rather than as literals,
- * so it cannot drift from the rest of the page.
- *
- * A shadow, not a background: it blooms outside the die's box and so costs
- * the row no height, which is what keeps the three marks on one line.
- */
-const CHIP_GLOW = (
-  [
-    ["--brand-indigo", "-3px -3px"],
-    ["--brand-pink", "3px -3px"],
-    ["--brand-red", "3px 3px"],
-    ["--brand-green", "-3px 3px"],
-  ] as const
-)
-  .map(
-    ([hue, offset]) =>
-      `${offset} 11px -1px color-mix(in srgb, var(${hue}) 55%, transparent)`,
-  )
-  .join(", ");
-
-/** The die itself: black, the mark in the middle, lit from behind. */
+/** The die itself: black, a hairline edge, the mark in the middle. */
 function ChipMark() {
   return (
     <span
       aria-hidden
-      style={{ boxShadow: CHIP_GLOW }}
       className={cn(
         "flex aspect-square shrink-0 items-center justify-center gap-1",
         "rounded border border-white/12 bg-black p-1",
@@ -84,13 +60,13 @@ function ChipMark() {
 /** Eight segments: four for the floor, all eight for the recommendation. */
 function MemoryMark() {
   return (
-    <span aria-hidden className="flex h-7 items-end gap-0.75">
+    <span aria-hidden className="flex h-7 items-end gap-1">
       {Array.from({ length: 8 }, (_, i) => (
         <i
           key={i}
           className={cn(
             "block w-1.5 h-6 rounded-[1px]",
-            i < 4 ? " bg-white/55" : " border border-white/25",
+            i < 4 ? " bg-white" : " border border-white/25",
           )}
         />
       ))}

@@ -158,7 +158,7 @@ function NotchNavPointer({ shown }: { shown: boolean }) {
       onFocusCapture={hold}
       onBlurCapture={release}
       className={cn(
-        "fixed top-(--gut) left-1/2 z-100 flex items-start text-black",
+        "fixed top-(--gut) left-1/2 z-100 flex items-start text-black ",
         // A little room below the notch so the pointer does not have to
         // thread the concave gap to keep it open.
         "pb-4",
@@ -188,7 +188,7 @@ function NotchNavPointer({ shown }: { shown: boolean }) {
       <Fillet side="l" />
 
       <div
-        className="relative flex items-center bg-black px-5.5"
+        className="relative flex items-center bg-black px-5.5 pb-3"
         style={{ height: NOTCH_H }}
       >
         <NavSide side="l" open={open} home={home} />

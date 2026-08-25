@@ -311,7 +311,7 @@ export function OrbSection() {
   if (reduced)
     return (
       <section id="orb" className="relative py-(--section-y)">
-        <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
+        <div className="mx-auto w-full max-w-7xl px-4">
           <SectionHead
             eyebrow="the orb"
             title="Five states. You always know which one."
@@ -339,7 +339,7 @@ export function OrbSection() {
   if (!wide)
     return (
       <section id="orb" className="relative overflow-x-clip py-(--section-y)">
-        <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
+        <div className="mx-auto w-full max-w-7xl px-4">
           <SectionHead
             eyebrow="the orb"
             title="Five states. You always know which one."
@@ -415,7 +415,7 @@ export function OrbSection() {
        but `hidden` makes this a scroll container and kills the sticky
        column inside it. `clip` crops without either. */
     <section ref={root} id="orb" className="relative overflow-x-clip">
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-10">
+      <div className="mx-auto w-full max-w-7xl px-4">
         <SectionHead
           eyebrow="the orb"
           title="Five states. You always know which one."
