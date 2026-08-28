@@ -73,9 +73,11 @@ export function LandingSpecs() {
           ))}
         </div>
 
-        <div className="flex flex-col gap-3 sm:pl-6">
-          <DownloadButton className="w-full">Download for Mac</DownloadButton>
-          <GhostButton href="/rovyk" className="w-full">
+        <div className="flex flex-col gap-3 sm:items-center sm:pl-6">
+          <DownloadButton className="w-full sm:w-52">
+            Download for Mac
+          </DownloadButton>
+          <GhostButton href="/rovyk" className="w-full sm:w-52">
             Learn more
           </GhostButton>
         </div>
