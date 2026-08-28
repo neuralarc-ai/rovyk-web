@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { RovykWordmark } from "@/components/rovyk-wordmark";
-import { Fillet } from "@/components/notch-fillet";
+import { Fillet, NotchBezel } from "@/components/notch-fillet";
 import { NotchNavTouch } from "@/components/notch-nav-touch";
 import { JoinWaitlistButton } from "@/components/waitlist/join-waitlist-button";
 import { WAITLIST_MODE } from "@/lib/flags";
@@ -292,11 +292,7 @@ export function NotchNav() {
           Three fixed strips. Invisible over the black intro, and framing
           from the hero onward — which is what makes the notch read as
           carved out of hardware rather than a bar floating on the page. */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 z-90">
-        <div className="absolute inset-x-0 top-0 h-(--gut) bg-black" />
-        <div className="absolute inset-y-0 left-0 w-(--gut) bg-black" />
-        <div className="absolute inset-y-0 right-0 w-(--gut) bg-black" />
-      </div>
+      <NotchBezel />
 
       {/* Remounted rather than branched inside one nav: the two have
           different roots — one centred and content-sized, one spanning the
