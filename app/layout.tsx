@@ -25,7 +25,8 @@ export const metadata: Metadata = {
   metadataBase: SITE_ORIGIN,
   alternates: { canonical: "/" },
   title: "Rovyk for macOS",
-  description: "Rovyk for macOS.",
+  description:
+    "Rovyk for macOS. Talk to your Mac and watch it work — see it in action, then download.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
