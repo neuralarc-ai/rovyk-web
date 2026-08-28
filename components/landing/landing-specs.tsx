@@ -29,14 +29,20 @@ const SPECS = [
 
 /**
  * The page's closing beat: what it needs, right beside what to do about
- * it. 60% card, 20% Download, 20% Learn more — one row on a wide screen,
- * stacked in reading order (specs, then the two actions) below `md`.
+ * it. The card spans two of the same three columns `LandingFeatures`
+ * draws above it — same container, same `sm:grid-cols-3`, zero column
+ * gap — so its right edge sits exactly on the line the features grid's
+ * second divider does. The breathing room before the buttons is their
+ * own left padding, not a grid gap: a gap would have eaten into the
+ * column math and pulled the card's edge off that line by a few
+ * pixels. Download sits above Learn more in the remaining third — the
+ * one action worth defaulting to goes first.
  */
 export function LandingSpecs() {
   return (
     <div className="mx-auto w-full max-w-6xl px-6 pb-[clamp(64px,9vh,112px)] sm:px-10">
-      <div className="grid gap-5 md:grid-cols-[3fr_1fr_1fr] md:items-center">
-        <div className="grid overflow-hidden rounded-3xl border border-border bg-card sm:grid-cols-2">
+      <div className="grid gap-y-6 sm:grid-cols-3 sm:items-center sm:gap-x-0">
+        <div className="grid overflow-hidden rounded-3xl border border-border bg-card sm:col-span-2 sm:grid-cols-2">
           {SPECS.map((spec, i) => (
             <div
               key={spec.k}
@@ -67,10 +73,12 @@ export function LandingSpecs() {
           ))}
         </div>
 
-        <DownloadButton className="w-full">Download for Mac</DownloadButton>
-        <GhostButton href="/rovyk" className="w-full">
-          Learn more
-        </GhostButton>
+        <div className="flex flex-col gap-3 sm:pl-6">
+          <DownloadButton className="w-full">Download for Mac</DownloadButton>
+          <GhostButton href="/rovyk" className="w-full">
+            Learn more
+          </GhostButton>
+        </div>
       </div>
     </div>
   );
