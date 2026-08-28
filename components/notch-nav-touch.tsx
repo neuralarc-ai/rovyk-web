@@ -149,7 +149,7 @@ function Bleed() {
 }
 
 export function NotchNavTouch({ shown }: { shown: boolean }) {
-  const home = usePathname() === "/";
+  const home = usePathname() === "/rovyk";
   const [open, setOpen] = useState(false);
   /** Which destination the reader has got as far as, sampled on open. */
   const [reached, setReached] = useState(-1);
@@ -504,7 +504,7 @@ export function NotchNavTouch({ shown }: { shown: boolean }) {
           <div className="pointer-events-auto relative flex items-start">
             <Fillet side="l" w={FILLET_W_TOUCH} />
             <Link
-              href="/"
+              href="/rovyk"
               aria-label="Rovyk home"
               className="relative flex items-center justify-center bg-black text-white transition-opacity duration-200 active:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring pb-3"
               style={{ width: WORD_BODY_W, height: NOTCH_H }}

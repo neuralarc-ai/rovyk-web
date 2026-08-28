@@ -130,7 +130,7 @@ function NavSide({
 
 /** The centred notch, and the rail it opens into on hover. */
 function NotchNavPointer({ shown }: { shown: boolean }) {
-  const home = usePathname() === "/";
+  const home = usePathname() === "/rovyk";
   const [open, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -194,7 +194,7 @@ function NotchNavPointer({ shown }: { shown: boolean }) {
         <NavSide side="l" open={open} home={home} />
 
         <Link
-          href="/"
+          href="/rovyk"
           aria-label="Rovyk home"
           className="flex shrink-0 items-center px-0.5 text-white transition-opacity duration-200 hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >

@@ -7,7 +7,7 @@ import { SITE_URL, absoluteUrl } from "@/lib/site";
 /* ────────────────────────────────────────────────────────────────────
    The sitemap.
 
-   Three pages, so this is a list rather than anything generated — and a
+   Four pages, so this is a list rather than anything generated — and a
    list is the right shape while it stays this short: a route that goes
    missing from here is a route somebody deleted, which is a diff worth
    reading. Revisit if the site ever grows a blog.
@@ -36,6 +36,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: BUILT_AT,
       changeFrequency: "weekly",
       priority: 1,
+    },
+    {
+      url: absoluteUrl("/rovyk"),
+      lastModified: BUILT_AT,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
     {
       url: absoluteUrl("/privacy"),

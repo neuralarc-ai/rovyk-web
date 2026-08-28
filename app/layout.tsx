@@ -3,7 +3,6 @@ import { Geist, Geist_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { SITE_ORIGIN } from "@/lib/site";
 import { cn } from "@/lib/utils";
-import { NotchNav } from "@/components/notch-nav";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { WaitlistProvider } from "@/components/waitlist/waitlist-provider";
 
@@ -25,9 +24,8 @@ export const metadata: Metadata = {
   // var, and every page below can keep writing relative paths.
   metadataBase: SITE_ORIGIN,
   alternates: { canonical: "/" },
-  title: "Rovyk: voice agent for macOS",
-  description:
-    "Talk to your Mac and watch it work. Rovyk lives in the menu bar and operates your machine. Local by default.",
+  title: "Rovyk for macOS",
+  description: "Rovyk for macOS.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -50,7 +48,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {/* Above the nav and every section, because all of them ask for the
               same dialog and there is only ever one of it. */}
           <WaitlistProvider>
-            <NotchNav />
             {children}
           </WaitlistProvider>
         </SmoothScroll>
