@@ -22,11 +22,13 @@ const FEATURES = [
   },
 ] as const;
 
-/** Three equal columns, thin dividers between them on desktop. */
+/** Three equal columns. Straight vertical hairlines between them on
+ *  desktop, nothing else — no top rule floating above the row, which
+ *  read as attached to nothing. Stacked and undivided below `sm`. */
 export function LandingFeatures() {
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-[clamp(56px,8vh,104px)] sm:px-10">
-      <div className="grid gap-10 border-t border-border pt-10 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-border sm:pt-0">
+      <div className="grid gap-10 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-border">
         {FEATURES.map(({ icon: Icon, title, body }) => (
           <div
             key={title}
