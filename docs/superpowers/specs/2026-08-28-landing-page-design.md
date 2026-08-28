@@ -6,7 +6,7 @@ Add a new, minimal, video-led landing page at the site root (`/`),
 Apple-product-page style. The site's current homepage (intro
 performance, hero, all marketing sections, full nav, full footer)
 moves to `/rovyk` unchanged in content. The new landing page's
-"Learn more" and "Explore the full site" actions point at `/rovyk`.
+"Learn more" action points at `/rovyk`.
 
 ## Non-goals
 
@@ -87,9 +87,38 @@ One file per concern, matching the rest of the codebase's pattern
 (small, single-purpose components; data/copy as a local constant beside
 the component that renders it, unless it's genuinely shared).
 
-- **`landing-nav.tsx`** — `<AppleLogo>` left, "Rovyk for macOS" centered,
-  a small link ("Explore the full site") right, `href="/rovyk"`. Not
-  sticky/scroll-reactive like `NotchNav` — a plain top bar.
+- **`landing-notch-nav.tsx`** — supersedes the earlier plain-bar plan
+  (revised twice after spec review). Reuses the site's actual notch
+  shape — same bezel strips, same `Fillet`, same `RovykWordmark`, same
+  `lib/notch.ts` geometry and easing constants — rather than a generic
+  Apple-style bar, so the landing page is framed the same way the rest
+  of the site is. What distinguishes it from `NotchNav` is entirely
+  about links, not motion:
+  - **No links, ever.** `LINKS_L`/`LINKS_R` are not rendered — the pill
+    holds only the wordmark, on every device. There is nothing to put
+    in a drawer, so there is no touch/drawer variant to build at all —
+    unlike `NotchNav`, this component does not branch on pointer
+    capability.
+  - **The hover expand/collapse motion is kept**, because it is worth
+    keeping on its own: on a hover-capable device the pill sits shut
+    (just "R") and opens to the full "ROVYK" wordmark on hover/focus,
+    exactly `NotchNavPointer`'s existing width/height/opacity transition
+    and per-letter stagger — just with no `NavSide` rails widening
+    alongside it.
+  - **Touch is the one place it statically expands** — with no hover to
+    ever trigger the reveal, a touch visitor would otherwise never see
+    past the collapsed "R". So on `!(hover: hover) and (pointer: fine)`
+    it renders permanently at the open size instead, no interaction
+    needed, same `matchMedia` check `NotchNav` already uses for that
+    split.
+  - Still drops in from the bezel once on mount, same timing as
+    `NotchNav`, so the arrival motion matches sitewide.
+
+  The three-strip bezel markup (`NotchNav`'s top-level `<div aria-hidden>`
+  block) is extracted into a small shared `NotchBezel` component in
+  `components/notch-fillet.tsx` — the file that already holds the other
+  piece (`Fillet`) both navs share — so the frame can't drift between
+  the two independent copies.
 - **`landing-hero.tsx`** — "Rovyk for macOS" as the large title, one
   line of supporting copy beneath, generous top/bottom whitespace
   before the video.
@@ -124,9 +153,13 @@ the component that renders it, unless it's genuinely shared).
   — "very light visual weight" per the brief.
 
 `app/page.tsx` composes these five in the order: nav → hero → video →
-action → features → footer, each full-bleed section on
-`bg-background`, no `--gut`-inset sheet (the sheet treatment is part of
-the *current* site's visual identity, not requested here).
+action → features → footer. Revised along with the nav: since the notch
+pill only reads correctly carved into the bezel it hangs from, the page
+gets the same `m-(--gut) rounded-4xl bg-background` inset "sheet" the
+rest of the site uses (`app/(site)/rovyk/page.tsx` keeps its own copy
+of that wrapper, unchanged) — this is no longer a piece of "current
+site" identity being withheld from the landing page, it comes with
+reusing the notch nav.
 
 ## Verification
 
@@ -135,11 +168,13 @@ the *current* site's visual identity, not requested here).
   (same nav, same footer, same content) — a diff against current
   production screenshots should show no change outside the new file
   paths.
-- New landing page: nav present, hero copy present, video placeholder
-  renders at the specified proportions, Download button respects
-  `WAITLIST_MODE`, "Learn more" and the nav's secondary link both
-  resolve to `/rovyk`, three feature cards render, footer links to
-  `/privacy` and `/terms` resolve.
+- New landing page: notch nav present, bezel framing the sheet, no
+  link rails on hover, wordmark expands on hover/focus (pointer) or
+  sits expanded permanently (touch), hero copy present, video
+  placeholder renders at the specified proportions, Download button
+  respects `WAITLIST_MODE`, "Learn more" resolves to `/rovyk`, three
+  feature cards render, footer links to `/privacy` and `/terms`
+  resolve.
 - `sitemap.xml` includes `/rovyk`.
 - No new console errors (checked the same way prior sections in this
   session were checked — a headless-browser smoke pass).
