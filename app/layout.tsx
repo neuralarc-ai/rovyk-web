@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
+import { ENTITY } from "@/lib/legal";
 import { SITE_ORIGIN } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { SmoothScroll } from "@/components/smooth-scroll";
@@ -27,6 +28,9 @@ export const metadata: Metadata = {
   title: "Rovyk for macOS",
   description:
     "Rovyk for macOS. Talk to your Mac and watch it work — see it in action, then download.",
+  authors: [{ name: ENTITY.name, url: ENTITY.site }],
+  creator: ENTITY.name,
+  publisher: ENTITY.legal,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

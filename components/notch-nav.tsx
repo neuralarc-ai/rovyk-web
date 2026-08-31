@@ -15,6 +15,7 @@ import {
   LETTER_STEP_MS,
   LINKS_L,
   LINKS_R,
+  NAV_CTA,
   MARK_H_OPEN,
   MARK_H_SHUT,
   MARK_W_OPEN,
@@ -78,6 +79,19 @@ const POINTER = "(hover: hover) and (pointer: fine)";
 const NAV_LINK =
   "inline-flex h-7.5 items-center rounded-sm px-1 transition-colors duration-200 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
+/**
+ * The offer, drawn as a control rather than as a fifth link.
+ *
+ * Filled, so it is the one thing in the notch that is a shape. Eighteen
+ * pixels of it, which is all there is: the body is 34px tall and holds its
+ * contents in the upper 22 of them — the `pb-3` below is the lip the lit
+ * underside runs along — so a pill centred on the same line as the links has
+ * exactly that much room before it starts eating into the notch's own top
+ * edge. Chunkier means a shallower lip, not a taller pill.
+ */
+const NAV_CTA_PILL =
+  "inline-flex h-4.5 shrink-0 cursor-pointer items-center rounded-full bg-white px-3 leading-none font-medium text-black transition-colors duration-200 hover:bg-white/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+
 function NavSide({
   side,
   open,
@@ -106,24 +120,30 @@ function NavSide({
       // React 19 takes `inert` as a real boolean, not the empty-string form.
       inert={!open}
     >
-      {links.map((link) =>
-        WAITLIST_MODE && link.cta ? (
-          <JoinWaitlistButton
-            key={link.href}
-            className={cn(NAV_LINK, "cursor-pointer")}
-          >
+      {links.map((link) => (
+        <a
+          key={link.href}
+          href={linkHref(link.href, home)}
+          className={NAV_LINK}
+        >
+          {link.label}
+        </a>
+      ))}
+
+      {/* Inside the rail rather than beside it, so it collapses with the
+          links: a call to action that stayed put while the notch shut would
+          be a button hanging off a closed notch. */}
+      {side === "r" ? (
+        WAITLIST_MODE ? (
+          <JoinWaitlistButton className={NAV_CTA_PILL}>
             {WAITLIST_NAV_LABEL}
           </JoinWaitlistButton>
         ) : (
-          <a
-            key={link.href}
-            href={linkHref(link.href, home)}
-            className={NAV_LINK}
-          >
-            {link.label}
+          <a href={linkHref(NAV_CTA.href, home)} className={NAV_CTA_PILL}>
+            {NAV_CTA.label}
           </a>
-        ),
-      )}
+        )
+      ) : null}
     </div>
   );
 }

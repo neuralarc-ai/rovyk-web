@@ -1,4 +1,5 @@
 import { DownloadButton } from "@/components/cta-button";
+import { ENTITY } from "@/lib/legal";
 import { Kicker } from "@/components/kicker";
 import { RovykWordmark } from "@/components/rovyk-wordmark";
 import { cn } from "@/lib/utils";
@@ -20,9 +21,13 @@ import Link from "next/link";
 const LINKS: { heading: string; items: [label: string, href: string][] }[] = [
   {
     heading: "product",
+    /* The nav's labels and the nav's order. The same two sections were
+       "Surfaces" and "Capabilities" here, "Where it lives" and "Features" in
+       the nav, and listed second-then-first — three names for two places,
+       and an index that disagreed with the page it indexes. */
     items: [
-      ["Capabilities", "#features"],
-      ["Surfaces", "#where"],
+      ["Where it lives", "#where"],
+      ["What it can do", "#features"],
       ["How it works", "#how"],
       ["What sets it apart", "#uses"],
     ],
@@ -65,6 +70,24 @@ export function SiteFooter() {
             <p className="max-w-[44ch] text-sn leading-[1.65] font-light text-white/58">
               A voice agent that lives in the notch and operates your Mac. Local
               by default, cloud by choice, and honest about both.
+            </p>
+
+            {/* Who made this — which is the one of this band's three jobs
+                it was not doing. The name is the door: this is the end of
+                the page, and the company is the only thing here worth
+                leaving for. A new tab, so leaving is not the same as
+                going. */}
+            <p className="mt-4 text-sn font-light text-white/44">
+              A{" "}
+              <a
+                href={ENTITY.site}
+                target="_blank"
+                rel="noreferrer"
+                className="border-b border-input pb-px text-white/68 transition-colors duration-200 hover:border-white/40 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                {ENTITY.name}
+              </a>{" "}
+              product
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2.5">
@@ -124,7 +147,9 @@ export function SiteFooter() {
         {/* ── The small print ─────────────────────────────────────── */}
         <div className="flex flex-col gap-2.5 border-t border-border pt-5 pb-6 text-[12.5px] text-white/44 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
           <p className="flex flex-wrap items-center gap-3">
-            <span>&copy; 2026 Rovyk</span>
+            {/* The entity, not the product: a copyright notice naming a
+                brand is a notice naming nobody who can hold one. */}
+            <span>&copy; 2026 {ENTITY.legal}</span>
             <i aria-hidden className={DOT} />
             <span>All rights reserved</span>
           </p>

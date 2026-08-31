@@ -72,7 +72,11 @@ export function updatedAt(doc: LegalDoc): Date {
   const [day, month, year] = doc.updated.trim().split(/\s+/);
   const index = MONTHS.indexOf((month ?? "").toLowerCase());
 
-  if (index === -1 || !/^\d{1,2}$/.test(day ?? "") || !/^\d{4}$/.test(year ?? "")) {
+  if (
+    index === -1 ||
+    !/^\d{1,2}$/.test(day ?? "") ||
+    !/^\d{4}$/.test(year ?? "")
+  ) {
     throw new Error(
       `legal: cannot read \`updated\` as a date: "${doc.updated}". ` +
         `Expected a form like "24 August 2026".`,
@@ -82,9 +86,21 @@ export function updatedAt(doc: LegalDoc): Date {
   return new Date(Date.UTC(Number(year), index, Number(day)));
 }
 
-/** The entity behind both documents, written once. */
+/**
+ * The company, written once — here rather than anywhere else because the
+ * legal documents are where it has to be exactly right, and a second copy
+ * kept for the marketing surfaces is a second copy that can be wrong.
+ *
+ * Two names, on purpose. `legal` is the filing and belongs wherever the
+ * entity is the point: these documents, the notice at the point of
+ * collection, the foot of an email. `name` is the byline, and is what the
+ * hero and the footer say, because "by Neural Arc" reads as attribution
+ * where "by Neural Arc, Inc." reads as a filing.
+ */
 export const ENTITY = {
+  name: "Neural Arc",
   legal: "Neural Arc, Inc.",
+  site: "https://neuralarc.ai",
   incorporated: "Delaware",
   office: "Pune, India",
   email: "hello@neuralarc.ai",

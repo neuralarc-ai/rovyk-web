@@ -6,10 +6,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { HeroOrb } from "@/components/hero-orb";
 import { SectionHead } from "@/components/section-head";
-import { getLenis } from "@/components/smooth-scroll";
 import {
   ORB_BEATS,
   ORB_RAIL,
+  ORB_RAIL_SEG,
   type OrbBeat,
   type OrbGlow,
 } from "@/lib/orb-beats";
@@ -51,6 +51,20 @@ const ANCHOR = "center";
 /** The width at which the orb and the prose can be read side by side. Below
  *  it they cannot, and the section changes shape rather than shrinking. */
 const WIDE = "(min-width: 1024px)";
+
+/** Every blank gradation's centre, measured down the ruler in pitches from
+ *  its top: a labelled row is two pitches tall and a blank one is one. In the
+ *  order the strip renders them, so it indexes the nodes directly. */
+const TICKS = ORB_RAIL.reduce<number[]>((at, row, i) => {
+  const above = ORB_RAIL.slice(0, i).reduce((y, r) => y + (r.stop ? 2 : 1), 0);
+  return row.stop ? at : [...at, above + 0.5];
+}, []);
+
+/** How far from the mark a gradation still grows for, in pitches, and how
+ *  much wider it gets there. Three pitches out is about where the window's
+ *  mask has finished dimming it anyway. */
+const REACH = 3;
+const GROWTH = 1;
 
 const TAB_ID = (i: number) => `orb-state-${i}`;
 const PANEL_ID = "orb-panel";
@@ -200,6 +214,36 @@ function OrbStage({
   );
 }
 
+/**
+ * One pass of the ruler: a labelled gradation per state, blank ones between.
+ *
+ * Uniformly white and uniformly wide, because the window it is read through
+ * is what dims it. Emphasis that lives in the mask is emphasis about where a
+ * gradation is on the screen rather than which row it happens to be, which is
+ * the whole claim — and it leaves travelling the ruler as one transform on
+ * one node per frame rather than a class toggled on forty-one.
+ */
+function Rungs() {
+  return (
+    <>
+      {ORB_RAIL.map((row, i) =>
+        row.stop ? (
+          <div
+            key={i}
+            className="flex h-(--label) items-center justify-end font-mono text-sm text-white"
+          >
+            {String(row.beat + 1).padStart(2, "0")}
+          </div>
+        ) : (
+          <div key={i} className="flex h-(--pitch) items-center justify-end">
+            <span className="h-px w-2 origin-right bg-white" />
+          </div>
+        ),
+      )}
+    </>
+  );
+}
+
 export function OrbSection() {
   const [active, setActive] = useState(0);
   const [reduced, setReduced] = useState(false);
@@ -208,9 +252,9 @@ export function OrbSection() {
      section down, so it is long hydrated by the time anyone reaches it. */
   const [wide, setWide] = useState(true);
   const root = useRef<HTMLElement>(null);
-  const column = useRef<HTMLDivElement>(null);
   const beats = useRef<(HTMLDivElement | null)[]>([]);
-  const rail = useRef<(HTMLButtonElement | HTMLSpanElement | null)[]>([]);
+  const ruler = useRef<HTMLDivElement>(null);
+  const railBox = useRef<HTMLDivElement>(null);
   const [orbBox, orbSize] = useMeasured();
 
   useEffect(() => {
@@ -243,21 +287,58 @@ export function OrbSection() {
           });
         });
 
-        /* The rail is painted, not rendered: it tracks the scrollbar and has
-           no business re-rendering thirteen nodes to do it. */
+        /* The ruler is painted, not rendered: it tracks the scrollbar frame
+           by frame and has no business re-rendering the section to do it.
+           Measured from the first beat's centre to the last rather than from
+           the column's edges, so the labelled gradation is under the mark at
+           exactly the moment its beat owns the orb.
+
+           The gradations grow on the way past. Where each one is relative to
+           the mark is already known here — the ruler's own offset plus the
+           row's — so it costs an arithmetic step and a `scaleX` each, and no
+           measuring of anything. */
+        const [first, last] = [beats.current[0], beats.current.at(-1)];
+        const ticks = ruler.current
+          ? Array.from(ruler.current.querySelectorAll("span"))
+          : [];
+
+        const paint = (progress: number) => {
+          const y = -(1 + ORB_RAIL_SEG * (ORB_BEATS.length - 1) * progress);
+          if (ruler.current)
+            ruler.current.style.transform = `translateY(calc(var(--pitch) * ${y}))`;
+          ticks.forEach((tick, i) => {
+            const d = Math.abs(TICKS[i] + y) / REACH;
+            // Smoothstep, so a gradation swells and settles rather than
+            // arriving at its own edge with a corner on it.
+            const e = d >= 1 ? 0 : (1 - d) ** 2 * (1 + 2 * d);
+            tick.style.transform = `scaleX(${1 + e * GROWTH})`;
+          });
+        };
+
+        if (first && last)
+          ScrollTrigger.create({
+            trigger: first,
+            start: `center ${at}`,
+            endTrigger: last,
+            end: `center ${at}`,
+            onUpdate: ({ progress }) => paint(progress),
+            // And on setup and after a resize, so the ruler is never drawn
+            // flat for the screens before the first beat reaches the mark.
+            onRefresh: ({ progress }) => paint(progress),
+          });
+
+        /* The rail is centred on the viewport by sticking to it, which it
+           can only do once the section's top has reached the top of the
+           screen — before that it rides up the page and the mark is not at
+           the middle of anything. So it is not shown before that, and this
+           is exactly the span over which it is: the section's top edge to
+           the moment its bottom edge lets the sticky column go again. */
         ScrollTrigger.create({
-          trigger: column.current,
-          start: `top ${at}`,
-          end: `bottom ${at}`,
-          onUpdate: ({ progress }) => {
-            const on = Math.min(
-              ORB_RAIL.length - 1,
-              Math.floor(progress * ORB_RAIL.length),
-            );
-            rail.current.forEach((node, i) =>
-              node?.setAttribute("data-cur", String(i === on)),
-            );
-          },
+          trigger: root.current,
+          start: "top top",
+          end: "bottom bottom",
+          onToggle: ({ isActive }) =>
+            railBox.current?.setAttribute("data-on", String(isActive)),
         });
       };
 
@@ -269,19 +350,6 @@ export function OrbSection() {
     },
     { scope: root },
   );
-
-  /** Lenis owns the scroll, so ask it rather than jumping the page. */
-  const jump = (i: number) => {
-    const el = beats.current[i];
-    if (!el) return;
-    const lenis = getLenis();
-    if (lenis)
-      lenis.scrollTo(el, {
-        offset: -(innerHeight - el.clientHeight) / 2,
-        duration: 1.1,
-      });
-    else el.scrollIntoView({ block: "center" });
-  };
 
   const beat = ORB_BEATS[active];
 
@@ -425,7 +493,6 @@ export function OrbSection() {
         <div className="relative grid items-start lg:grid-cols-2">
           {/* ── The prose ─────────────────────────────────────────── */}
           <div
-            ref={column}
             /* The lead-in is what makes the first beat line up. The orb only
                centres itself once its column has stuck to the top, and that
                cannot happen until the section head has scrolled away — so
@@ -471,65 +538,61 @@ export function OrbSection() {
       </div>
 
       {/* ── The rail ───────────────────────────────────────────────
-          Navigation, not decoration: the numbered stops are buttons, so a
-          four-screen section is reachable without holding the down arrow. */}
+          A ruler rather than five stops with one of them lit: the rail and
+          its mark hold still at the anchor line — the same line the orb is
+          read at — and the scale travels through them, so the state you are
+          on is always read in one place and the next one arrives from below
+          and pushes the last out of the top. The gradations between the
+          numbers are what make that legible: without them a strip carrying
+          five labels and nothing else has nothing to show it moving.
+
+          Decoration, not navigation. Stops that spend most of the section
+          off the strip cannot be clicked, so the numbers are printed where
+          they can be read — at the head of each beat — and this is hidden
+          from a screen reader rather than duplicated to one.
+
+          The rail is centred on the screen by sticking to it, and sticky
+          can only hold something at the middle of the screen once the box it
+          lives in has reached the top of it. Before that the rail rides up
+          the page with the section and the mark is not at the middle of
+          anything, so it is not shown at all until it is — which is what the
+          fade at each end is. Every frame it is visible for, the mark is
+          dead centre. */}
       <div
-        aria-hidden={false}
-        className="pointer-events-none absolute inset-y-0 right-5 hidden lg:block"
+        ref={railBox}
+        aria-hidden
+        data-on="false"
+        className="pointer-events-none absolute inset-y-0 right-5 hidden opacity-0 transition-opacity duration-500 data-[on=true]:opacity-100 lg:block"
       >
-        <nav
-          aria-label="Orb states"
-          className="pointer-events-auto sticky top-1/2 flex -translate-y-1/2 items-stretch"
-        >
-          <div className="flex h-33 flex-col items-end justify-between">
-            {ORB_RAIL.map((node, i) =>
-              node.stop ? (
-                <button
-                  key={i}
-                  type="button"
-                  ref={(el) => {
-                    rail.current[i] = el;
-                  }}
-                  onClick={() => jump(node.beat)}
-                  aria-label={`${ORB_BEATS[node.beat].label}: ${ORB_BEATS[node.beat].title}`}
-                  aria-current={active === node.beat ? "true" : undefined}
-                  className="group/stop flex h-2 cursor-pointer items-center justify-end gap-1.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                >
-                  <span
-                    className={cn(
-                      "font-mono text-[9.5px] transition-colors duration-350",
-                      active === node.beat
-                        ? "text-white"
-                        : "text-white/40 group-hover/stop:text-white/70",
-                    )}
-                  >
-                    {String(node.beat + 1).padStart(2, "0")}
-                  </span>
-                  <span
-                    className={cn(
-                      "h-px transition-all duration-350 ease-[cubic-bezier(.52,.52,0,1)]",
-                      active === node.beat
-                        ? "w-3.25 bg-white"
-                        : "w-1.75 bg-white/20 group-hover/stop:bg-white/45",
-                    )}
-                  />
-                </button>
-              ) : (
-                <span
-                  key={i}
-                  ref={(el) => {
-                    rail.current[i] = el;
-                  }}
-                  aria-hidden
-                  className="flex h-2 items-center justify-end"
-                >
-                  <span className="h-px w-1.75 bg-white/20 transition-all duration-350 data-[cur=true]:w-2.75 data-[cur=true]:bg-white/60" />
-                </span>
-              ),
-            )}
+        <div className="sticky top-0 flex h-svh items-center gap-2.5 [--label:calc(var(--pitch)*2)] [--pitch:1rem]">
+          {/* The window the ruler is read through, and the only thing that
+              says which gradation is which: full white at the mark, a
+              third of that either side, gone by the ends. A gradation is
+              bright because of where it is rather than because of which
+              beat it belongs to — which is the claim, and what lets the
+              strip underneath be one flat colour moved by one transform. */}
+          <div className="h-[68svh] w-8 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,#00000061_25%,#00000061_44%,#000_48%,#000_52%,#00000061_56%,#00000061_75%,transparent)]">
+            <div
+              ref={ruler}
+              /* Half a label's height up, so it is the middle of the first
+                 number that starts under the mark, not its top. */
+              style={{ transform: "translateY(calc(var(--pitch) * -1))" }}
+              className="relative top-1/2 will-change-transform"
+            >
+              <Rungs />
+            </div>
           </div>
-          <span aria-hidden className="ml-2 w-px bg-border" />
-        </nav>
+
+          {/* The rail proper, and the mark the ruler is read against. Full
+              height: it is the fixed thing here, so it does not get to end
+              where the ruler does. The mark is a sibling of the line
+              rather than a child of it — a hairline is one pixel wide, and
+              its own mask is in no position to paint anything beside it. */}
+          <div className="relative h-full w-2.5">
+            <span className="absolute inset-y-0 right-0 w-px bg-border [mask-image:linear-gradient(to_bottom,transparent,black_14%,black_86%,transparent)]" />
+            <span className="absolute top-1/2 right-0.5 h-px w-2 -translate-y-1/2 bg-white" />
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -1,8 +1,17 @@
 # Voice on the marketing site — research notes
 
-Status: **research only, nothing implemented.** Written August 2026, before any
-provider was chosen. Prices and browser support drift — re-check anything here
-before spending money on it.
+Status: **superseded in part.** Written August 2026, before any provider was
+chosen. Prices and browser support drift — re-check anything here before
+spending money on it.
+
+The decisions this research led to now live in
+[`voice-narration.md`](./voice-narration.md), which is the document to build
+from: the scripts, the file formats, the generator contract and the acceptance
+checklist. What remains below is the reasoning — provider comparison and
+licensing (§3), why timestamps are the whole trick (§4), why on-device TTS in
+the browser was rejected (§5), why there is no live mic (§6), and the
+constraints the design had to respect (§7). Sections 8 through 10 are the
+proposal that `voice-narration.md` replaced; they are kept for the trail.
 
 The question this answers: how do we put a *good* voice on rovyk-web, given
 that the product is a voice agent and the hero is a scripted spoken exchange.
