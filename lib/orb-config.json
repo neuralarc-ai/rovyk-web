@@ -1,0 +1,9 @@
+{
+  "global": { "speed": 4, "bands": 7, "gap": 1.25, "tilt": 20, "feather": 2.1, "contrast": 0.5 },
+  "idle": { "rate": 1, "level": 0.1, "swing": 0.05 },
+  "listening": { "rate": 2.1, "slow": 0.55, "floor": 1.5, "reach": 0.72 },
+  "thinking": { "rate": 1.25 },
+  "working": { "rate": 0.12, "field": 0.5 },
+  "speaking": { "rate": 1.5, "slow": 1, "depth": 1, "field": 0.7 },
+  "resolved": { "rate": 1.5, "phase": 1, "swing": 4, "field": 1 }
+}

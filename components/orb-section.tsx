@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { HeroOrb } from "@/components/hero-orb";
+import { LatitudeOrb } from "@/components/latitude-orb";
 import { SectionHead } from "@/components/section-head";
 import {
   ORB_BEATS,
@@ -195,7 +195,7 @@ function OrbStage({
         ref={boxRef}
         className="relative aspect-square w-[min(280px,64vw)] lg:w-[min(440px,40vw)]"
       >
-        {size > 0 ? <HeroOrb state={beat.state} size={size} /> : null}
+        {size > 0 ? <LatitudeOrb state={beat.state} size={size} /> : null}
       </div>
 
       {/* The section claims you always know which state it is in. Naming it on
@@ -393,7 +393,7 @@ export function OrbSection() {
                 className="group/beat flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-10"
               >
                 <div className="shrink-0">
-                  <HeroOrb state={beat.state} size={132} />
+                  <LatitudeOrb state={beat.state} size={132} />
                 </div>
                 <Beat beat={beat} n={i + 1} />
               </div>

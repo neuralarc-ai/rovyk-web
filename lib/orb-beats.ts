@@ -3,10 +3,12 @@ import type { OrbState } from "thinking-orbs/engine";
 /* ────────────────────────────────────────────────────────────────────
    The five states, as the orb section reads them.
 
-   `mode` is not a nickname — it is the name of the geometry the orb
-   library actually draws for that state, straight out of its own
-   `STATE_TO_MODE` table. Printing it is a checkable claim, which is the
-   only kind this page makes.
+   `mode` is not a nickname — it is the arrangement of lit bands the orb
+   really draws for that state. Printing it is a checkable claim, which is
+   the only kind this page makes, so it moved when the section's orb did:
+   these named the dot-field library's modes until `<LatitudeOrb>` replaced
+   it here. The hero and the HUD still draw the library, and still its
+   modes.
 
    `glow` is inherited from the HUD's tone map rather than chosen here.
    The notch already colours these exact states — Thinking and Working
@@ -23,7 +25,7 @@ export type OrbBeat = {
   state: OrbState;
   /** What the HUD calls this state. */
   label: string;
-  /** What the orb library calls the geometry. */
+  /** How the bands are lit for this state. */
   mode: string;
   title: string;
   body: string;
@@ -36,7 +38,7 @@ export const ORB_BEATS: OrbBeat[] = [
   {
     state: "searching",
     label: "Idle",
-    mode: "Globe",
+    mode: "Even, unlit",
     title: "Awake. Not listening.",
     body: "Nothing is captured until the wake word lands.",
     fact: "Always-on local detector",
@@ -45,7 +47,7 @@ export const ORB_BEATS: OrbBeat[] = [
   {
     state: "listening",
     label: "Listening",
-    mode: "Wave",
+    mode: "Filled from below",
     title: "Hearing you, on your machine.",
     body: "Speech to text runs on-device. Your voice never leaves the Mac.",
     fact: "Zero audio crosses the network",
@@ -54,7 +56,7 @@ export const ORB_BEATS: OrbBeat[] = [
   {
     state: "solving",
     label: "Thinking",
-    mode: "Rubik",
+    mode: "One travelling crest",
     title: "One brain. Fifty-nine tools.",
     body: "It reads the request, the thread and the screen, then decides.",
     fact: "No routing table, no fixed intents",
@@ -63,7 +65,7 @@ export const ORB_BEATS: OrbBeat[] = [
   {
     state: "working",
     label: "Working",
-    mode: "Orbits",
+    mode: "One travelling notch",
     title: "Doing the actual thing.",
     body: "Apps, files, buttons in software that never heard of Rovyk.",
     fact: "Clicks via the Accessibility API",
@@ -72,7 +74,7 @@ export const ORB_BEATS: OrbBeat[] = [
   {
     state: "composing",
     label: "Speaking",
-    mode: "Ribbon",
+    mode: "Per-band waveform",
     title: "Answering out loud.",
     body: "A bundled on-device voice. Your hands stay where they were.",
     fact: "Supertonic TTS, shipped inside",
