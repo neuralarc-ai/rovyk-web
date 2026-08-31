@@ -152,18 +152,32 @@ export type NavLink = {
   cta?: boolean;
 };
 
+/**
+ * The rail, in the order the page is met: two items to the left of the mark
+ * and one to its right, then the offer.
+ *
+ * Every label is the name its own section answers to. A rail that said
+ * "Features" and landed you on a section headed "10 groups. 59 tools." read
+ * as having taken you somewhere else, which is most of what was wrong with
+ * it — the order was right all along. The three destinations are one phrase
+ * in one voice for the same reason: a lone category noun between two of them
+ * looked like it had come from a different menu.
+ */
 export const LINKS_L: NavLink[] = [
   { label: "Where it lives", href: "#where" },
-  { label: "Features", href: "#features" },
+  { label: "What it can do", href: "#features" },
 ];
-export const LINKS_R: NavLink[] = [
-  { label: "How it works", href: "#how" },
-  { label: "Download", href: "#cta", cta: true },
-];
+export const LINKS_R: NavLink[] = [{ label: "How it works", href: "#how" }];
 
-/** Reading order, for anything that shows them as one list rather than as
- *  two rails either side of the mark. */
-export const LINKS: NavLink[] = [...LINKS_L, ...LINKS_R];
+/**
+ * The offer, which is why it is not in the table above.
+ *
+ * It was the fourth entry of the right-hand rail, and being one of the links
+ * is exactly how it looked: same size, same colour, same hover, four words
+ * you could skip past. It is the one thing in the nav that is not a place on
+ * the page, so it is rendered separately and drawn as a control.
+ */
+export const NAV_CTA: NavLink = { label: "Download", href: "#cta", cta: true };
 
 /**
  * The drawer's index: the page, in the order you meet it.
@@ -179,7 +193,7 @@ export const LINKS: NavLink[] = [...LINKS_L, ...LINKS_R];
  */
 export const DESTINATIONS: NavLink[] = [
   { label: "Where it lives", href: "#where" },
-  { label: "Features", href: "#features" },
+  { label: "What it can do", href: "#features" },
   { label: "How it works", href: "#how" },
   { label: "What sets it apart", href: "#uses" },
   { label: "Control", href: "#safe" },

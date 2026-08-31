@@ -165,7 +165,7 @@ export function ApartSection() {
                       on ? "opacity-100" : "opacity-0",
                     )}
                   >
-                    <Corners inset="10px" size="size-1.75" />
+                    {/* <Corners inset="10px" size="size-1.75" /> */}
                   </span>
 
                   <span

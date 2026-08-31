@@ -81,16 +81,22 @@ export const ORB_BEATS: OrbBeat[] = [
 ];
 
 /**
- * The rail beside the beats: one numbered stop each, with two blank
- * gradations between them so it reads as a scale rather than a row of
- * dots. Only the numbered ones are worth navigating to.
+ * The rail beside the beats, written as a ruler rather than a list of five
+ * stops: one labelled gradation per state with `GAP` blank ones between, so
+ * the scale carries how far apart the states are as well as which one you
+ * are on. The rail holds still and this travels through it.
  */
+const GAP = 8;
+
 export const ORB_RAIL = ORB_BEATS.flatMap((_, i) =>
   i < ORB_BEATS.length - 1
     ? [
         { beat: i, stop: true },
-        { beat: i, stop: false },
-        { beat: i, stop: false },
+        ...Array.from({ length: GAP }, () => ({ beat: i, stop: false })),
       ]
     : [{ beat: i, stop: true }],
 );
+
+/** One labelled stop to the next, counted in blank gradations — the label's
+ *  own row is two of them tall. The section moves the ruler by this. */
+export const ORB_RAIL_SEG = GAP + 2;

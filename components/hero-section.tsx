@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import Image from "next/image";
 import heroWall from "@/public/assets/hero-wall.jpg";
 import { AppleLogo } from "@/components/apple-logo";
+import { ENTITY } from "@/lib/legal";
 import { DownloadButton, GhostButton } from "@/components/cta-button";
 import { RovykHud } from "@/components/rovyk-hud";
 
@@ -154,6 +155,17 @@ export function HeroSection() {
           <span className="text-white/36">[</span>
           Voice agent for macOS
           <span className="text-white/36">]</span>
+          {/* The byline. This line already answers what this is, and who
+              made it is the same kind of fact at the same weight — so it
+              goes here rather than into the spec row below, which is three
+              numbers about the download and would quietly stop matching the
+              closer's copy of itself.
+
+              Text, not a link: it sits directly above the one button on the
+              page that matters, and an outbound link there is a leak. The
+              footer's copy of this is the one that opens the door. */}
+          <span aria-hidden className="size-0.75 rounded-full bg-white/26" />
+          <span className="text-white/44">by {ENTITY.name}</span>
         </div>
 
         <h1

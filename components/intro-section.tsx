@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import type { OrbState } from "thinking-orbs/engine";
 import { ArrowClockwiseIcon } from "@phosphor-icons/react/dist/ssr";
 import { RovykWordmark } from "@/components/rovyk-wordmark";
+import { ENTITY } from "@/lib/legal";
 import { HeroOrb } from "@/components/hero-orb";
 import { CaretDoubleDownIcon } from "@phosphor-icons/react";
 
@@ -40,6 +41,7 @@ const ORB_REST = 0.86;
    ──────────────────────────────────────────────────────────────────── */
 const CUE = {
   splashIn: 0.25,
+  byline: 1.35,
   splashOut: 2.05,
   lights: 2.15,
   orbIn: 2.35,
@@ -67,6 +69,7 @@ export function IntroSection() {
 
       const splash = q("[data-splash]");
       const letters = q("[data-letter]");
+      const byline = q("[data-byline]");
       const glow = q("[data-glow]");
       const orb = q("[data-orb]");
       const askLine = q("[data-ask]");
@@ -134,6 +137,19 @@ export function IntroSection() {
             stagger: 0.07,
           },
           CUE.splashIn,
+        )
+
+        /* Under the mark, after it. The letters land at 1.38 and the splash
+           starts leaving at 2.05, so this is the only window there is: it
+           arrives as the last letter settles and holds for two thirds of a
+           second. Late enough to read as a byline under a title rather than
+           as part of it, and it leaves on the container's own tween because
+           it is the same object getting out of the way. */
+        .fromTo(
+          byline,
+          { autoAlpha: 0, y: 7 },
+          { autoAlpha: 1, y: 0, duration: 0.55, ease: "power2.out" },
+          CUE.byline,
         )
         .to(
           splash,
@@ -312,7 +328,24 @@ export function IntroSection() {
         data-splash
         className="pointer-events-none absolute inset-0 grid place-items-center opacity-0"
       >
-        <RovykWordmark className="w-[min(44vw,400px)] text-white" />
+        {/* Stacked inside the cell rather than as two grid children: two
+            children of a `place-items-center` grid are two rows sharing the
+            height, which would take the mark off centre to make room for a
+            line of 10px type. */}
+        <div className="flex flex-col items-center">
+          <RovykWordmark className="w-[min(44vw,400px)] text-white" />
+
+          {/* The site's small caps without their brackets. Brackets mark an
+              eyebrow — a label for the thing under it — and this is a byline
+              for the thing above it. Hidden until GSAP raises it, so it is
+              not briefly the only thing on a black screen. */}
+          <p
+            data-byline
+            className="mt-5 font-mono text-[10.5px] tracking-[0.16em] text-white/38 uppercase opacity-0"
+          >
+            A {ENTITY.name} product
+          </p>
+        </div>
       </div>
 
       {/* Three rows: the orb row is auto and the rows around it flex, so the
