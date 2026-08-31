@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { HeroOrb } from "@/components/hero-orb";
+import { BlobOrb } from "@/components/blob-orb";
 import { SectionHead } from "@/components/section-head";
 import { getLenis } from "@/components/smooth-scroll";
 import {
@@ -65,8 +65,10 @@ const GLOW: Record<OrbGlow, string> = {
 
 const GLOWS = Object.keys(GLOW) as OrbGlow[];
 
-/** The orb is sized in CSS but drawn in device pixels, so the canvas has to
- *  be told a number. Measured rather than guessed at a breakpoint. */
+/** The orb's box is sized in CSS, but the orb itself has to be handed a
+ *  number — a viewBox needs one to scale to, and the canvas the dot orb draws
+ *  on needs one in device pixels. Measured rather than guessed at a
+ *  breakpoint. */
 function useMeasured() {
   const [size, setSize] = useState(0);
   const ref = useCallback((el: HTMLDivElement | null) => {
@@ -137,10 +139,10 @@ function Beat({
             key={label}
             className="flex items-baseline gap-5 border-t border-border py-2.5"
           >
-            <dt className="w-20.5 shrink-0 font-mono text-[10px] tracking-[0.14em] text-white/34 uppercase">
+            <dt className="w-20.5 shrink-0 font-mono text-xs tracking-[0.14em] text-white/34 uppercase">
               {label}
             </dt>
-            <dd className="text-[13.5px] font-light text-white/85">{value}</dd>
+            <dd className="text-base font-light text-white/85">{value}</dd>
           </div>
         ))}
       </dl>
@@ -181,21 +183,10 @@ function OrbStage({
         ref={boxRef}
         className="relative aspect-square w-[min(280px,64vw)] lg:w-[min(440px,40vw)]"
       >
-        {size > 0 ? <HeroOrb state={beat.state} size={size} /> : null}
+        {size > 0 ? (
+          <BlobOrb state={beat.state} replay={beat.replay} size={size} />
+        ) : null}
       </div>
-
-      {/* The section claims you always know which state it is in. Naming it on
-          the orb argues that rather than asserting it. The state's name only —
-          the geometry it is drawn from is a fact about the claim, and belongs
-          in the beat's spec rows rather than a second time under the orb. */}
-      {caption ? (
-        <span
-          key={beat.state}
-          className="animate-in fade-in relative mt-3 font-mono text-[11px] tracking-[0.16em] text-white/48 uppercase duration-500 lg:mt-6"
-        >
-          {beat.label}
-        </span>
-      ) : null}
     </div>
   );
 }
@@ -325,7 +316,7 @@ export function OrbSection() {
                 className="group/beat flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-10"
               >
                 <div className="shrink-0">
-                  <HeroOrb state={beat.state} size={132} />
+                  <BlobOrb state={beat.state} size={132} />
                 </div>
                 <Beat beat={beat} n={i + 1} />
               </div>
