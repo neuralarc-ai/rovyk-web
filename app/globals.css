@@ -78,7 +78,11 @@
   --animate-scroll-cue: scroll-cue 2.4s ease-in-out infinite;
   /* Hero-section motion — see components/hero-section.tsx */
   --animate-twinkle: twinkle 6s ease-in-out infinite;
-  --animate-marquee: marquee 42s linear infinite;
+  /* 60s, not 42s: the keyframe travels a third of the rail's own
+     width, so a wider rail scrolls faster in pixels. The items are
+     phrases now — about half again as wide as the names they
+     replaced — and the duration buys that back at reading pace. */
+  --animate-marquee: marquee 60s linear infinite;
   /* Focus demo — the open mic's level meter. */
   --animate-waveform: waveform 900ms ease-in-out infinite;
 }
