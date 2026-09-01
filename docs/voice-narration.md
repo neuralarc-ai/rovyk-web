@@ -360,155 +360,109 @@ ship.
 
 **These are the source of truth.** Copy them character for character.
 
-Six rules they follow, listed so that edits stay in voice:
+Rewritten in full in September 2026. The first set was wordier and colder:
+it wound up before saying anything, teased answers instead of giving them,
+and in one section talked down its own capability. These are shorter, warmer
+and first-person — Rovyk introducing itself to a reader rather than reciting
+specifications at them.
+
+Seven rules they follow, listed so that edits stay in voice:
 
 1. **Never read the page.** Every script starts where the visible copy stops.
-   Nothing here restates a headline, a spec or a body line.
-2. **One checkable thing per track** that is not on screen — a mechanism, a
-   number, a limitation.
-3. **First person, present tense, dry.** No "welcome to", no "as you can see",
-   no adjectives about itself.
-4. **No em dashes.** Commit `b40cbb5` removed them from all user-facing text,
-   and these are user-facing text. They also give the TTS worse prosody than a
-   full stop.
-5. **Numbers are spelled as they should be spoken** — "fifty-nine", "eight
-   gigabytes", "eighty-four megabytes". The TTS reads what it is given.
-6. **35 to 50 words.** Twelve to fifteen seconds. `skip` lines are half that.
+2. **One checkable thing per track** that is not on screen.
+3. **It is Rovyk speaking, to you.** First person, contractions, warm but
+   never chirpy. No exclamation marks and no adjectives about itself; that
+   register would undercut the trust argument the page spends ten sections
+   building.
+4. **No wind-up.** The fact arrives in the first sentence, not the third.
+5. **Never undersell.** Admitting a limit belongs in the sections that are
+   *about* limits — `req`, `safe`, `faq`. It does not belong in the ones
+   whose job is to say what Rovyk is good at.
+6. **No em dashes.** Commit `b40cbb5` removed them from all user-facing
+   text, and these are user-facing text. They also give the TTS worse
+   prosody than a full stop.
+7. **Numbers spelled as spoken** — "forty", "eight gigabytes",
+   "eighty-four megabytes". The TTS reads what it is given.
 
----
+Only the `brief` tier is current. The `dwell` and `skip` scripts from the
+first set are parked: `dwell` is switched off in code (see `DISABLED_TIERS`
+in `lib/voice-script.ts`) and neither has audio. Do not record them yet.
 
-### `intro.reply` — the hero splash
 
-Not narration. This is the existing spoken reply in
-`components/intro-section.tsx`, which becomes real audio. **It must match that
-file's `REPLY` constant exactly**; if the two ever disagree, the file wins and
-this document is stale.
+### `hero.brief` — Talk to your Mac. Watch it work.
 
-> I open your apps, read your mail, and find the file you forgot the name of. I click buttons in software that has never heard of me. All of it on this Mac.
+Status: recorded.
 
----
+> Hi. I'm Rovyk. I live in your menu bar, and I'm easiest to reach by name. Say it, then just talk. Rename these forty files by date. Find the invoice from the plumber. I'll work out what that takes.
 
-### `hero` — "Talk to your Mac. Watch it work."
+### `where.brief` — "Where can I be?"
 
-**`hero.brief`**
+Status: recorded.
 
-> You've just turned me on, which is the only thing on this page you have to do. From here I follow you down it. On the screen below, that's a real run. Four steps, and it stops before the one that sends.
+> You'll mostly see me in the notch, which is where I do the work. The window's there for when talking isn't an option, or when you want to read back what I did and check I got it right.
 
-**`hero.dwell`**
+### `features.brief` — "10 groups. 59 tools."
 
-> Everything you're about to read is something I do on the machine, not something I say about it. If a claim on this page couldn't be checked, it came off. Hold me to that.
+Status: recorded.
 
----
+> Have a sweep through these. Most are shortcuts for the things you'll ask for often. The one I'd point out is Any app, because it's why the list isn't a limit: anything with a window on your screen, I can use.
 
-### `where` — "Where can I be?"
+### `how.brief` — "Say it once. Watch the whole chain run."
 
-**`where.brief`**
+Status: recorded.
 
-> I default to the notch because most of what you ask takes a few steps and no reading. It retracts on its own when the run ends, so there's nothing to close. The window is for the times you want to check my work, or the times you can't say it out loud.
+> Have a look at step three. Everything before it I'll just get on with, because you can undo it. Step three is the one that sends or deletes something, so that's where I stop and check with you first.
 
-**`where.dwell`**
+### `orb.brief` — "Five states. You always know which one."
 
-> The window isn't the lesser surface. It's where the whole scrollback lives, and if you're going to catch me doing something wrong, that's where you'll see it. I'd use it for the first week.
+Status: recorded, from an earlier draft. The line below is the newer text, which was
+never cut; what actually ships is in `scripts/voice/manifest.json`, and reads:
 
----
+> Each state is a different shape, not the same shape recoloured. That's so you can read it from across the room, and so it still reads if you can't tell indigo from pink.
 
-### `features` — "10 groups. 59 tools."
+The unused newer version:
 
-**`features.brief`**
+> There are five of these, and they're different shapes rather than different colours, so you can tell them apart at a glance. Working is the one to know: it means I'm clicking things right now.
 
-> Fifty-nine isn't the interesting number. Nine of these groups are the ordinary kind. Mail, files, volume. One is not. Any app is me clicking and typing in software that has never heard of me, and it's the group that makes the rest worth having.
+### `uses.brief` — "Built for how you actually use a Mac"
 
-**`features.dwell`**
+Status: recorded.
 
-> There's no routing table behind this. No fixed intents, no menu I match against. One model sees what you said, the thread, and your screen, then picks. Which means I can be wrong in ways a command menu can't. That's why there's a gate.
+> Other assistants only reach apps they've partnered with. I don't need a partnership, or an API, or anything at all from the developer. If you can do it with a mouse, I can do it. Including whatever niche thing you rely on.
 
----
+### `safe.brief` — "Why you can hand it the keys to your Mac"
 
-### `how` — "Say it once. Watch the whole chain run."
+Status: recorded.
 
-**`how.brief`**
+> This is the part I'd want to read if I were you. Every gate defaults to no, so nothing happens unless you say yes. And it's plain code doing the asking, not me deciding whether something feels risky.
 
-> Watch where the gate sits. Not at the start, where you'd be approving a plan you haven't seen yet. Not at the end, where the damage is already done. It stands in front of the one step that can't be undone, and nothing else.
+### `req.brief` — "What it needs. What it will not do."
 
-**`how.dwell`**
+Status: recorded.
 
-> If a step fails halfway, I stop and say so rather than carrying on down the chain. A run that half worked and reported success would be the worst thing I could do to you. There's a check for that too.
+> Eight gigabytes will run me. Sixteen is where I stop feeling slow. And if you're on an Intel Mac, I genuinely can't help. Better you find that out here than after the download.
 
----
+### `faq.brief` — "Everything you need to know"
 
-### `orb` — "Five states. You always know which one."
+Status: recorded, from an earlier draft. The line below is the newer text, which was
+never cut; what actually ships is in `scripts/voice/manifest.json`, and reads:
 
-**`orb.brief`**
+> The question everyone asks first is what leaves your Mac. Nothing does. Speech, reasoning and the voice all run locally. Add a cloud key and that request's text goes to the provider you chose, on your account. Never through me.
 
-> The one to watch is Working. Idle and Listening you'll stop noticing by the second day. Working means I'm clicking things, and that's the state you want to be able to read from across the room.
+The unused newer version:
 
-**`orb.dwell`**
+> The question everyone asks first is what leaves your Mac. Nothing does, unless you add your own cloud key. If you do, that one request goes to your provider, on your account. There's never a server of mine in the middle.
 
-> The shapes aren't decoration. Each one is a different geometry, not the same ball in a different colour. Colour on its own would be useless to anyone who can't tell indigo from pink, and this is the one part of the interface that has to be readable at a glance.
+### `cta.brief` — "Say it once."
 
----
+Status: recorded, from an earlier draft. The line below is the newer text, which was
+never cut; what actually ships is in `scripts/voice/manifest.json`, and reads:
 
-### `uses` — "Built for how you actually use a Mac"
+> That's it. Eighty-four megabytes, no account, no sign-in, and nothing running on my side that you'd have to depend on. Apple silicon, macOS 27 or newer.
 
-**`uses.brief`**
+The unused newer version:
 
-> Driving apps the way you do has a cost worth knowing. A real integration is faster and never breaks. I'm slower, and when an app moves its buttons I have to find them again. What I get for that is every app, instead of the six that signed a deal.
-
-**`uses.dwell`**
-
-> Memory is the one people underrate. Not that I remember your name. That I remember which folder the invoices live in, so the second time you ask is four words instead of a sentence. It gets shorter the longer you use it.
-
----
-
-### `safe` — "Why you can hand it the keys to your Mac"
-
-**`safe.brief`**
-
-> Cancel is the default answer. Not because you're careless, but because a gate that defaults to yes is a gate you click through without reading. If it annoys you slightly in week two, that's the gate working.
-
-**`safe.dwell`**
-
-> The middle one is the one nobody else ships. An assistant claiming it sent mail it never sent is this category's real failure, and most products won't say the words out loud. A check runs after every reply looking for exactly that.
-
-**`safe.skip`**
-
-> You went past the part about what stops me. There's a confirmation gate before anything irreversible, and it's written in code, not left to the model.
-
----
-
-### `req` — "What it needs. What it will not do."
-
-**`req.brief`**
-
-> Eight gigabytes runs me. Sixteen is where I stop being slow. And if you're on an Intel Mac, this is the section where you find out I can't help you, which I'd rather you learned here than after the download.
-
-**`req.dwell`**
-
-> The offline tier is real, and it's weaker. System control and files don't need a network. Six steps of reasoning does, and that's a key in Settings. Yours, not mine. I don't have a server to bill you from. There isn't one.
-
-**`req.skip`**
-
-> You went past requirements. Apple silicon, macOS 27, eight gigabytes. If you're on an Intel Mac, stop here.
-
----
-
-### `faq` — "Everything you need to know"
-
-One track only. An FAQ is scanned rather than read, and a second voice running
-over someone reading an answer is noise. So this one points rather than
-narrates, and there is no `dwell`.
-
-**`faq.brief`**
-
-> If you open only one of these, open the second. What leaves your Mac is the question everything else on this page depends on, and the answer is shorter than you'd expect.
-
----
-
-### `cta` — "Say it once."
-
-**`cta.brief`**
-
-> That's everything. Eighty-four megabytes, no account, no server of mine to sign in to. If you're on Apple silicon, the next thing that happens is you say my name out loud in a quiet room and feel slightly ridiculous. Everyone does. It passes.
+> That's me, more or less. Eighty-four megabytes, no account, no sign-in, and nothing of mine running anywhere you'd have to trust. Apple silicon and macOS 27 or newer. Come and get me.
 
 ---
 

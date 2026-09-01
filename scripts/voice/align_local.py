@@ -215,9 +215,9 @@ def run(args) -> None:
         sys.exit(f"model not found: {model}\nDownload one from "
                  "https://huggingface.co/ggerganov/whisper.cpp")
 
-    expected = {t["file"]: t for t in manifest["tracks"]}
+    expected = {t["file"] + ".mp3": t for t in manifest["tracks"]}
     files = sorted(p.name for p in audio_dir.glob("*.mp3")) if args.verify \
-        else [t["file"] for t in manifest["tracks"]]
+        else [t["file"] + ".mp3" for t in manifest["tracks"]]
     if args.only:
         files = [f for f in files if args.only in f or args.only == expected.get(f, {}).get("id")]
 

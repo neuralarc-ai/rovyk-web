@@ -10,17 +10,16 @@
 
    Two things are deliberately kept here rather than in the components:
 
-   1. **The delivered filenames.** The audio arrived named by content
-      rather than by track (`when-sec`, `59-tools`, `requirements`), and
-      one file holds a different script than its name claims. Renaming
-      binary assets to satisfy a naming rule is churn; absorbing the
-      mismatch in one table is not. `file` is the only place any of it
-      is spelled out.
+   1. **Which file belongs to which track.** The names line up with the
+      ids now, but the indirection stays: the first delivery arrived
+      named by content rather than by track, and one file turned out to
+      hold a different script than its name claimed. `file` is the one
+      place a mismatch has to be reconciled if it happens again.
 
-   2. **Which tracks do not exist yet.** Seven are still unrecorded. A
-      missing track is silence, never an error — a section without audio
-      is simply a section the voice has nothing to add to, and the page
-      has to be complete without any of this anyway.
+   2. **Which tracks do not exist yet.** A missing track is silence,
+      never an error — a section without audio is simply a section the
+      voice has nothing to add to, and the page has to be complete
+      without any of this anyway.
    ──────────────────────────────────────────────────────────────────── */
 
 /**
@@ -160,47 +159,50 @@ export const SECTION_LABEL: Record<VoiceSection, string> = {
  * disk. Nothing branches on it beyond "there is nothing to play here".
  */
 export const TRACKS: VoiceTrack[] = [
-  /* The splash already speaks, and already owns its own audio: the *ask*
-     is `supertonic_speech.mp3`, played from inside the intro's own
-     timeline so the clip and the typing cannot drift. This is the other
-     half — the reply — and it is unrecorded. The conductor never touches
-     either, because `intro` carries no recorded track and so is not one
-     of the sections it watches. */
+  /* The splash already speaks, and owns its own audio: the *ask* is
+     `supertonic_speech.mp3`, played from inside the intro's own timeline
+     so the clip and the typing cannot drift. This is the other half, the
+     reply, and it is unrecorded. The conductor never touches either,
+     because `intro` carries no recorded track and so is not one of the
+     sections it watches. */
   { id: "intro.reply", section: "intro", tier: "reply", file: null },
 
-  { id: "hero.brief", section: "hero", tier: "brief", file: "hero-sec" },
-  { id: "hero.dwell", section: "hero", tier: "dwell", file: "hero-dwell" },
+  { id: "hero.brief", section: "hero", tier: "brief", file: "hero.brief" },
+  { id: "hero.dwell", section: "hero", tier: "dwell", file: null },
 
-  // Delivered as `when-sec`. Verified by transcription as `where.brief`,
-  // word for word — the name is a typo, the audio is correct.
-  { id: "where.brief", section: "where", tier: "brief", file: "when-sec" },
-  { id: "where.dwell", section: "where", tier: "dwell", file: "where-dwell" },
+  { id: "where.brief", section: "where", tier: "brief", file: "where.brief" },
+  { id: "where.dwell", section: "where", tier: "dwell", file: null },
 
-  { id: "features.brief", section: "features", tier: "brief", file: "59-tools" },
-  { id: "features.dwell", section: "features", tier: "dwell", file: "feature-dwell" },
+  { id: "features.brief", section: "features", tier: "brief", file: "features.brief" },
+  { id: "features.dwell", section: "features", tier: "dwell", file: null },
 
-  { id: "how.brief", section: "how", tier: "brief", file: "how-sec" },
-  { id: "how.dwell", section: "how", tier: "dwell", file: "how-dwell" },
+  { id: "how.brief", section: "how", tier: "brief", file: "how.brief" },
+  { id: "how.dwell", section: "how", tier: "dwell", file: null },
 
-  { id: "orb.brief", section: "orb", tier: "brief", file: "orb-brief" },
-  { id: "orb.dwell", section: "orb", tier: "dwell", file: "orb-dwell" },
+  /* Cut from an earlier draft of the script, along with `faq` and
+     `cta`. Kept rather than re-recorded, so for these three the words
+     in `scripts/voice/manifest.json` are what is actually spoken and
+     `docs/voice-narration.md` records the newer text that was never
+     used. The manifest is the one the caption is built from. */
+  { id: "orb.brief", section: "orb", tier: "brief", file: "orb.brief" },
+  { id: "orb.dwell", section: "orb", tier: "dwell", file: null },
 
-  { id: "uses.brief", section: "uses", tier: "brief", file: null },
+  { id: "uses.brief", section: "uses", tier: "brief", file: "uses.brief" },
   { id: "uses.dwell", section: "uses", tier: "dwell", file: null },
 
-  { id: "safe.brief", section: "safe", tier: "brief", file: null },
+  { id: "safe.brief", section: "safe", tier: "brief", file: "safe.brief" },
   { id: "safe.dwell", section: "safe", tier: "dwell", file: null },
   { id: "safe.skip", section: "safe", tier: "skip", file: null },
 
-  { id: "req.brief", section: "req", tier: "brief", file: "requirements" },
+  { id: "req.brief", section: "req", tier: "brief", file: "req.brief" },
   { id: "req.dwell", section: "req", tier: "dwell", file: null },
-  // `req-dwell.mp3` holds the skip line, not the dwell one. Transcribed
-  // back word for word; the file is right and its name is wrong.
-  { id: "req.skip", section: "req", tier: "skip", file: "req-dwell" },
+  { id: "req.skip", section: "req", tier: "skip", file: null },
 
-  { id: "faq.brief", section: "faq", tier: "brief", file: "faq-sec" },
+  /* See the note on `orb.brief`. */
+  { id: "faq.brief", section: "faq", tier: "brief", file: "faq.brief" },
 
-  { id: "cta.brief", section: "cta", tier: "brief", file: "cta-sec" },
+  /* See the note on `orb.brief`. */
+  { id: "cta.brief", section: "cta", tier: "brief", file: "cta.brief" },
 ];
 
 /**

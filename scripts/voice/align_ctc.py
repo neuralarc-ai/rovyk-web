@@ -205,7 +205,7 @@ def main() -> None:
     print(f"\n  MMS_FA forced alignment  ·  {len(tracks)} track(s)\n")
 
     for track in tracks:
-        mp3 = audio_dir / track["file"]
+        mp3 = audio_dir / (track["file"] + ".mp3")
         words = track["text"].split()
         timed = align(model, load_audio(mp3), words)
 

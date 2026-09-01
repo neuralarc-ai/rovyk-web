@@ -41,3 +41,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Voice masters. The lossless source the shipped MP3s are encoded from —
+# kept locally, never committed. Re-encoding needs these; regenerating
+# them does not reproduce them, because TTS is not deterministic and a
+# second run is a different take.
+/public/assets/audio/wav/
+
+# Python
+__pycache__/
+*.pyc
