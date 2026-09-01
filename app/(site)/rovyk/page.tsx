@@ -10,6 +10,8 @@ import { OrbSection } from "@/components/orb-section";
 import { RequirementsSection } from "@/components/requirements-section";
 import { SiteFooter } from "@/components/site-footer";
 import { SurfacesSection } from "@/components/surfaces-section";
+import { VoiceHud } from "@/components/voice/voice-hud";
+import { VoiceProvider } from "@/components/voice/voice-provider";
 import { ToolsSection } from "@/components/tools-section";
 
 export const metadata: Metadata = {
@@ -49,6 +51,13 @@ export default function Page() {
 
         <SiteFooter />
       </div>
+
+      {/* Voice mode. Mounted last and fixed to the frame, so it hangs off
+          the page's chrome rather than sitting inside the sheet. Silent
+          and inert until the visitor presses the tab. */}
+      <VoiceProvider>
+        <VoiceHud />
+      </VoiceProvider>
     </>
   );
 }

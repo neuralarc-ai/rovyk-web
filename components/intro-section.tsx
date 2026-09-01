@@ -499,6 +499,9 @@ export function IntroSection() {
   return (
     <section
       ref={root}
+      /* See the note in `hero-section.tsx`: named for the narration, not
+         for a link. */
+      id="intro"
       aria-label="Hey Rovyk, what can you do for me?"
       className="relative h-svh w-full overflow-hidden bg-black"
     >
