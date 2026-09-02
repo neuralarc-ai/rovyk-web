@@ -28,9 +28,21 @@ export const metadata: Metadata = {
   title: "Rovyk for macOS",
   description:
     "Rovyk for macOS. Talk to your Mac and watch it work — see it in action, then download.",
+
+  /* Who made it, in the form search results, social cards and assistants
+     actually read — the same fact the hero's byline and the footer's give a
+     reader. `publisher` takes the filing rather than the byline: it is the
+     one of the two names that can be served papers.
+
+     `openGraph` carries only what is true of every page. Title and
+     description are deliberately absent: Next fills those from each page's
+     own, and spelling them out here would put the landing page's title on
+     the card for /rovyk, /terms and /privacy. */
+  applicationName: "Rovyk",
   authors: [{ name: ENTITY.name, url: ENTITY.site }],
   creator: ENTITY.name,
   publisher: ENTITY.legal,
+  openGraph: { type: "website", siteName: "Rovyk", locale: "en_US" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
