@@ -8,6 +8,7 @@ import type { OrbState } from "thinking-orbs/engine";
 import { ArrowClockwiseIcon } from "@phosphor-icons/react/dist/ssr";
 import { RovykWordmark } from "@/components/rovyk-wordmark";
 import { VOICE_MODE } from "@/lib/flags";
+import { takeFloor } from "@/lib/voice-floor";
 import { ENTITY } from "@/lib/legal";
 import type { VoiceAlignment, VoiceWord } from "@/lib/voice-script";
 import { HeroOrb } from "@/components/hero-orb";
@@ -49,6 +50,20 @@ const CLIP_SRC = {
 } as const;
 
 type ClipName = keyof typeof CLIP_SRC;
+
+/**
+ * How long the splash has to be settled on screen before it performs.
+ *
+ * Being visible is not the same as being watched. A visitor who lands
+ * and scrolls straight past has the intro on screen for a moment, and
+ * starting on that moment is how it ended up talking to an empty
+ * screen. Waiting for them to still be here is the same rule the
+ * narration conductor uses for a section, at a shorter interval —
+ * this one is the page's opening beat, not an interruption, and the
+ * performance spends its first three seconds on the splash before a
+ * word is spoken anyway.
+ */
+const VIEW_SETTLE_MS = 500;
 
 /** Don't let a slow network hold the whole intro hostage — if the clip
  *  isn't decoded within this long, start on the guessed rate instead; it
@@ -293,21 +308,67 @@ export function IntroSection() {
           );
         });
 
-      const playClip = (clip: Clip) => {
-        const ctx = audioCtxRef.current;
-        if (!ctx) return;
+      /** Stop whatever is sounding, and leave the visuals alone. Used by
+       *  the floor when the dock wants to speak, and by the view gate
+       *  when the splash scrolls out from under its own voice. */
+      const hush = () => {
         try {
           sourceRef.current?.stop();
         } catch {
           /* already stopped or never started — nothing to clean up */
         }
+        sourceRef.current = null;
+      };
+
+      let releaseFloor: (() => void) | null = null;
+
+      /* Whether the splash is on screen at all.
+         `hush` only silences what is already sounding; it cannot stop a
+         clip whose cue has not arrived. Scrolling away one second in
+         left the ask still scheduled for three and a half, and it duly
+         played to an empty screen. So the timeline pauses when the
+         section leaves — and this guards the gap `run` opens while it
+         waits on the network, where there is a timeline about to be
+         played and nothing yet to pause. */
+      let onScreen = false;
+
+      /* What is cued when, for the run currently built. The timeline
+         knows where it is; this is what turns that into "and therefore
+         this clip should be four seconds in". */
+      let schedule: { at: number; clip: Clip }[] = [];
+
+      /**
+       * Start a clip, optionally part-way in.
+       *
+       * `into` is how many seconds of speech have already gone by. It is
+       * what lets a line pick up where it was cut rather than starting
+       * over or staying silent — see `resumeVoice`.
+       */
+      const playClip = (clip: Clip, into = 0) => {
+        const ctx = audioCtxRef.current;
+        if (!ctx || !onScreen) return;
+        const remaining = clip.duration - into;
+        if (remaining <= 0.05) return;
+        hush();
+        /* Only one voice on the page. The dock runs its own player and
+           knows nothing about this timeline; taking the floor is how the
+           two stay out of each other's way. */
+        releaseFloor?.();
+        releaseFloor = takeFloor(hush);
         const source = ctx.createBufferSource();
         source.buffer = clip.buffer;
         source.connect(ctx.destination);
         // Trimmed at both ends to the measured speech span, not just the
         // front — otherwise the node keeps running silently through the
         // trailing pad too.
-        source.start(0, clip.leadIn, clip.duration);
+        source.start(0, clip.leadIn + into, remaining);
+        /* Let the floor go when the clip runs out on its own, so a
+           finished line is not still holding it. */
+        source.onended = () => {
+          if (sourceRef.current === source) sourceRef.current = null;
+          releaseFloor?.();
+          releaseFloor = null;
+        };
         sourceRef.current = source;
       };
 
@@ -418,6 +479,10 @@ export function IntroSection() {
         clips: { ask: Clip | null; reply: Clip | null },
       ) => {
         const cue = cueSheet(shift, replySpan);
+        schedule = [
+          ...(clips.ask ? [{ at: cue.type, clip: clips.ask }] : []),
+          ...(clips.reply ? [{ at: cue.reply, clip: clips.reply }] : []),
+        ];
         /* The reveal is the same shape at any length: stretch the beats
            by however much longer the voice takes than the silent run. */
         const pace = replySpan / REPLY_SPAN;
@@ -607,7 +672,7 @@ export function IntroSection() {
            window the sheet was written around. */
         const replySpan = reply?.duration ?? REPLY_SPAN;
         tl = build(typeDuration, shift, replySpan, { ask, reply });
-        tl.play();
+        if (onScreen) tl.play();
       };
 
       /* Replay rewinds the performance rather than layering a second one on
@@ -616,6 +681,7 @@ export function IntroSection() {
          (or, the first time, lazily creates) the audio context synchronously
          inside the click before `run` does anything async. */
       const replay = () => {
+        onScreen = true;
         setOrbState("searching");
         void audioCtxRef.current?.resume().catch(() => {});
         void run();
@@ -623,7 +689,84 @@ export function IntroSection() {
       const button = q("[data-replay]")[0];
       button?.addEventListener("click", replay);
 
-      void run();
+      /* ── Only while it is on screen ──────────────────────────────
+         The performance used to start on mount, which is fine on a cold
+         load at the top and wrong every other time: a reload halfway
+         down the page, or a browser restoring scroll, left the splash
+         talking to nobody while the visitor read something else.
+
+         So it waits to be seen. `onToggle` does not fire for a trigger
+         created while already inside its own range, so the first state
+         is read directly — the same thing the narration conductor has
+         to do when it wakes mid-section.
+
+         Scrolling away hushes the voice but lets the timeline run on:
+         the animation is the page's own content and finishing it
+         off-screen costs nothing, whereas a disembodied voice five
+         sections down is the bug being fixed. */
+      let started = false;
+      const begin = () => {
+        if (started) return;
+        started = true;
+        void run();
+      };
+
+      let settle: ReturnType<typeof setTimeout> | null = null;
+
+      /* Picking the voice back up.
+         The timeline resumes on its own — every tween carries on from
+         where it stopped — but the clips are started by `.call`, and
+         GSAP does not re-fire a call the playhead has already passed.
+         So coming back showed the words continuing in silence. This
+         works out from the playhead which line should be sounding and
+         how far into it, and starts it there. */
+      const resumeVoice = () => {
+        if (!tl) return;
+        const now = tl.time();
+        for (const { at, clip } of schedule) {
+          const into = now - at;
+          if (into >= 0 && into < clip.duration) {
+            playClip(clip, into);
+            return;
+          }
+        }
+      };
+
+      const arrive = () => {
+        if (settle) clearTimeout(settle);
+        settle = setTimeout(() => {
+          onScreen = true;
+          begin();
+          /* Built while off-screen, or paused on the way past. Either
+             way this is where it gets to run. */
+          tl?.play();
+          resumeVoice();
+        }, VIEW_SETTLE_MS);
+      };
+
+      const leave = () => {
+        if (settle) clearTimeout(settle);
+        settle = null;
+        onScreen = false;
+        hush();
+        tl?.pause();
+      };
+
+      /* Deliberately not "any part of it is visible". A section this
+         tall shows a sliver for most of a screen's worth of scrolling,
+         and a sliver is not what anyone is looking at: this holds from
+         the top until the section's floor has risen past the middle of
+         the viewport, which is the point it stops being the thing on
+         screen. */
+      const inView = ScrollTrigger.create({
+        trigger: root.current,
+        start: "top 60%",
+        end: "bottom 40%",
+        onToggle: ({ isActive }) => (isActive ? arrive() : leave()),
+      });
+      /* A trigger created inside its own range never announces itself,
+         so the first state is read rather than waited for. */
+      if (inView.isActive) arrive();
 
       /* ── Leaving ─────────────────────────────────────────────────
          Scrolling past lifts and defocuses the exchange, so the next
@@ -644,13 +787,12 @@ export function IntroSection() {
       return () => {
         cancelled = true;
         button?.removeEventListener("click", replay);
+        if (settle) clearTimeout(settle);
+        inView.kill();
         drift.scrollTrigger?.kill();
         tl?.kill();
-        try {
-          sourceRef.current?.stop();
-        } catch {
-          /* already stopped or never started */
-        }
+        releaseFloor?.();
+        hush();
       };
     },
     { scope: root },

@@ -13,6 +13,7 @@ import {
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { VoicePlayer } from "@/components/voice/voice-player";
+import { takeFloor } from "@/lib/voice-floor";
 import {
   VOICE_SECTIONS,
   sectionAtLine,
@@ -126,6 +127,9 @@ export function VoiceProvider({ children }: { children: ReactNode }) {
   /** Set when the browser refused to play. Cleared by the next gesture,
    *  which is the only thing that can change its mind. */
   const blocked = useRef(false);
+  /** Handed back by `takeFloor`; called when this player stops of its
+   *  own accord, so a finished track does not go on holding the floor. */
+  const releaseFloor = useRef<(() => void) | null>(null);
   /* The conductor reads these inside timers and event handlers that
      outlive the render they were made in. Synced after paint rather than
      during it: a ref written while rendering is a ref that disagrees with
@@ -166,6 +170,23 @@ export function VoiceProvider({ children }: { children: ReactNode }) {
 
   /* ── Speaking ─────────────────────────────────────────────────── */
 
+  /**
+   * Fall silent without marking anything heard.
+   *
+   * Every path that is not a track reaching its own end comes through
+   * here — stopping, a dialog opening, the tab going away. None of them
+   * mean the visitor received what was being said, so none of them
+   * retire the track: it stays eligible and will be offered again.
+   */
+  const silence = useCallback(() => {
+    if (settleTimer.current) clearTimeout(settleTimer.current);
+    starting.current = null;
+    releaseFloor.current?.();
+    releaseFloor.current = null;
+    player.stop();
+    setSpeaking(null);
+  }, [player]);
+
   const say = useCallback(
     async (track: VoiceTrack) => {
       /* Claimed synchronously, because `speaking` does not reach
@@ -174,6 +195,12 @@ export function VoiceProvider({ children }: { children: ReactNode }) {
       if (starting.current) return;
       starting.current = track.id;
       setSpeaking(track);
+
+      /* The splash can still be talking — it runs its own clips off its
+         own timeline and neither of us knows about the other. Taking the
+         floor stops whoever had it, so the two can never overlap. */
+      releaseFloor.current?.();
+      releaseFloor.current = takeFloor(silence);
 
       const started = await player.play(track);
       if (!started) {
@@ -200,7 +227,7 @@ export function VoiceProvider({ children }: { children: ReactNode }) {
         })();
       if (next && !heard.current.has(next.id)) void player.prefetch(next);
     },
-    [player],
+    [player, silence],
   );
 
   /** Consider speaking. Never interrupts, never queues — if something is
@@ -230,6 +257,8 @@ export function VoiceProvider({ children }: { children: ReactNode }) {
     return player.onEnd((trackId) => {
       const finished = live.current.speaking;
       starting.current = null;
+      releaseFloor.current?.();
+      releaseFloor.current = null;
       setSpeaking(null);
       if (!finished || finished.id !== trackId) return;
 
@@ -264,21 +293,6 @@ export function VoiceProvider({ children }: { children: ReactNode }) {
   }, [player, say]);
 
   /* ── Waking and sleeping ──────────────────────────────────────── */
-
-  /**
-   * Fall silent without marking anything heard.
-   *
-   * Every path that is not a track reaching its own end comes through
-   * here — stopping, a dialog opening, the tab going away. None of them
-   * mean the visitor received what was being said, so none of them
-   * retire the track: it stays eligible and will be offered again.
-   */
-  const silence = useCallback(() => {
-    if (settleTimer.current) clearTimeout(settleTimer.current);
-    starting.current = null;
-    player.stop();
-    setSpeaking(null);
-  }, [player]);
 
   const sleep = useCallback(() => {
     silence();
