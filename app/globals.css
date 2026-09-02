@@ -8,6 +8,21 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Where the footer is allowed to hide behind the sheet.
+
+   The reveal works by parking the footer against the bottom of the
+   viewport and sliding the sheet off it, which only reads as a reveal if
+   the footer fits on the screen it is parked on. A sticky footer taller
+   than the viewport is worse than none: the page runs out of scroll
+   before its top rows clear the sheet's edge, so the wordmark and the
+   e-mail address simply become unreachable.
+
+   Below `md` the two columns stack and the footer is most of a phone
+   screen tall, so the effect stays off there and the footer is an
+   ordinary block. The height floor catches the short-and-wide case — a
+   half-height window on a laptop — that the width alone would miss. */
+@custom-variant reveal (@media (min-width: 48rem) and (min-height: 40rem));
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

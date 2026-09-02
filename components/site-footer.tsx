@@ -16,6 +16,17 @@ import Link from "next/link";
 
    It darkens downwards, from the sheet's own ground to a shade below
    it, so the page has a floor rather than simply stopping.
+
+   And on a screen it fits on (the `reveal:` variant — see globals.css) it
+   is a floor in the literal sense: parked against the bottom of the
+   viewport from the first scroll, with the sheet lying over it, so the
+   last section slides away rather than ending. Nothing here animates —
+   the footer is stationary the whole time and the sheet is what moves —
+   which is why it survives reduced motion untouched.
+
+   The hairline moves to the sheet's bottom edge under `reveal:`. Stuck to
+   the screen, a border on this edge would appear at a fixed height
+   partway through the reveal, out of step with everything else moving.
    ──────────────────────────────────────────────────────────────────── */
 
 const LINKS: { heading: string; items: [label: string, href: string][] }[] = [
@@ -60,7 +71,7 @@ const DOT = "size-0.75 shrink-0 rounded-full bg-white/30";
 
 export function SiteFooter() {
   return (
-    <footer className="relative overflow-hidden rounded-b-4xl border-t border-input [background:linear-gradient(180deg,var(--background)_0%,var(--muted)_46%,#141414_100%)]">
+    <footer className="relative overflow-hidden rounded-b-4xl border-t border-input [background:linear-gradient(180deg,var(--background)_0%,var(--muted)_46%,#141414_100%)] reveal:sticky reveal:bottom-0 reveal:z-0 reveal:border-t-0">
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4">
         {/* ── Who this is, how to reach them, where else to go ───── */}
         <div className={cn(BAND, "items-start pt-14 pb-12")}>

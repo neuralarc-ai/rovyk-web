@@ -61,7 +61,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       {/* Black is the frame the sheet floats in, not a section background —
           so it belongs to the shell. */}
-      <body className="flex min-h-full flex-col bg-black">
+      <body className="flex min-h-full flex-col bg-background">
         <SmoothScroll>
           {/* Above the nav and every section, because all of them ask for the
               same dialog and there is only ever one of it. */}
