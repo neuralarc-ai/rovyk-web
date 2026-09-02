@@ -4,7 +4,6 @@ import "./globals.css";
 import { ENTITY } from "@/lib/legal";
 import { SITE_ORIGIN } from "@/lib/site";
 import { cn } from "@/lib/utils";
-import { NotchNav } from "@/components/notch-nav";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { WaitlistProvider } from "@/components/waitlist/waitlist-provider";
 
@@ -26,9 +25,9 @@ export const metadata: Metadata = {
   // var, and every page below can keep writing relative paths.
   metadataBase: SITE_ORIGIN,
   alternates: { canonical: "/" },
-  title: "Rovyk: voice agent for macOS",
+  title: "Rovyk for macOS",
   description:
-    "Talk to your Mac and watch it work. Rovyk lives in the menu bar and operates your machine. Local by default.",
+    "Rovyk for macOS. Talk to your Mac and watch it work — see it in action, then download.",
 
   /* Who made it, in the form search results, social cards and assistants
      actually read — the same fact the hero's byline and the footer's give a
@@ -37,8 +36,8 @@ export const metadata: Metadata = {
 
      `openGraph` carries only what is true of every page. Title and
      description are deliberately absent: Next fills those from each page's
-     own, and spelling them out here would put the home page's title on the
-     card for /terms and /privacy. */
+     own, and spelling them out here would put the landing page's title on
+     the card for /rovyk, /terms and /privacy. */
   applicationName: "Rovyk",
   authors: [{ name: ENTITY.name, url: ENTITY.site }],
   creator: ENTITY.name,
@@ -66,7 +65,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {/* Above the nav and every section, because all of them ask for the
               same dialog and there is only ever one of it. */}
           <WaitlistProvider>
-            <NotchNav />
             {children}
           </WaitlistProvider>
         </SmoothScroll>

@@ -35,12 +35,15 @@ const LABEL = "font-mono text-[10px] tracking-[0.18em] text-white/34 uppercase";
    rule and note to a different baseline, so the row they sit in is given
    the height of the tallest mark and everything is centred inside it.
    One constant, so the row and the die cannot drift apart. */
-const MARK_SIZE = "h-12";
+export const MARK_SIZE = "h-12";
 
 /* ── The three little diagrams ─────────────────────────────────────── */
 
-/** The die itself: black, a hairline edge, the mark in the middle. */
-function ChipMark() {
+/** The die itself: black, a hairline edge, the mark in the middle.
+ *  Exported — the landing page's own spec card reuses this exact mark
+ *  rather than redrawing it, so the two pages can't quietly disagree
+ *  about what "Apple Silicon" looks like. */
+export function ChipMark() {
   return (
     <span
       aria-hidden

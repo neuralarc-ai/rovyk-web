@@ -103,7 +103,7 @@ export const LETTER_STEP_MS = 90;
 /** The hamburger's three rules, and the tab they sit in. */
 export const RULE_W = 18;
 export const RULE_H = 1.5;
-export const RULE_GAP = 5;
+const RULE_GAP = 5;
 export const RULE_PITCH = RULE_H + RULE_GAP;
 export const HAM_W = 48;
 
@@ -116,8 +116,8 @@ export const RULE_MID = NOTCH_H / 2 - RULE_H / 2;
 /** The wordmark tab: the whole word rather than the R, since a corner has
  *  room for it and there is no hover here to reveal the rest. */
 export const WORD_H = 16;
-export const WORD_W = WORD_H * WORDMARK_ASPECT;
-export const WORD_PAD = 20;
+const WORD_W = WORD_H * WORDMARK_ASPECT;
+const WORD_PAD = 20;
 export const WORD_BODY_W = WORD_W + WORD_PAD * 2;
 
 /* ── The drawer ───────────────────────────────────────────────────────
@@ -144,7 +144,7 @@ export const ROW_H = "clamp(56px, 14.5vw, 72px)";
 
 /* ── The links ────────────────────────────────────────────────────── */
 
-export type NavLink = {
+type NavLink = {
   label: string;
   href: string;
   /** The one nav item that is an offer rather than a destination. While the

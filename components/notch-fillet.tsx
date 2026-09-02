@@ -101,3 +101,19 @@ export function Fillet({
     </svg>
   );
 }
+
+/**
+ * The three fixed frame strips every page with a notch nav sits inside —
+ * top, left, right, each `--gut` thick. Shared so `NotchNav` and the
+ * landing page's own nav can't quietly disagree about how thick the
+ * frame is or which edges it covers.
+ */
+export function NotchBezel() {
+  return (
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-90">
+      <div className="absolute inset-x-0 top-0 h-(--gut) bg-black" />
+      <div className="absolute inset-y-0 left-0 w-(--gut) bg-black" />
+      <div className="absolute inset-y-0 right-0 w-(--gut) bg-black" />
+    </div>
+  );
+}

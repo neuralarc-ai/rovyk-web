@@ -1,0 +1,66 @@
+{
+  "$comment": "Input for the aligners. `text` is what is actually spoken on the recording and is hashed into every alignment file, so a smart quote or a double space is a diff. Three tracks (orb, faq, cta) were cut from earlier drafts and their text here matches the audio rather than docs/voice-narration.md.",
+  "audioDir": "public/assets/audio",
+  "tracks": [
+    {
+      "id": "intro.ask",
+      "file": "intro.ask",
+      "text": "Hey Rovyk, what can you do for me?"
+    },
+    {
+      "id": "intro.reply",
+      "file": "intro.reply",
+      "text": "I open your apps, read your mail, and find the file you forgot the name of. I click buttons in software that has never heard of me. All of it on this Mac."
+    },
+    {
+      "id": "hero.brief",
+      "file": "hero.brief",
+      "text": "Hi. I'm Rovyk. I live in your menu bar, and I'm easiest to reach by name. Say it, then just talk. Rename these forty files by date. Find the invoice from the plumber. I'll work out what that takes."
+    },
+    {
+      "id": "where.brief",
+      "file": "where.brief",
+      "text": "You'll mostly see me in the notch, which is where I do the work. The window's there for when talking isn't an option, or when you want to read back what I did and check I got it right."
+    },
+    {
+      "id": "features.brief",
+      "file": "features.brief",
+      "text": "Have a sweep through these. Most are shortcuts for the things you'll ask for often. The one I'd point out is Any app, because it's why the list isn't a limit: anything with a window on your screen, I can use."
+    },
+    {
+      "id": "how.brief",
+      "file": "how.brief",
+      "text": "Have a look at step three. Everything before it I'll just get on with, because you can undo it. Step three is the one that sends or deletes something, so that's where I stop and check with you first."
+    },
+    {
+      "id": "orb.brief",
+      "file": "orb.brief",
+      "text": "Each state is a different shape, not the same shape recoloured. That's so you can read it from across the room, and so it still reads if you can't tell indigo from pink."
+    },
+    {
+      "id": "uses.brief",
+      "file": "uses.brief",
+      "text": "Other assistants only reach apps they've partnered with. I don't need a partnership, or an API, or anything at all from the developer. If you can do it with a mouse, I can do it. Including whatever niche thing you rely on."
+    },
+    {
+      "id": "safe.brief",
+      "file": "safe.brief",
+      "text": "This is the part I'd want to read if I were you. Every gate defaults to no, so nothing happens unless you say yes. And it's plain code doing the asking, not me deciding whether something feels risky."
+    },
+    {
+      "id": "req.brief",
+      "file": "req.brief",
+      "text": "Eight gigabytes will run me. Sixteen is where I stop feeling slow. And if you're on an Intel Mac, I genuinely can't help. Better you find that out here than after the download."
+    },
+    {
+      "id": "faq.brief",
+      "file": "faq.brief",
+      "text": "The question everyone asks first is what leaves your Mac. Nothing does. Speech, reasoning and the voice all run locally. Add a cloud key and that request's text goes to the provider you chose, on your account. Never through me."
+    },
+    {
+      "id": "cta.brief",
+      "file": "cta.brief",
+      "text": "That's it. Eighty-four megabytes, no account, no sign-in, and nothing running on my side that you'd have to depend on. Apple silicon, macOS 27 or newer."
+    }
+  ]
+}

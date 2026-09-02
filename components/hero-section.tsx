@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Image from "next/image";
-import heroWall from "@/public/assets/hero-wall.jpg";
+import heroWall from "@/public/assets/hero-wall-2.jpg";
 import { AppleLogo } from "@/components/apple-logo";
 import { ENTITY } from "@/lib/legal";
 import { DownloadButton, GhostButton } from "@/components/cta-button";
@@ -110,6 +110,10 @@ export function HeroSection() {
   return (
     <section
       ref={root}
+      /* Named so the voice narration can find it. Every other section on
+         this page already answered to a name because the nav links to it;
+         the hero is nobody's link target and so had none. */
+      id="hero"
       /* Full height from `sm` up, and content height below it. A 16:10
          window at 86vw is 210px tall on a phone, and no arrangement of it
          fills the ~150px a forced 100svh leaves over — the only way to close
