@@ -17,11 +17,18 @@ import { cn } from "@/lib/utils";
  * asked to remember two versions of itself. See `lib/flags.ts`.
  */
 
-const BASE =
+/* Exported, because the shape is the shared thing and the offer is not.
+   The 404's one action is a `<Link href="/">` — neither a download nor
+   a waitlist — so it composes the shape itself rather than growing a
+   third variant here that would have to be kept in step with these. */
+export const CTA_BASE =
   "inline-flex h-11.5 items-center justify-center gap-2.5 rounded-xl border px-6 text-[14.5px] font-medium tracking-[-0.005em] whitespace-nowrap transition-[transform,background,border-color] duration-200 hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
-const PRIMARY =
+export const CTA_PRIMARY =
   "border-primary bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80";
+
+const BASE = CTA_BASE;
+const PRIMARY = CTA_PRIMARY;
 
 /** Said the same way everywhere it is said. */
 export const WAITLIST_LABEL = "Join the waitlist";
