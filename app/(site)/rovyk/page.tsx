@@ -12,6 +12,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SurfacesSection } from "@/components/surfaces-section";
 import { VoiceHud } from "@/components/voice/voice-hud";
 import { VoiceProvider } from "@/components/voice/voice-provider";
+import { VOICE_MODE } from "@/lib/flags";
 import { ToolsSection } from "@/components/tools-section";
 
 export const metadata: Metadata = {
@@ -54,10 +55,16 @@ export default function Page() {
 
       {/* Voice mode. Mounted last and fixed to the frame, so it hangs off
           the page's chrome rather than sitting inside the sheet. Silent
-          and inert until the visitor presses the tab. */}
-      <VoiceProvider>
-        <VoiceHud />
-      </VoiceProvider>
+          and inert until the visitor presses the dock.
+
+          Behind a flag, and not mounted at all when it is off: the whole
+          feature is a provider, a frame loop and an audio element, none
+          of which should exist on a build that has not asked for them. */}
+      {VOICE_MODE ? (
+        <VoiceProvider>
+          <VoiceHud />
+        </VoiceProvider>
+      ) : null}
     </>
   );
 }

@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import type { OrbState } from "thinking-orbs/engine";
 import { ArrowClockwiseIcon } from "@phosphor-icons/react/dist/ssr";
 import { RovykWordmark } from "@/components/rovyk-wordmark";
+import { VOICE_MODE } from "@/lib/flags";
 import { ENTITY } from "@/lib/legal";
 import type { VoiceAlignment, VoiceWord } from "@/lib/voice-script";
 import { HeroOrb } from "@/components/hero-orb";
@@ -230,6 +231,12 @@ export function IntroSection() {
          playback already past the lead-in — no separate seek, no risk of a
          stray frame of silence slipping out before the first word. */
       const loadClip = async (name: ClipName): Promise<Clip | null> => {
+        /* The one gate for the splash's audio. Everything downstream
+           already treats a missing clip as a silent beat, so this needs
+           no second branch anywhere else: no fetch, no `AudioContext`,
+           and the performance is the one it played before there was
+           anything to hear. */
+        if (!VOICE_MODE) return null;
         const cached = clipsRef.current[name];
         if (cached !== undefined) return cached;
         try {
