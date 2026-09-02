@@ -8,6 +8,7 @@ import type { OrbState } from "thinking-orbs/engine";
 import { ArrowClockwiseIcon } from "@phosphor-icons/react/dist/ssr";
 import { RovykWordmark } from "@/components/rovyk-wordmark";
 import { ENTITY } from "@/lib/legal";
+import type { VoiceAlignment, VoiceWord } from "@/lib/voice-script";
 import { HeroOrb } from "@/components/hero-orb";
 import { CaretDoubleDownIcon } from "@phosphor-icons/react";
 
@@ -26,10 +27,27 @@ const REPLY = [
   "I click buttons in software that has never heard of me. All of it on this Mac.",
 ];
 
-/** The ask, spoken — triggered from inside the timeline itself, at the same
- *  cue the typing starts on, so the two can never drift apart regardless of
- *  which run (the automatic first one, or a replay) is playing. */
-const AUDIO_SRC = "/assets/audio/supertonic_speech.mp3";
+/* ── The two voices ───────────────────────────────────────────────────
+   The section is a conversation, so it takes two clips and they are not
+   the same speaker. `ask` is the visitor's line and belongs to whoever
+   is asking; `reply` is Rovyk answering. Until this was split they were
+   one file, which meant the question was spoken in Rovyk's own voice —
+   the agent asking itself what it could do.
+
+   Both are optional. A missing clip is a silent beat, not an error: the
+   ask falls back to typing at a guessed rate and the reply to its own
+   stagger, which is exactly what the section did before there was any
+   audio at all.
+
+   Each is played from inside the timeline, on the same cue as the thing
+   it accompanies, so the automatic first run and every replay stay in
+   sync the same way. */
+const CLIP_SRC = {
+  ask: "/assets/audio/intro.ask.mp3",
+  reply: "/assets/audio/intro.reply.mp3",
+} as const;
+
+type ClipName = keyof typeof CLIP_SRC;
 
 /** Don't let a slow network hold the whole intro hostage — if the clip
  *  isn't decoded within this long, start on the guessed rate instead; it
@@ -48,9 +66,21 @@ const SILENCE_WINDOW_MS = 20;
 const SILENCE_THRESHOLD_DB = -45;
 const MIN_SPEECH_DURATION = 0.15;
 
-type Clip = { buffer: AudioBuffer; leadIn: number; duration: number };
+/** Per-word timings, when the clip has an alignment file beside it.
+ *  Written by `scripts/voice/align_ctc.py`; see `lib/voice-script.ts`
+ *  for the shape and why the times are integer milliseconds. */
+type Clip = {
+  buffer: AudioBuffer;
+  leadIn: number;
+  duration: number;
+  words: VoiceWord[] | null;
+};
 
-function analyzeSpeech(buffer: AudioBuffer): Omit<Clip, "buffer"> {
+/** How far ahead of the voice a word appears. The eye arrives before the
+ *  ear does, so landing exactly on the onset reads as lagging. */
+const WORD_LEAD = 0.08;
+
+function analyzeSpeech(buffer: AudioBuffer): { leadIn: number; duration: number } {
   const data = buffer.getChannelData(0);
   const sr = buffer.sampleRate;
   const windowSize = Math.max(1, Math.round((sr * SILENCE_WINDOW_MS) / 1000));
@@ -111,14 +141,33 @@ const CUE = {
   rest: 8.7,
 } as const;
 
-const cueSheet = (shift: number) => ({
-  ...CUE,
-  settle: CUE.settle + shift,
-  think: CUE.think + shift,
-  reply: CUE.reply + shift,
-  replyTail: CUE.replyTail + shift,
-  rest: CUE.rest + shift,
-});
+/** How long the reply occupies when nothing is voicing it, and how far
+ *  into that window the second line begins. Derived from the sheet above
+ *  rather than typed twice, so a silent run is bit-identical to what it
+ *  was and a voiced one is the same shape stretched to the clip. */
+const REPLY_SPAN = CUE.rest - CUE.reply;
+const LINE_TWO_AT = (CUE.replyTail - CUE.reply) / REPLY_SPAN;
+
+/**
+ * The sheet, given what the audio turned out to be.
+ *
+ * `askShift` moves everything from `settle` on, because a voiced question
+ * almost always runs longer than the guessed typing rate. `replySpan`
+ * then decides how much room the answer gets: the second line starts the
+ * same fraction of the way through it, and `rest` lands on its end, so
+ * the orb never drops back to idle while Rovyk is still speaking.
+ */
+const cueSheet = (askShift: number, replySpan: number) => {
+  const reply = CUE.reply + askShift;
+  return {
+    ...CUE,
+    settle: CUE.settle + askShift,
+    think: CUE.think + askShift,
+    reply,
+    replyTail: reply + replySpan * LINE_TWO_AT,
+    rest: reply + replySpan,
+  };
+};
 
 const TYPE_RATE = 0.036; // seconds per character, when there is no audio to match
 const DEFAULT_TYPE_DURATION = ASK.length * TYPE_RATE;
@@ -129,7 +178,7 @@ export function IntroSection() {
   const wakeRef = useRef<HTMLSpanElement>(null);
   const restRef = useRef<HTMLSpanElement>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const clipRef = useRef<Clip | null>(null);
+  const clipsRef = useRef<Partial<Record<ClipName, Clip | null>>>({});
   const sourceRef = useRef<AudioBufferSourceNode | null>(null);
 
   useGSAP(
@@ -180,8 +229,9 @@ export function IntroSection() {
          measure the silence against, and `start(when, offset)` can begin
          playback already past the lead-in — no separate seek, no risk of a
          stray frame of silence slipping out before the first word. */
-      const loadClip = async (): Promise<Clip | null> => {
-        if (clipRef.current) return clipRef.current;
+      const loadClip = async (name: ClipName): Promise<Clip | null> => {
+        const cached = clipsRef.current[name];
+        if (cached !== undefined) return cached;
         try {
           const AudioContextCtor =
             window.AudioContext ??
@@ -194,13 +244,29 @@ export function IntroSection() {
           const ctx = audioCtxRef.current ?? new AudioContextCtor();
           audioCtxRef.current = ctx;
 
-          const res = await fetch(AUDIO_SRC);
+          const res = await fetch(CLIP_SRC[name]);
+          /* A clip that is not there yet is a silent beat, and it is
+             cached as such — otherwise every replay re-requests a file
+             that is still missing. */
+          if (!res.ok) {
+            clipsRef.current[name] = null;
+            return null;
+          }
           const bytes = await res.arrayBuffer();
           const buffer = await ctx.decodeAudioData(bytes);
-          const clip: Clip = { buffer, ...analyzeSpeech(buffer) };
-          clipRef.current = clip;
+          /* The alignment is optional and its absence is not a failure:
+             without it the ask types at a guessed rate and the reply
+             reveals on a stagger, which is what this section did before
+             either clip existed. */
+          const words = await fetch(CLIP_SRC[name].replace(/\.mp3$/, ".json"))
+            .then((r) => (r.ok ? (r.json() as Promise<VoiceAlignment>) : null))
+            .then((a) => a?.words ?? null)
+            .catch(() => null);
+          const clip: Clip = { buffer, ...analyzeSpeech(buffer), words };
+          clipsRef.current[name] = clip;
           return clip;
         } catch {
+          clipsRef.current[name] = null;
           return null;
         }
       };
@@ -238,14 +304,116 @@ export function IntroSection() {
         sourceRef.current = source;
       };
 
+      /* ── Typing the ask ──────────────────────────────────────────
+         With an alignment, each word's characters land across exactly
+         the span that word is spoken over, so the transcript pauses
+         where the voice pauses. Without one it is a single linear tween
+         at a guessed rate, which is what it always was. */
+      const typeAsk = (
+        t: gsap.core.Timeline,
+        at: number,
+        clip: Clip | null,
+        typeDuration: number,
+      ) => {
+        const typed = { chars: 0 };
+        const write = () => writeAsk(typed.chars);
+        /* Narrowed on the clip rather than on its words, so the
+           compiler can see that `leadIn` below is reachable. */
+        if (!clip?.words?.length) {
+          t.fromTo(
+            typed,
+            { chars: 0 },
+            { chars: ASK.length, duration: typeDuration, ease: "none", onUpdate: write },
+            at,
+          );
+          return;
+        }
+
+        const { words, leadIn: lead } = clip;
+        let cursor = 0;
+        for (const word of words) {
+          const found = ASK.indexOf(word.w, cursor);
+          if (found === -1) continue;
+          const endChar = found + word.w.length;
+          t.to(
+            typed,
+            {
+              chars: endChar,
+              duration: Math.max(0.05, (word.e - word.s) / 1000),
+              ease: "none",
+              onUpdate: write,
+            },
+            at + Math.max(0, word.s / 1000 - lead),
+          );
+          cursor = endChar;
+        }
+      };
+
+      /* ── Revealing the reply ─────────────────────────────────────
+         Each word arrives on its own timestamp rather than on a
+         stagger, so the text is not merely the same length as the
+         voice — it is the voice. Falls back to the two staggered runs
+         when there is nothing to sync to. */
+      const revealReply = (
+        t: gsap.core.Timeline,
+        cue: ReturnType<typeof cueSheet>,
+        clip: Clip | null,
+        pace: number,
+      ) => {
+        const words = clip?.words;
+
+        if (words?.length === replyWords.length && clip) {
+          replyWords.forEach((el, i) => {
+            t.to(
+              el,
+              { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.42, ease: "power2.out" },
+              cue.reply +
+                Math.max(0, words[i].s / 1000 - clip.leadIn - WORD_LEAD),
+            );
+          });
+          return;
+        }
+
+        t.to(
+          q("[data-reply-line='0'] [data-word]"),
+          {
+            autoAlpha: 1,
+            y: 0,
+            filter: "blur(0px)",
+            ease: "power2.out",
+            duration: 0.62 * pace,
+            stagger: 0.055 * pace,
+          },
+          cue.reply,
+        ).to(
+          q("[data-reply-line='1'] [data-word]"),
+          {
+            autoAlpha: 1,
+            y: 0,
+            filter: "blur(0px)",
+            ease: "power2.out",
+            duration: 0.62 * pace,
+            stagger: 0.045 * pace,
+          },
+          cue.replyTail,
+        );
+      };
+
       /**
        * One run of the performance, built fresh each time so the typing
        * beat's duration — and everything timed off the end of it — can
        * differ between the silent first run and a voiced replay.
        */
-      const build = (typeDuration: number, shift: number, clip: Clip | null) => {
-        const cue = cueSheet(shift);
-        const typed = { chars: 0 };
+      const build = (
+        typeDuration: number,
+        shift: number,
+        replySpan: number,
+        clips: { ask: Clip | null; reply: Clip | null },
+      ) => {
+        const cue = cueSheet(shift, replySpan);
+        /* The reveal is the same shape at any length: stretch the beats
+           by however much longer the voice takes than the silent run. */
+        const pace = replySpan / REPLY_SPAN;
         const t = gsap.timeline({ paused: true });
 
         t
@@ -350,22 +518,12 @@ export function IntroSection() {
              gesture behind it, is silent rather than an error either way. */
           .call(
             () => {
-              if (clip) playClip(clip);
+              if (clips.ask) playClip(clips.ask);
             },
             undefined,
             cue.type,
           )
-          .fromTo(
-            typed,
-            { chars: 0 },
-            {
-              chars: ASK.length,
-              duration: typeDuration,
-              ease: "none",
-              onUpdate: () => writeAsk(typed.chars),
-            },
-            cue.type,
-          )
+          .add(() => {}, cue.type)
 
           /* ── Commit ──────────────────────────────────────────────────
              The request lands. Rather than fading into the background once
@@ -389,33 +547,16 @@ export function IntroSection() {
              language arriving in units of meaning, and it is the exact
              structure per-word audio timestamps will drive later. */
           .call(() => setOrbState("composing"), undefined, cue.reply)
-          .to(orb, { scale: 1, duration: 0.9, ease: "power2.out" }, cue.reply)
-          .set(replyLines, { autoAlpha: 1 }, cue.reply)
-          .to(
-            q("[data-reply-line='0'] [data-word]"),
-            {
-              autoAlpha: 1,
-              y: 0,
-              filter: "blur(0px)",
-              duration: 0.62,
-              ease: "power2.out",
-              stagger: 0.055,
+          .call(
+            () => {
+              if (clips.reply) playClip(clips.reply);
             },
+            undefined,
             cue.reply,
           )
-          .to(
-            q("[data-reply-line='1'] [data-word]"),
-            {
-              autoAlpha: 1,
-              y: 0,
-              filter: "blur(0px)",
-              duration: 0.62,
-              ease: "power2.out",
-              stagger: 0.045,
-            },
-            cue.replyTail,
-          )
-
+          .to(orb, { scale: 1, duration: 0.9, ease: "power2.out" }, cue.reply)
+          .set(replyLines, { autoAlpha: 1 }, cue.reply)
+          .add(() => {}, cue.reply)
           /* ── Rest ─────────────────────────────────────────────────────
              Back to the dense globe rather than the ring: at hero scale the
              ring reads as a loading spinner, the globe reads as the orb. */
@@ -431,6 +572,9 @@ export function IntroSection() {
             cue.rest + 0.2,
           );
 
+        typeAsk(t, cue.type, clips.ask, typeDuration);
+        revealReply(t, cue, clips.reply, pace);
+
         return t;
       };
 
@@ -441,12 +585,21 @@ export function IntroSection() {
          play and by Replay alike — so there is exactly one place that
          decides the typing duration and shift, not two that could disagree. */
       const run = async () => {
-        const clip = await withTimeout(loadClip(), AUDIO_LOAD_TIMEOUT_MS);
+        /* Both fetched together and behind one deadline, so a missing or
+           slow reply cannot delay the question. Whichever arrives, the
+           run is built from what is actually in hand. */
+        const [ask, reply] = (await withTimeout(
+          Promise.all([loadClip("ask"), loadClip("reply")]),
+          AUDIO_LOAD_TIMEOUT_MS,
+        )) ?? [null, null];
         if (cancelled) return;
         tl?.kill();
-        const typeDuration = clip?.duration ?? DEFAULT_TYPE_DURATION;
+        const typeDuration = ask?.duration ?? DEFAULT_TYPE_DURATION;
         const shift = Math.max(0, typeDuration - DEFAULT_TYPE_DURATION);
-        tl = build(typeDuration, shift, clip);
+        /* A voiced reply sets its own length; a silent one keeps the
+           window the sheet was written around. */
+        const replySpan = reply?.duration ?? REPLY_SPAN;
+        tl = build(typeDuration, shift, replySpan, { ask, reply });
         tl.play();
       };
 

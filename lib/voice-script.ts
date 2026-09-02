@@ -159,12 +159,12 @@ export const SECTION_LABEL: Record<VoiceSection, string> = {
  * disk. Nothing branches on it beyond "there is nothing to play here".
  */
 export const TRACKS: VoiceTrack[] = [
-  /* The splash already speaks, and owns its own audio: the *ask* is
-     `supertonic_speech.mp3`, played from inside the intro's own timeline
-     so the clip and the typing cannot drift. This is the other half, the
-     reply, and it is unrecorded. The conductor never touches either,
-     because `intro` carries no recorded track and so is not one of the
-     sections it watches. */
+  /* The splash owns its own audio and its own clock. It takes two
+     clips, `intro.ask` and `intro.reply`, loaded and played from inside
+     its GSAP timeline so they cannot drift from the typing — see
+     `components/intro-section.tsx`. Neither is a narration track and the
+     conductor never touches them: `intro` carries no recorded track
+     here, so it is not one of the sections it watches. */
   { id: "intro.reply", section: "intro", tier: "reply", file: null },
 
   { id: "hero.brief", section: "hero", tier: "brief", file: "hero.brief" },

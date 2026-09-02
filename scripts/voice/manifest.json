@@ -3,6 +3,16 @@
   "audioDir": "public/assets/audio",
   "tracks": [
     {
+      "id": "intro.ask",
+      "file": "intro.ask",
+      "text": "Hey Rovyk, what can you do for me?"
+    },
+    {
+      "id": "intro.reply",
+      "file": "intro.reply",
+      "text": "I open your apps, read your mail, and find the file you forgot the name of. I click buttons in software that has never heard of me. All of it on this Mac."
+    },
+    {
       "id": "hero.brief",
       "file": "hero.brief",
       "text": "Hi. I'm Rovyk. I live in your menu bar, and I'm easiest to reach by name. Say it, then just talk. Rename these forty files by date. Find the invoice from the plumber. I'll work out what that takes."
