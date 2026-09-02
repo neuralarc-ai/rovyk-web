@@ -37,7 +37,16 @@ export default function Page() {
           page's `contentinfo` landmark rather than a block buried in the
           main content. */}
       <div className="relative m-(--gut) rounded-4xl bg-background">
-        <main>
+        {/* The sheet's own surface, spelled out again so it can travel.
+
+            Under `reveal:` the footer stops being the last block on the
+            sheet and becomes the thing the sheet is lying on top of, so
+            main needs an opaque ground of its own to hide it with, its own
+            top corners (the sheet's are behind it now), and a layer above
+            it. The hairline moves here too: on the footer it sat at a fixed
+            point on the screen and popped into view mid-reveal, whereas on
+            this edge it is the sheet's departing edge and travels with it. */}
+        <main className="reveal:relative reveal:z-10 reveal:rounded-t-4xl reveal:border-b reveal:border-input reveal:bg-background">
           <HeroSection />
           <SurfacesSection />
           <ToolsSection />

@@ -90,7 +90,7 @@ const NAV_LINK =
  * edge. Chunkier means a shallower lip, not a taller pill.
  */
 const NAV_CTA_PILL =
-  "inline-flex h-4.5 shrink-0 cursor-pointer items-center rounded-full bg-white px-3 leading-none font-medium text-black transition-colors duration-200 hover:bg-white/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+  "inline-flex shrink-0 cursor-pointer items-center rounded-full bg-white px-3 py-1 leading-none font-medium text-black transition-colors duration-200 hover:bg-white/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 function NavSide({
   side,

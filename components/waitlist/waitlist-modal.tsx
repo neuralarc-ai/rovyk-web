@@ -97,6 +97,12 @@ export function WaitlistModal({
   const [visited, setVisited] = useState<Partial<Record<FieldName, boolean>>>(
     {},
   );
+  /* Whether the reader has actually typed in a field, which is not the same
+     as focus having been in it. The dialog autofocuses the first field, so
+     without this distinction merely opening it and then clicking anything —
+     the privacy policy link included — counted as an attempt at the name
+     and accused them of leaving it blank. */
+  const [edited, setEdited] = useState<Partial<Record<FieldName, boolean>>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -112,6 +118,7 @@ export function WaitlistModal({
       setValues(EMPTY);
       setErrors({});
       setVisited({});
+      setEdited({});
       setStatus("idle");
       setFormError(null);
       honeypot.current = "";
@@ -121,6 +128,7 @@ export function WaitlistModal({
 
   const set = (name: FieldName, value: string) => {
     setValues((prev) => ({ ...prev, [name]: value }));
+    setEdited((prev) => ({ ...prev, [name]: true }));
     // A field only speaks up once it has been left. After that it keeps
     // talking, so a correction clears the message as it is made rather
     // than on the next blur.
@@ -131,6 +139,10 @@ export function WaitlistModal({
   };
 
   const leave = (name: FieldName) => {
+    // Focus passing through a field is not an attempt at it. A field the
+    // reader never typed in stays quiet until they submit, which is the
+    // point at which an empty required field really is their problem.
+    if (!edited[name]) return;
     setVisited((prev) => ({ ...prev, [name]: true }));
     const field = FIELDS.find((f) => f.name === name)!;
     setErrors((prev) => ({

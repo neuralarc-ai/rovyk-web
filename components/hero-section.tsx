@@ -13,19 +13,32 @@ import { RovykHud } from "@/components/rovyk-hud";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const APPS = [
-  "Mail",
-  "Calendar",
-  "Finder",
-  "Safari",
-  "Xcode",
-  "Slack",
-  "Notion",
-  "GitHub",
-  "Figma",
-  "Spotify",
-  "Terminal",
-  "Notes",
+/** The marquee's items. A name on its own is the shape of a press strip
+ *  or a logo wall, and that is what a bare list of them read as — the one
+ *  thing the rail is claiming, that it drives these, was the word missing
+ *  from every frame. So each item is a verb and the noun it acts on, and
+ *  the claim survives being cropped by the fade: half a phrase still has
+ *  a verb in it.
+ *
+ *  Which makes every line a factual claim, so each one is a tool in
+ *  lib/tools.ts and nothing else. GitHub is the one to watch: the tools
+ *  there are `github_list_prs` and `github_read_pr`, both reads — so it
+ *  checks pull requests and does not open them. Xcode, Terminal and Figma
+ *  lost their lines for the same reason; there is no build tool and no
+ *  shell tool, and `open_app` is the honest verb for any of them. */
+const ACTIONS = [
+  { lead: "Opens", noun: "Safari" },
+  { lead: "Replies in", noun: "Mail" },
+  { lead: "Summarises your", noun: "inbox" },
+  { lead: "Reschedules in", noun: "Calendar" },
+  { lead: "Finds it in", noun: "Finder" },
+  { lead: "Tidies your", noun: "Downloads" },
+  { lead: "Fills a form on the", noun: "web" },
+  { lead: "Checks your PRs on", noun: "GitHub" },
+  { lead: "Clicks through", noun: "Notion" },
+  { lead: "Types into", noun: "Slack" },
+  { lead: "Pauses", noun: "Spotify" },
+  { lead: "Switches to", noun: "Xcode" },
 ];
 
 /** Facts, not claims — every one of these is checkable before downloading. */
@@ -260,28 +273,41 @@ export function HeroSection() {
 
       {/* ── App marquee ────────────────────────────────────────────────
           The claim the marquee is making is scope: it drives apps that
-          never integrated with it. Names only, no logos — we are not
-          implying partnerships. */}
+          never integrated with it — so it says so, in a verb, in every
+          frame. Words only, no logos: we are not implying partnerships,
+          and the phrasing is deliberately about what Rovyk does rather
+          than who it is with. */}
       <div className="absolute bottom-0 left-1/2 z-30 flex -translate-x-1/2 items-end">
         <span className="mask-fillet-bl -mr-px size-6.5 shrink-0 bg-background" />
         <div className="relative flex h-14.5 w-[min(480px,54vw)] items-center overflow-hidden rounded-t-3xl bg-background">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-18 bg-linear-to-r from-background to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-18 bg-linear-to-l from-background to-transparent" />
-          <div className="animate-marquee flex w-max items-center gap-9.5 pl-5 motion-reduce:animate-none">
+          {/* The fades are a share of the strip, not a fixed inset: at
+              54vw the pill is about 200px, and 72px on each side left a
+              56px window that a phrase could not clear. */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-linear-to-r from-background to-transparent sm:w-18" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-linear-to-l from-background to-transparent sm:w-18" />
+          <div className="animate-marquee flex w-max items-center gap-7 pl-5 motion-reduce:animate-none">
             {/* Three passes: the keyframe travels exactly one third, so the
                 loop point lands on an identical frame. */}
             {[0, 1, 2].map((pass) => (
               <div
                 key={pass}
-                className="flex items-center gap-9.5"
+                className="flex items-center gap-7"
                 aria-hidden={pass > 0}
               >
-                {APPS.map((app) => (
+                {/* The sighted reader gets the verb from the phrases; this
+                    is the same sentence for a reader who is handed the list
+                    with no strip around it. Absolutely positioned, so it
+                    costs the row nothing. */}
+                {pass === 0 && (
+                  <span className="sr-only">Apps Rovyk can operate:</span>
+                )}
+                {ACTIONS.map(({ lead, noun }) => (
                   <span
-                    key={app}
-                    className="text-[15px] font-semibold tracking-[-0.01em] whitespace-nowrap text-white/60"
+                    key={noun + lead}
+                    className="text-sm font-light tracking-[-0.01em] whitespace-nowrap text-white/45"
                   >
-                    {app}
+                    {lead}{" "}
+                    <b className="font-semibold text-white/85">{noun}</b>
                   </span>
                 ))}
               </div>

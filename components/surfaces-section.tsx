@@ -8,6 +8,7 @@ import { DOWNLOADS_FLOW } from "@/lib/hud-flows";
 import { cn } from "@/lib/utils";
 import { AppleLogo } from "./apple-logo";
 import { DownloadButton } from "./cta-button";
+import { ArrowFatUpIcon, CommandIcon, OptionIcon } from "@phosphor-icons/react/dist/ssr";
 
 /* ────────────────────────────────────────────────────────────────────
    Surfaces — where the agent can be.
@@ -42,7 +43,7 @@ const FLOAT =
 
 function Kbd({ children }: { children: React.ReactNode }) {
   return (
-    <kbd className="inline-flex h-4.75 min-w-4.75 items-center justify-center rounded-sm border border-input bg-accent px-1.5 font-mono text-[11px] leading-none text-white">
+    <kbd className="inline-flex h-6 min-w-4.75 items-center justify-center rounded-sm border border-input bg-accent px-1.5 font-mono text-xs leading-none text-white">
       {children}
     </kbd>
   );
@@ -94,7 +95,7 @@ function MetaStrip({
           {i > 0 ? (
             <i
               aria-hidden
-              className="size-0.75 shrink-0 rounded-full bg-white/22"
+              className="size-1 shrink-0 rounded-full bg-white/22"
             />
           ) : null}
           <span className="flex items-center gap-1.5">{item}</span>
@@ -173,7 +174,9 @@ const SURFACES = [
     stage: <NotchStage />,
     meta: [
       <>
-        <Kbd>⌥</Kbd>
+        <Kbd>
+          <OptionIcon  />
+        </Kbd>
         <Kbd>space</Kbd>
       </>,
       <>&ldquo;Hey Rovyk&rdquo;</>,
@@ -189,8 +192,12 @@ const SURFACES = [
     stage: <FocusStage />,
     meta: [
       <>
-        <Kbd>⌘</Kbd>
-        <Kbd>⇧</Kbd>
+        <Kbd>
+          <CommandIcon  />
+        </Kbd>
+        <Kbd>
+          <ArrowFatUpIcon  />
+        </Kbd>
         <Kbd>space</Kbd>
       </>,
       <>Full scrollback</>,

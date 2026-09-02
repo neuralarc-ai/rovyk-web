@@ -4,10 +4,13 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
+import { usePathname } from "next/navigation";
 import { WaitlistModal } from "@/components/waitlist/waitlist-modal";
 import { getLenis } from "@/components/smooth-scroll";
 
@@ -53,6 +56,23 @@ export function WaitlistProvider({ children }: { children: ReactNode }) {
     else lenis?.start();
     setOpen(next);
   }, []);
+
+  /* A link inside the dialog is still a navigation, and this provider sits
+     in the root layout — it does not unmount when the route changes, so
+     nothing was closing the dialog behind you. The privacy policy link in
+     the collection notice is the one that has to work: it is there because
+     Art. 13 wants the policy reachable at the point of collection, and it
+     was leaving the dialog floating over the page it had just opened.
+
+     Keyed off the path rather than wired into that one link, so any link
+     the dialog ever grows behaves the same. */
+  const pathname = usePathname();
+  const landed = useRef(pathname);
+  useEffect(() => {
+    if (pathname === landed.current) return;
+    landed.current = pathname;
+    change(false);
+  }, [pathname, change]);
 
   /* Only `open` is exposed, and it is stable — consumers are buttons, and
      a button has no reason to re-render because a dialog it is not inside
