@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Image from "next/image";
-import heroWall from "@/public/assets/hero-wall-4.jpg";
+import heroWall from "@/public/assets/hero-wall-2.jpg";
 import { AppleLogo } from "@/components/apple-logo";
 import { ENTITY } from "@/lib/legal";
 import { DownloadButton, GhostButton } from "@/components/cta-button";
