@@ -3,38 +3,40 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import {
+  ArrowCounterClockwiseIcon,
   CornersOutIcon,
-  PauseIcon,
   PlayIcon,
   SpeakerHighIcon,
   SpeakerSlashIcon,
   XIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import heroWall from "@/public/assets/hero-wall-2.jpg";
+import { cn } from "@/lib/utils";
 
 /* ────────────────────────────────────────────────────────────────────
-   The page's dominant element: a looping clip of the product in use.
+   The page's dominant element: a clip of the product in use, played
+   once.
 
    It asks to start with its sound on, which is a request browsers are
    free to refuse — autoplay with audio is only granted to sites the
    visitor has played media on before. So the start is a two-step: try it
    loud, and if that is turned down, come back muted rather than not at
    all. Either way the element, not our intent, is what the controls read
-   their state off; a "pause" button over a video that never started is
-   worse than no button.
+   their state off.
 
-   Three controls and a line of progress. No scrubber and no timeline —
-   those advertise something to sit and watch, and this is a loop you
-   glance at.
+   The mark in the middle is a play button and nothing else: it is there
+   when the clip is stopped and gone when it runs, so it is only ever
+   offering the one thing that is possible. There is no pause button —
+   the frame is the pause button, and a running video needs no furniture
+   over it to say so. At the end the mark returns as a replay, since the
+   clip stops rather than looping.
 
    The exception is the phone, where the frame is a few hundred pixels
-   wide and a UI demo that small is a rumour. Tapping opens the clip in a
-   dialog rather than calling `requestFullscreen`: that API takes the
-   whole browser window with it, and only exists on some of the devices
-   that need this — an iPhone has no element fullscreen at all, only the
-   native player. The dialog behaves the same everywhere, and its video
-   carries the system's own controls, whose fullscreen button is there
-   for anyone who does want the screen.
+   wide and a UI demo that small is a rumour. The corner carries a second
+   button there, opening the clip in a dialog rather than calling
+   `requestFullscreen`: that API takes the whole browser window with it,
+   and only exists on some of the devices that need this — an iPhone has
+   no element fullscreen at all, only the native player.
    ──────────────────────────────────────────────────────────────────── */
 
 const SRC = "https://dryb6003xlide.cloudfront.net/rovyk-hero.mp4";
@@ -51,7 +53,9 @@ export function LandingVideo() {
   /* Where the inline clip had got to when the dialog took over, and
      where the dialog had got to when it handed back. */
   const at = useRef(0);
+
   const [playing, setPlaying] = useState(false);
+  const [ended, setEnded] = useState(false);
   const [muted, setMuted] = useState(false);
   const [open, setOpen] = useState(false);
   const [touch, setTouch] = useState(false);
@@ -65,16 +69,19 @@ export function LandingVideo() {
 
     const read = () => {
       setPlaying(!el.paused);
+      setEnded(el.ended);
       setMuted(el.muted);
     };
     read();
 
     el.addEventListener("play", read);
     el.addEventListener("pause", read);
+    el.addEventListener("ended", read);
     el.addEventListener("volumechange", read);
 
     /* Someone who asked for less motion did not ask for this either, so
-       it holds on the poster until they press play. */
+       it holds on the poster until they press play — which is exactly
+       what a stopped clip already shows a button for. */
     if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
       el.play().catch(() => {
         /* Refused with sound. Muted is the version every browser
@@ -87,14 +94,15 @@ export function LandingVideo() {
     return () => {
       el.removeEventListener("play", read);
       el.removeEventListener("pause", read);
+      el.removeEventListener("ended", read);
       el.removeEventListener("volumechange", read);
     };
   }, []);
 
   /* Watched rather than read once — same reasoning as the nav: a tablet
-     with a keyboard folded on can change its answer mid-session. The
-     whole control hangs off this, target and button both: a pointer has
-     the full-width frame already, and nothing to gain from a dialog. */
+     with a keyboard folded on can change its answer mid-session. Only
+     the dialog hangs off this; a pointer has the full-width frame
+     already, and nothing to gain from one. */
   useEffect(() => {
     const mq = matchMedia(POINTER);
     const read = () => setTouch(!mq.matches);
@@ -129,13 +137,20 @@ export function LandingVideo() {
     return () => cancelAnimationFrame(frame);
   }, [playing]);
 
-  const togglePlay = useCallback(() => {
+  /* The whole interaction, and the same one whether it arrives on the
+     mark or anywhere else on the frame: stop it, start it, or start it
+     over. */
+  const press = useCallback(() => {
     const el = ref.current;
     if (!el) return;
-    /* A rejected `play()` is a refusal we can do nothing about — the
-       paused state it leaves behind is already the honest one. */
-    if (el.paused) el.play().catch(() => {});
-    else el.pause();
+    if (el.ended) {
+      el.currentTime = 0;
+      el.play().catch(() => {});
+    } else if (el.paused) {
+      el.play().catch(() => {});
+    } else {
+      el.pause();
+    }
   }, []);
 
   const toggleSound = useCallback(() => {
@@ -177,12 +192,12 @@ export function LandingVideo() {
       <div className="group relative aspect-16/9 w-full max-w-full overflow-hidden rounded-3xl bg-background shadow-[0_0_0_1px_rgba(255,255,255,.18),0_0_0_6px_rgba(255,255,255,.035),0_40px_90px_-30px_rgba(0,0,0,.9)] sm:max-w-[min(1100px,78vw)]">
         {/* No `muted` prop: React does not render that attribute on the
             server, so the value would flip on hydration. Sound is set
-            imperatively above, where the browser's answer is visible. */}
+            imperatively above, where the browser's answer is visible.
+            No `loop` either: it plays once and offers a replay. */}
         <video
           ref={ref}
           src={SRC}
           poster={heroWall.src}
-          loop
           playsInline
           preload="metadata"
           aria-label="Rovyk in use"
@@ -193,40 +208,56 @@ export function LandingVideo() {
             over a bright frame, and nothing more. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/45 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/30 to-transparent"
         />
 
-        {/* A thumb is not a cursor: on touch the whole frame opens it,
-            because a 36px circle in a corner is not what anyone aims at
-            first. Pointer devices keep the frame inert and use the
-            button, which is also the only version a keyboard can reach. */}
-        {touch ? (
-          <button
-            type="button"
-            onClick={enlarge}
-            aria-label="Open the video larger"
-            className="absolute inset-0 cursor-pointer"
-          />
-        ) : null}
+        {/* The frame itself, as a surface to press — this is the pause
+            button. Hidden from assistive tech and out of the tab order
+            on purpose: it is a second way to reach the button below, not
+            a second control, and a keyboard already has that one. */}
+        <button
+          type="button"
+          aria-hidden
+          tabIndex={-1}
+          onClick={press}
+          className="absolute inset-0 cursor-pointer"
+        />
 
-        <div className="absolute right-4 bottom-4 flex items-center gap-2 opacity-75 transition-opacity duration-200 focus-within:opacity-100 group-hover:opacity-100 sm:right-5 sm:bottom-5">
+        {/* The wrapper never takes a click — it is full-bleed, and
+            anything it caught would be a click the frame below needed.
+            Only the mark is pressable, and only while the clip is
+            stopped; while it runs there is nothing here to press. */}
+        <div
+          className={cn(
+            "pointer-events-none absolute inset-0 bg-black/30 grid place-items-center transition-opacity duration-300 ease-[cubic-bezier(.52,.52,0,1)] motion-reduce:transition-none",
+            playing ? "opacity-0" : "opacity-100",
+          )}
+        >
           <button
             type="button"
-            onClick={togglePlay}
-            aria-label={playing ? "Pause the video" : "Play the video"}
-            className={BUTTON}
+            onClick={press}
+            aria-label={ended ? "Play the video again" : "Play the video"}
+            className={cn(
+              "grid size-16 cursor-pointer place-items-center rounded-full border border-white/25 bg-black/30 text-white/85 backdrop-blur-sm transition-colors duration-200 hover:border-white/45 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:size-20",
+              !playing && "pointer-events-auto",
+            )}
           >
-            {playing ? (
-              <PauseIcon weight="fill" className="size-3.5" aria-hidden />
+            {ended ? (
+              <ArrowCounterClockwiseIcon
+                className="size-6 sm:size-7"
+                aria-hidden
+              />
             ) : (
               <PlayIcon
                 weight="fill"
-                className="size-3.5 translate-x-px"
+                className="size-6 sm:size-7"
                 aria-hidden
               />
             )}
           </button>
+        </div>
 
+        <div className="absolute right-4 bottom-4 flex items-center gap-2 opacity-75 transition-opacity duration-200 focus-within:opacity-100 group-hover:opacity-100 sm:right-5 sm:bottom-5">
           <button
             type="button"
             onClick={toggleSound}
@@ -240,9 +271,8 @@ export function LandingVideo() {
             )}
           </button>
 
-          {/* The visible half of the same control: the frame behind it
-              opens the dialog too, but nothing says so, and a keyboard
-              cannot press a bare tap target. */}
+          {/* Touch only, and the only way into the dialog now that a tap
+              on the frame plays or pauses. */}
           {touch ? (
             <button
               type="button"
@@ -298,7 +328,6 @@ export function LandingVideo() {
               poster={heroWall.src}
               autoPlay
               controls
-              loop
               playsInline
               onLoadedMetadata={(e) => {
                 e.currentTarget.currentTime = at.current;
